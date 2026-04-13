@@ -1,0 +1,321 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+:root {
+  /* Premium Color Palette - Ninho do Dragão */
+  --primary: #3d4a57;
+  --primary-foreground: #FFFFFF;
+  
+  /* Accent colors - warm and elegant */
+  --accent-warm: #d4a574;
+  --accent-rose: #e8b4b8;
+  --accent-sage: #a8b8a8;
+  --accent-soft-pink: #f5e6e8;
+  
+  --radius: 0.5rem;
+  --background: oklch(0.99 0 0);
+  --foreground: oklch(0.25 0.01 65);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.25 0.01 65);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.25 0.01 65);
+  --secondary: oklch(0.98 0.001 286.375);
+  --secondary-foreground: oklch(0.4 0.015 65);
+  --muted: oklch(0.92 0.001 286.375);
+  --muted-foreground: oklch(0.552 0.016 285.938);
+  --accent: #d4a574;
+  --accent-foreground: oklch(1 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.94 0.002 286.32);
+  --input: oklch(0.94 0.002 286.32);
+  --ring: #d4a574;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-family: "Poppins", "Segoe UI", system-ui, sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Playfair Display", "Georgia", serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [type="button"]:not(:disabled),
+  [type="submit"]:not(:disabled),
+  [type="reset"]:not(:disabled),
+  a[href],
+  select:not(:disabled),
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled) {
+    @apply cursor-pointer;
+  }
+}
+
+@layer components {
+  /* Container */
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .flex {
+    min-height: 0;
+    min-width: 0;
+  }
+
+  @media (min-width: 640px) {
+    .container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+      max-width: 1280px;
+    }
+  }
+
+  /* Premium Button Styles */
+  .btn-primary {
+    @apply bg-[#d4a574] text-white px-7 py-3.5 rounded-lg font-semibold transition-all duration-300 hover:bg-[#c29460] shadow-md hover:shadow-lg hover:scale-105 active:scale-95;
+  }
+
+  .btn-primary-dark {
+    @apply bg-[#3d4a57] text-white px-7 py-3.5 rounded-lg font-semibold transition-all duration-300 hover:bg-[#2a3340] shadow-md hover:shadow-lg hover:scale-105 active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply border-2 border-[#d4a574] text-[#d4a574] px-7 py-3 rounded-lg font-semibold transition-all duration-300 hover:bg-[#d4a574] hover:text-white;
+  }
+
+  .btn-outline {
+    @apply border-2 border-white text-white px-7 py-3 rounded-lg font-semibold transition-all duration-300 hover:bg-white hover:text-[#3d4a57];
+  }
+
+  /* Card Styles */
+  .card-premium {
+    @apply bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 p-6 border border-gray-50;
+  }
+
+  .card-category {
+    @apply bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-50;
+  }
+
+  .card-product {
+    @apply bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-50;
+  }
+
+  /* Typography */
+  .heading-hero {
+    @apply text-5xl md:text-6xl lg:text-7xl font-bold text-[#3d4a57] leading-tight;
+  }
+
+  .heading-xl {
+    @apply text-4xl md:text-5xl font-bold text-[#3d4a57] leading-tight;
+  }
+
+  .heading-lg {
+    @apply text-3xl md:text-4xl font-bold text-[#3d4a57] leading-tight;
+  }
+
+  .heading-md {
+    @apply text-2xl md:text-3xl font-bold text-[#3d4a57];
+  }
+
+  .heading-sm {
+    @apply text-xl md:text-2xl font-bold text-[#3d4a57];
+  }
+
+  .subheading {
+    @apply text-lg text-gray-600 leading-relaxed;
+  }
+
+  .text-muted {
+    @apply text-gray-500 text-sm;
+  }
+
+  .text-accent {
+    @apply text-[#d4a574] font-semibold;
+  }
+
+  /* Badge */
+  .badge-warm {
+    @apply inline-block bg-[#d4a574] text-white px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wide;
+  }
+
+  .badge-rose {
+    @apply inline-block bg-[#e8b4b8] text-white px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wide;
+  }
+
+  .badge-sage {
+    @apply inline-block bg-[#a8b8a8] text-white px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wide;
+  }
+
+  /* Section Divider */
+  .section-divider {
+    @apply border-b border-gray-100;
+  }
+
+  /* Gradient Background */
+  .bg-gradient-soft {
+    @apply bg-gradient-to-br from-white via-[#f5e6e8] to-white;
+  }
+
+  /* Icon Box */
+  .icon-box {
+    @apply w-14 h-14 bg-[#d4a574] rounded-lg flex items-center justify-center;
+  }
+
+  .icon-box-rose {
+    @apply w-14 h-14 bg-[#e8b4b8] rounded-lg flex items-center justify-center;
+  }
+
+  .icon-box-sage {
+    @apply w-14 h-14 bg-[#a8b8a8] rounded-lg flex items-center justify-center;
+  }
+
+  /* Product Grid */
+  .product-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8;
+  }
+
+  /* Testimonial */
+  .testimonial-card {
+    @apply bg-gradient-to-br from-[#f5e6e8] to-white p-8 rounded-xl border border-[#d4a574]/20;
+  }
+
+  /* Section Spacing */
+  .section-py {
+    @apply py-16 md:py-24;
+  }
+
+  .section-py-sm {
+    @apply py-12 md:py-16;
+  }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.7s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.7s ease-out;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.7s ease-out;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Responsive Utilities */
+@media (max-width: 640px) {
+  .heading-hero {
+    @apply text-3xl;
+  }
+  
+  .heading-xl {
+    @apply text-2xl;
+  }
+}
