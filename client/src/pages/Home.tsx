@@ -1,4 +1,4 @@
-import { Heart, MessageCircle, Gift, Sparkles, Shirt, Package, Star, Instagram, Facebook, CheckCircle2, Clock3, ArrowRight, ShieldHeart } from "lucide-react";
+import { Heart, MessageCircle, Gift, Sparkles, Shirt, Package, Star, Instagram, Facebook, CheckCircle2, Clock3, ArrowRight, ShieldCheck } from "lucide-react";
 import { Link } from "wouter";
 import { featuredCategories, priceHighlights, textileCatalog, mothersDayHighlights, siteConfig } from "@/lib/site";
 
@@ -100,7 +100,7 @@ export default function Home() {
       <section className="bg-white border-b border-[#f3e2d1]">
         <div className="container py-5 grid md:grid-cols-3 gap-4">
           {[
-            { icon: ShieldHeart, text: "Peças pensadas para emocionar" },
+            { icon: ShieldCheck, text: "Peças pensadas para emocionar" },
             { icon: CheckCircle2, text: "Valores claros e encomenda simples" },
             { icon: Clock3, text: "Resposta rápida pelo WhatsApp" },
           ].map((item) => (
