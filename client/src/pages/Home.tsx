@@ -10,8 +10,7 @@ export default function Home() {
 
   export default function Home() {
   return (
-    <div style={{ padding: "20px", textAlign: "center" }}>
-      
+      <div style={{ padding: "20px", maxWidth: "900px", margin: "0 auto", textAlign: "center" }}>
       {/* HERO */}
       <h1 style={{ fontSize: "32px", fontWeight: "bold" }}>
         Peças personalizadas que guardam momentos únicos
@@ -28,19 +27,19 @@ export default function Home() {
       </a>
 
       {/* FRASE */}
-      <h2 style={{ marginTop: "40px" }}>
+      <h2 style={{ marginTop: "60px" }}>
         “Damos forma aos teus momentos.”
       </h2>
 
       {/* PRODUTOS */}
-      <h3 style={{ marginTop: "40px" }}>
+      <h3 style={{ marginTop: "60px" }}>
         Personalização sem limites
       </h3>
 
       <p>T-shirts • Canecas • Almofadas • Presentes únicos</p>
 
       {/* DIFERENCIAL */}
-      <h3 style={{ marginTop: "40px" }}>
+      <h3 style={{ marginTop: "60px" }}>
         Porque escolher o Ninho do Dragão?
       </h3>
 
@@ -49,16 +48,16 @@ export default function Home() {
       </p>
 
       {/* URGÊNCIA */}
-      <h3 style={{ marginTop: "40px", color: "red" }}>
+      <h3 style={{ marginTop: "60px", color: "red" }}>
         Encomendas abertas — vagas limitadas esta semana
       </h3>
 
       {/* CTA FINAL */}
-      <h2 style={{ marginTop: "40px" }}>
+      <h2 style={{ marginTop: "60px" }}>
         Tens uma ideia? Nós damos-lhe vida.
       </h2>
 
-      <a href="https://wa.me/351SEUNUMERO">
+      <a href="https://wa.me/351935852703">
         <button style={{ marginTop: "10px", padding: "12px 25px" }}>
           Falar no WhatsApp agora
         </button>
