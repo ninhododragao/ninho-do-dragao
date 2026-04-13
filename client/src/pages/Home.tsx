@@ -8,41 +8,65 @@ export default function Home() {
     window.open(`https://wa.me/${siteConfig.whatsappNumber}?text=${encoded}`, "_blank");
   };
 
+  export default function Home() {
   return (
-    <div className="min-h-screen bg-[#fffaf6] text-[#2f3640]">
-      <header className="sticky top-0 z-50 border-b border-black/5 bg-white/90 backdrop-blur">
-        <div className="container flex items-center justify-between py-4 gap-4">
-          <Link href="/" className="flex items-center gap-3 min-w-0">
-            <img src="/logo-ninho.jpg" alt="Ninho do Dragão" className="h-14 w-14 rounded-full object-cover shadow-md" />
-            <div className="min-w-0">
-              <p className="font-semibold text-sm text-[#d17c26] uppercase tracking-[0.2em]">Ninho do Dragão</p>
-              <p className="text-sm text-gray-500 truncate">Damos forma aos teus momentos</p>
-            </div>
-          </Link>
+    <div style={{ padding: "20px", textAlign: "center" }}>
+      
+      {/* HERO */}
+      <h1 style={{ fontSize: "32px", fontWeight: "bold" }}>
+        Peças personalizadas que guardam momentos únicos
+      </h1>
 
-          <nav className="hidden lg:flex items-center gap-6 text-sm font-medium text-[#3d4a57]">
-            <a href="#dia-da-mae" className="hover:text-[#d17c26] transition">Dia da Mãe</a>
-            <a href="#catalogo" className="hover:text-[#d17c26] transition">Catálogo</a>
-            <a href="#tamanhos" className="hover:text-[#d17c26] transition">Tamanhos</a>
-            <a href="#redes" className="hover:text-[#d17c26] transition">Redes</a>
-            <Link href="/sobre-nos" className="hover:text-[#d17c26] transition">Sobre nós</Link>
-          </nav>
+      <p style={{ marginTop: "10px" }}>
+        Criamos presentes com significado — feitos à tua medida para surpreender quem mais importa.
+      </p>
 
-          <div className="flex items-center gap-2 sm:gap-3">
-            <a href={siteConfig.instagram} target="_blank" rel="noreferrer" className="hidden sm:inline-flex items-center justify-center h-11 w-11 rounded-full border border-[#ecdcc7] text-[#3d4a57] hover:text-[#d17c26] hover:border-[#d17c26] transition" aria-label="Instagram">
-              <Instagram className="w-5 h-5" />
-            </a>
-            <a href={siteConfig.facebook} target="_blank" rel="noreferrer" className="hidden sm:inline-flex items-center justify-center h-11 w-11 rounded-full border border-[#ecdcc7] text-[#3d4a57] hover:text-[#d17c26] hover:border-[#d17c26] transition" aria-label="Facebook">
-              <Facebook className="w-5 h-5" />
-            </a>
-            <button onClick={() => openWhatsApp()} className="btn-primary flex items-center gap-2">
-              <MessageCircle className="w-4 h-4" />
-              <span className="hidden sm:inline">Encomendar</span>
-            </button>
-          </div>
-        </div>
-      </header>
+      <a href="https://wa.me/351935852703">
+        <button style={{ marginTop: "15px", padding: "10px 20px" }}>
+          Encomendar no WhatsApp
+        </button>
+      </a>
 
+      {/* FRASE */}
+      <h2 style={{ marginTop: "40px" }}>
+        “Damos forma aos teus momentos.”
+      </h2>
+
+      {/* PRODUTOS */}
+      <h3 style={{ marginTop: "40px" }}>
+        Personalização sem limites
+      </h3>
+
+      <p>T-shirts • Canecas • Almofadas • Presentes únicos</p>
+
+      {/* DIFERENCIAL */}
+      <h3 style={{ marginTop: "40px" }}>
+        Porque escolher o Ninho do Dragão?
+      </h3>
+
+      <p>
+        Feito com carinho • Design único • Entrega rápida • Atendimento próximo
+      </p>
+
+      {/* URGÊNCIA */}
+      <h3 style={{ marginTop: "40px", color: "red" }}>
+        Encomendas abertas — vagas limitadas esta semana
+      </h3>
+
+      {/* CTA FINAL */}
+      <h2 style={{ marginTop: "40px" }}>
+        Tens uma ideia? Nós damos-lhe vida.
+      </h2>
+
+      <a href="https://wa.me/351SEUNUMERO">
+        <button style={{ marginTop: "10px", padding: "12px 25px" }}>
+          Falar no WhatsApp agora
+        </button>
+      </a>
+
+    </div>
+  );
+}
       <section className="relative overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(255,176,73,0.28),_transparent_35%),linear-gradient(135deg,#1d2430_0%,#283446_50%,#10151d_100%)] text-white">
         <div className="absolute inset-0 opacity-20 [background-image:radial-gradient(circle_at_20%_20%,white_0,transparent_2px),radial-gradient(circle_at_80%_30%,white_0,transparent_2px),radial-gradient(circle_at_60%_80%,white_0,transparent_2px)]"></div>
         <div className="container py-18 md:py-24 grid md:grid-cols-2 gap-10 items-center relative">
