@@ -10,7 +10,7 @@ import { useState, useEffect, useRef } from "react";
 
 // ─── Asset URLs ────────────────────────────────────────────────────────────────
 const LOGO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310519663520925403/RjrWWnoYWZdN4j9NAk9t4j/logo-ninho_09b37153.jpg";
-const HERO_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663520925403/RjrWWnoYWZdN4j9NAk9t4j/hero_banner-dYQSG76aMLoWZJpuLTVnAk.webp";
+const HERO_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663520925403/RjrWWnoYWZdN4j9NAk9t4j/ovibeja_2026_ninho_9ef92953.png";
 const DIA_MAE_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663520925403/RjrWWnoYWZdN4j9NAk9t4j/dia_mae_banner-YvbiDkor3vrwTmbrEi2u4W.webp";
 const OVIBEJA_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663520925403/RjrWWnoYWZdN4j9NAk9t4j/ovibeja_banner-3dgetAgkAWqkMetB8yCNSu.webp";
 const PRODUCTS_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663520925403/RjrWWnoYWZdN4j9NAk9t4j/products_grid-Wt7Eh36m8TrZkDgm8XEFMH.webp";
