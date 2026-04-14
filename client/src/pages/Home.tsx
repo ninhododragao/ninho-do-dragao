@@ -7,6 +7,8 @@
  */
 
 import { useState, useEffect, useRef } from "react";
+import { NewsletterForm, PromotionBanner, showOrderConfirmation } from "@/components/NotificationSystem";
+import { Toaster } from "sonner";
 
 // ─── Asset URLs ────────────────────────────────────────────────────────────────
 const LOGO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310519663520925403/RjrWWnoYWZdN4j9NAk9t4j/logo-ninho_09b37153.jpg";
@@ -472,6 +474,8 @@ export default function Home() {
 
   return (
     <div style={{ backgroundColor: "white", minHeight: "100vh" }}>
+      <Toaster position="top-right" />
+      <PromotionBanner />
       <Navbar />
 
       {/* Hero Section */}
@@ -1078,9 +1082,23 @@ export default function Home() {
             lineHeight: 1.8,
             color: "#4a5568",
             fontFamily: "Open Sans, sans-serif",
+            marginBottom: "24px",
+          }}>
+            Subscreve à nossa newsletter e recebe <strong>10% de desconto</strong> na tua primeira encomenda!
+          </p>
+
+          <div style={{ marginBottom: "32px" }}>
+            <NewsletterForm />
+          </div>
+
+          <p style={{
+            fontSize: "15px",
+            lineHeight: 1.8,
+            color: "#4a5568",
+            fontFamily: "Open Sans, sans-serif",
             marginBottom: "32px",
           }}>
-            Fala connosco pelo WhatsApp para fazer a tua encomenda, tirar dúvidas ou pedir um orçamento personalizado. Respondemos rapidamente!
+            Ou fala connosco pelo WhatsApp para fazer a tua encomenda, tirar dúvidas ou pedir um orçamento personalizado. Respondemos rapidamente!
           </p>
 
           <a
