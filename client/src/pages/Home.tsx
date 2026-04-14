@@ -148,18 +148,37 @@ function Navbar() {
       }}
     >
       <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: "70px" }}>
-          {/* Logo */}
-          <a href="#" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
-            <img
-              src={LOGO_URL}
-              alt="Ninho do Dragão"
-              style={{ height: "44px", width: "auto", objectFit: "contain" }}
-            />
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: "70px", position: "relative" }}>
+          {/* Placeholder esquerdo para equilibrar o layout */}
+          <div style={{ width: "160px" }} />
+
+          {/* Nome centrado absolutamente */}
+          <a
+            href="#"
+            style={{
+              position: "absolute",
+              left: "50%",
+              transform: "translateX(-50%)",
+              textDecoration: "none",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <span style={{
+              fontFamily: "'Pacifico', cursive",
+              fontSize: "26px",
+              color: "#2B4EAF",
+              letterSpacing: "0.02em",
+              lineHeight: 1,
+            }}>
+              Ninho do Dragão
+            </span>
           </a>
 
-          {/* Desktop Nav */}
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }} className="hidden md:flex">
+          {/* Desktop Nav — escondido no mobile */}
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }} className="hidden md:flex" />
+
+          {/* Nav links — invisivel, apenas para acessibilidade */}
+          <div style={{ display: "none" }}>
             {navLinks.map((link) => (
               <a
                 key={link.href}
@@ -448,30 +467,7 @@ function HeroSection() {
               </a>
             </div>
 
-            {/* Stats */}
-            <div style={{
-              display: "flex",
-              gap: "32px",
-              marginTop: "48px",
-              paddingTop: "32px",
-              borderTop: "1px solid #e2e8f0",
-              flexWrap: "wrap",
-            }}>
-              {[
-                { value: "500+", label: "Clientes satisfeitos" },
-                { value: "2", label: "Técnicas exclusivas" },
-                { value: "24h", label: "Entrega rápida" },
-              ].map((stat) => (
-                <div key={stat.label}>
-                  <div style={{ fontSize: "24px", fontWeight: 800, color: "#2B4EAF", fontFamily: "Montserrat, sans-serif" }}>
-                    {stat.value}
-                  </div>
-                  <div style={{ fontSize: "13px", color: "#718096", fontFamily: "Open Sans, sans-serif" }}>
-                    {stat.label}
-                  </div>
-                </div>
-              ))}
-            </div>
+
           </div>
 
           {/* Hero Image */}
