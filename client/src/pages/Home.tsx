@@ -46,10 +46,8 @@ export default function Home() {
       {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border">
         <div className="container flex items-center justify-between py-4">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground text-lg">🐉</span>
-            </div>
+          <div className="flex items-center gap-3">
+            <img src="https://d2xsxph8kpxj0f.cloudfront.net/310519663520925403/RjrWWnoYWZdN4j9NAk9t4j/logo-ninho_d0cf1353.jpg" alt="Ninho do Dragão" className="h-12 w-12 object-contain" />
             <h1 className="font-bold text-xl text-foreground" style={playfairStyle}>Ninho do Dragão</h1>
           </div>
           <div className="hidden md:flex gap-8">
