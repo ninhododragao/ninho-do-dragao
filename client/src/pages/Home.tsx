@@ -15,7 +15,7 @@ const DIA_MAE_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663520925403/Rj
 const OVIBEJA_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663520925403/RjrWWnoYWZdN4j9NAk9t4j/ovibeja_banner-3dgetAgkAWqkMetB8yCNSu.webp";
 const PRODUCTS_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663520925403/RjrWWnoYWZdN4j9NAk9t4j/products_grid-Wt7Eh36m8TrZkDgm8XEFMH.webp";
 
-const WHATSAPP_NUMBER = "351912345678"; // Substituir pelo número real
+const WHATSAPP_NUMBER = "351935852703"; // +351 935 852 703
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=Olá!%20Gostaria%20de%20encomendar%20um%20produto%20personalizado.`;
 const INSTAGRAM_URL = "https://instagram.com/ninhododragao.pt";
 const FACEBOOK_URL = "https://facebook.com/ninhododragao.pt";
