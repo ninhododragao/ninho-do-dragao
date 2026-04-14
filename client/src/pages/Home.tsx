@@ -1,1252 +1,595 @@
 /*
- * Home.tsx — Ninho do Dragão
- * Design: "Artesanal Digital Moderno"
- * Cores: Azul principal (#2B4EAF), Azul claro (#5B8FD4), Dourado (#C9A227)
- * Fontes: Montserrat (títulos) + Open Sans (corpo) + Playfair Display (acentos emocionais)
- * Inspiração: personalize.pt — limpo, moderno, emocional, produto em destaque
+ * Home.tsx — Ninho do Dragão v2
+ * Design limpo, profissional, emocional. Conversão via WhatsApp.
+ * Mobile first. Sem imagens externas (exceto Ovibeja fornecida).
  */
 
 import { useState, useEffect, useRef } from "react";
-import { NewsletterForm, PromotionBanner, showOrderConfirmation } from "@/components/NotificationSystem";
-import { Toaster } from "sonner";
+import { Toaster, toast } from "sonner";
 
-// ─── Asset URLs ────────────────────────────────────────────────────────────────
-const LOGO_URL = "https://d2xsxph8kpxj0f.cloudfront.net/310519663520925403/RjrWWnoYWZdN4j9NAk9t4j/logo-ninho_09b37153.jpg";
-const HERO_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663520925403/RjrWWnoYWZdN4j9NAk9t4j/ovibeja_2026_ninho_9ef92953.png";
-const DIA_MAE_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663520925403/RjrWWnoYWZdN4j9NAk9t4j/dia_mae_banner-YvbiDkor3vrwTmbrEi2u4W.webp";
-const OVIBEJA_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663520925403/RjrWWnoYWZdN4j9NAk9t4j/ovibeja_banner-3dgetAgkAWqkMetB8yCNSu.webp";
-const PRODUCTS_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663520925403/RjrWWnoYWZdN4j9NAk9t4j/products_grid-Wt7Eh36m8TrZkDgm8XEFMH.webp";
+const WA = "https://wa.me/351935852703";
+const WA_MSG = (msg: string) => `${WA}?text=${encodeURIComponent(msg)}`;
+const OVIBEJA_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663520925403/RjrWWnoYWZdN4j9NAk9t4j/ovibeja_2026_ninho_9ef92953.png";
+const IG = "https://www.instagram.com/ninhododragao.pt";
+const FB = "https://www.facebook.com/ninhododragao.pt";
 
-const WHATSAPP_NUMBER = "351935852703"; // +351 935 852 703
-const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=Olá!%20Gostaria%20de%20encomendar%20um%20produto%20personalizado.`;
-const INSTAGRAM_URL = "https://instagram.com/ninhododragao.pt";
-const FACEBOOK_URL = "https://facebook.com/ninhododragao.pt";
-
-// ─── Types ─────────────────────────────────────────────────────────────────────
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  icon: string;
-}
-
-// ─── Catálogo Completo por Categorias ──────────────────────────────────────────
-const productCategories = {
-  texteis: [
-    { id: 1, name: "T-shirt", description: "Personalizada com vinil", icon: "👕" },
-    { id: 2, name: "Sweatshirt", description: "Com vinil de alta qualidade", icon: "🧥" },
-    { id: 3, name: "Hoodie", description: "Conforto premium personalizado", icon: "🧥" },
-  ],
-  presentes: [
-    { id: 4, name: "Caneca", description: "Sublimação de alta qualidade", icon: "☕" },
-    { id: 5, name: "Almofada", description: "Com sublimação de foto ou arte", icon: "🛋️" },
-    { id: 6, name: "Garrafa Térmica", description: "Inox com sublimação", icon: "🍶" },
-    { id: 7, name: "Copo Térmico", description: "Personalizado com vinil", icon: "☕" },
-    { id: 8, name: "Azulejo", description: "Com sublimação de foto", icon: "🎨" },
-    { id: 9, name: "Manta", description: "Premium personalizada", icon: "🧣" },
-    { id: 10, name: "Saco de Pano", description: "Ecológico com vinil", icon: "🛍️" },
-    { id: 11, name: "Porta-chaves", description: "Personalizado", icon: "🔑" },
-    { id: 12, name: "Ímã", description: "Micro-presente", icon: "🧲" },
-  ],
-  festas: [
-    { id: 13, name: "Saquinhos Festa", description: "Personalizados por unidade", icon: "🎉" },
-    { id: 14, name: "Caixas Lembrança", description: "Personalizadas", icon: "📦" },
-    { id: 15, name: "Topo de Bolo", description: "Personalizado", icon: "🎂" },
-    { id: 16, name: "Bandeirolas", description: "Decoração personalizada", icon: "🚩" },
-    { id: 17, name: "Toppers Cupcake", description: "Personalizados", icon: "🧁" },
-    { id: 18, name: "Convite Digital", description: "Personalizado", icon: "📧" },
-    { id: 19, name: "Convite Impresso", description: "Personalizado", icon: "📮" },
-  ],
-  kits: [
-    { id: 20, name: "Kit Essencial", description: "Entrada para eventos pequenos", icon: "🎁" },
-    { id: 21, name: "Kit Plus", description: "Solução completa", icon: "🎀" },
-    { id: 22, name: "Festa Completa", description: "Personalização total sob orçamento", icon: "🎊" },
-  ],
-  papelaria: [
-    { id: 23, name: "Cartões", description: "Personalizados", icon: "📇" },
-    { id: 24, name: "Etiquetas", description: "Personalizadas", icon: "🏷️" },
-    { id: 25, name: "Autocolantes", description: "Personalizados", icon: "✨" },
-    { id: 26, name: "Marcadores", description: "Personalizados", icon: "🖍️" },
-    { id: 27, name: "Caderno", description: "Premium personalizado", icon: "📓" },
-    { id: 28, name: "Calendário", description: "Personalizado", icon: "📅" },
-    { id: 29, name: "Agenda", description: "Premium personalizada", icon: "📔" },
-  ],
-  grupo: [
-    { id: 30, name: "T-shirt em Grupo", description: "Desconto em quantidade", icon: "👕" },
-    { id: 31, name: "Sweatshirt em Grupo", description: "Preço especial", icon: "🧥" },
-    { id: 32, name: "Orçamento Personalizado", description: "Consulte-nos", icon: "💬" },
-  ],
-};
-
-const categoryLabels = {
-  texteis: "Têxteis",
-  presentes: "Presentes",
-  festas: "Festas",
-  kits: "Kits",
-  papelaria: "Papelaria",
-  grupo: "Grupos",
-};
-
-const diaMAeProducts = [
-  { icon: "☕", name: "Caneca Especial Mãe", desc: "Com foto ou frase personalizada" },
-  { icon: "🛋️", name: "Almofada Personalizada", desc: "Com foto ou mensagem especial" },
-  { icon: "👕", name: "T-shirt Mãe & Filha", desc: "Conjunto combinado personalizado" },
-  { icon: "🍶", name: "Garrafa Térmica", desc: "Com nome e design exclusivo" },
-  { icon: "🛍️", name: "Saco de Pano", desc: "Com frase ou arte personalizada" },
-  { icon: "🎁", name: "Kit Presente", desc: "Conjunto de produtos personalizados" },
-];
-
-// ─── Intersection Observer Hook ────────────────────────────────────────────────
-function useInView(threshold = 0.1) {
+/* ─── Hook: Intersection Observer ─────────────────────────────── */
+function useInView(threshold = 0.15) {
   const ref = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
-
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true);
-          observer.disconnect();
-        }
-      },
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setInView(true); obs.disconnect(); } },
       { threshold }
     );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
+    obs.observe(el);
+    return () => obs.disconnect();
   }, [threshold]);
-
   return { ref, inView };
 }
 
-// ─── Navbar ────────────────────────────────────────────────────────────────────
+/* ─── Navbar ──────────────────────────────────────────────────── */
 function Navbar() {
+  const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const h = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", h, { passive: true });
+    return () => window.removeEventListener("scroll", h);
   }, []);
 
-  const navLinks = [
-    { href: "#produtos", label: "Produtos" },
-    { href: "#dia-da-mae", label: "Dia da Mãe 💝" },
-    { href: "#ovibeja", label: "Ovibeja 2026" },
-    { href: "#sobre", label: "Sobre" },
-    { href: "#contacto", label: "Contacto" },
+  const links = [
+    { label: "Produtos", href: "#produtos" },
+    { label: "Dia da Mãe", href: "#dia-mae" },
+    { label: "Ovibeja", href: "#ovibeja" },
+    { label: "Contacto", href: "#contacto" },
   ];
 
   return (
     <nav
       style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 1000,
-        backgroundColor: scrolled ? "rgba(255,255,255,0.97)" : "rgba(255,255,255,0.95)",
-        boxShadow: scrolled ? "0 2px 20px rgba(43,78,175,0.12)" : "0 1px 0 rgba(0,0,0,0.06)",
-        backdropFilter: "blur(10px)",
+        position: "fixed", top: 0, left: 0, right: 0, zIndex: 50,
+        backgroundColor: scrolled ? "rgba(255,255,255,0.97)" : "rgba(255,255,255,0.92)",
+        backdropFilter: "blur(12px)",
+        borderBottom: scrolled ? "1px solid #e5e7eb" : "1px solid transparent",
         transition: "all 0.3s ease",
       }}
     >
-      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: "70px", position: "relative" }}>
+      <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "14px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        {/* Brand */}
+        <a href="#" style={{ textDecoration: "none" }}>
+          <span style={{
+            fontFamily: "'Dancing Script', cursive",
+            fontSize: "28px",
+            fontWeight: 700,
+            color: "#2B4EAF",
+          }}>
+            Ninho do Dragão
+          </span>
+        </a>
 
-          {/* Nome centrado absolutamente */}
-          <a
-            href="#"
-            className="nav-brand-parent"
-            style={{
-              position: "absolute",
-              left: "50%",
-              transform: "translateX(-50%)",
-              textDecoration: "none",
-              whiteSpace: "nowrap",
-              zIndex: 1,
-            }}
-          >
-            <span className="nav-brand-name" style={{
-              fontFamily: "'Dancing Script', cursive",
-              fontSize: "32px",
-              fontWeight: 700,
-              background: "linear-gradient(135deg, #2B4EAF 0%, #C9A227 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-              letterSpacing: "0.01em",
-              lineHeight: 1,
-              filter: "drop-shadow(0 1px 2px rgba(43,78,175,0.15))",
+        {/* Desktop links */}
+        <div className="nav-desktop" style={{ display: "flex", alignItems: "center", gap: "28px" }}>
+          {links.map(l => (
+            <a key={l.href} href={l.href} className="nav-link" style={{
+              textDecoration: "none", color: "#374151", fontSize: "14px",
+              fontWeight: 600, fontFamily: "Montserrat, sans-serif",
             }}>
-              Ninho do Dragão
-            </span>
+              {l.label}
+            </a>
+          ))}
+          <a href={WA_MSG("Olá! Gostava de fazer uma encomenda.")} target="_blank" rel="noopener noreferrer"
+            className="btn-whatsapp"
+            style={{ padding: "10px 20px", borderRadius: "8px", fontSize: "13px", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.387 0-4.592-.826-6.326-2.207l-.442-.362-3.248 1.089 1.089-3.248-.362-.442A9.96 9.96 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></svg>
+            WhatsApp
           </a>
-
-          {/* Lado esquerdo: links de navegação desktop */}
-          <div style={{ display: "flex", alignItems: "center", gap: "4px" }} className="nav-desktop-links">
-            {navLinks.slice(0, 3).map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                style={{
-                  padding: "6px 12px",
-                  fontSize: "13px",
-                  fontWeight: 600,
-                  color: "#2D3748",
-                  textDecoration: "none",
-                  fontFamily: "Montserrat, sans-serif",
-                  letterSpacing: "0.01em",
-                  transition: "color 0.2s ease",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "#2B4EAF")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "#2D3748")}
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
-
-          {/* Lado direito: links restantes + botão WhatsApp */}
-          <div style={{ display: "flex", alignItems: "center", gap: "4px" }} className="nav-desktop-links">
-            {navLinks.slice(3).map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                style={{
-                  padding: "6px 12px",
-                  fontSize: "13px",
-                  fontWeight: 600,
-                  color: "#2D3748",
-                  textDecoration: "none",
-                  fontFamily: "Montserrat, sans-serif",
-                  letterSpacing: "0.01em",
-                  transition: "color 0.2s ease",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "#2B4EAF")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "#2D3748")}
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
-
-
-
-          {/* WhatsApp icon — discreto, sem texto */}
-          <a
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            title="Contactar pelo WhatsApp"
-            aria-label="Contactar pelo WhatsApp"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "38px",
-              height: "38px",
-              backgroundColor: "#25D366",
-              color: "white",
-              borderRadius: "50%",
-              textDecoration: "none",
-              transition: "all 0.2s ease",
-              boxShadow: "0 2px 8px rgba(37,211,102,0.3)",
-              flexShrink: 0,
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = "#1ea855";
-              e.currentTarget.style.transform = "scale(1.1)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "#25D366";
-              e.currentTarget.style.transform = "scale(1)";
-            }}
-            className="nav-desktop-links"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-            </svg>
-          </a>
-
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
-            aria-expanded={menuOpen}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "5px",
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: "8px",
-              minWidth: "44px",
-              minHeight: "44px",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-            className="nav-mobile-button"
-          >
-            <span style={{ width: "22px", height: "2px", backgroundColor: "#2B4EAF", display: "block", transition: "all 0.3s" }} />
-            <span style={{ width: "22px", height: "2px", backgroundColor: "#2B4EAF", display: "block", transition: "all 0.3s" }} />
-            <span style={{ width: "22px", height: "2px", backgroundColor: "#2B4EAF", display: "block", transition: "all 0.3s" }} />
-          </button>
         </div>
 
-        {/* Mobile Menu */}
-        {menuOpen && (
-          <div style={{
-            borderTop: "1px solid #e2e8f0",
-            paddingBottom: "16px",
-          }}>
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => setMenuOpen(false)}
-                style={{
-                  display: "block",
-                  padding: "12px 0",
-                  fontSize: "15px",
-                  fontWeight: 600,
-                  color: "#2D3748",
-                  textDecoration: "none",
-                  fontFamily: "Montserrat, sans-serif",
-                  borderBottom: "1px solid #f0f0f0",
-                }}
-              >
-                {link.label}
-              </a>
-            ))}
-            <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "8px",
-                marginTop: "12px",
-                backgroundColor: "#25D366",
-                color: "white",
-                padding: "10px 20px",
-                borderRadius: "25px",
-                textDecoration: "none",
-                fontSize: "14px",
-                fontWeight: 700,
-                fontFamily: "Montserrat, sans-serif",
-              }}
-            >
-              Encomendar via WhatsApp
-            </a>
-          </div>
-        )}
+        {/* Mobile hamburger */}
+        <button
+          className="nav-mobile-btn"
+          onClick={() => setOpen(!open)}
+          aria-label="Abrir menu"
+          style={{
+            display: "none", background: "none", border: "none", cursor: "pointer",
+            padding: "8px", minWidth: "44px", minHeight: "44px",
+            alignItems: "center", justifyContent: "center",
+          }}
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2B4EAF" strokeWidth="2.5" strokeLinecap="round">
+            {open ? <><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></> : <><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></>}
+          </svg>
+        </button>
       </div>
+
+      {/* Mobile menu */}
+      {open && (
+        <div style={{
+          backgroundColor: "white", borderTop: "1px solid #e5e7eb",
+          padding: "16px 20px", display: "flex", flexDirection: "column", gap: "12px",
+        }}>
+          {links.map(l => (
+            <a key={l.href} href={l.href} onClick={() => setOpen(false)} style={{
+              textDecoration: "none", color: "#374151", fontSize: "15px",
+              fontWeight: 600, fontFamily: "Montserrat, sans-serif", padding: "8px 0",
+            }}>
+              {l.label}
+            </a>
+          ))}
+          <a href={WA_MSG("Olá! Gostava de fazer uma encomenda.")} target="_blank" rel="noopener noreferrer"
+            className="btn-whatsapp"
+            style={{ padding: "12px", borderRadius: "8px", fontSize: "14px", textDecoration: "none", textAlign: "center" }}>
+            Encomendar no WhatsApp
+          </a>
+        </div>
+      )}
     </nav>
   );
 }
 
-// ─── Catálogo com Abas ─────────────────────────────────────────────────────────
-function ProductCatalog() {
-  const [activeTab, setActiveTab] = useState<keyof typeof productCategories>("texteis");
-  const { ref, inView } = useInView(0.2);
+/* ─── Placeholder Image Component ─────────────────────────────── */
+function PlaceholderImg({ icon, label, h = "200px" }: { icon: string; label: string; h?: string }) {
+  return (
+    <div className="placeholder-img" style={{
+      height: h, borderRadius: "12px", flexDirection: "column", gap: "8px",
+    }}>
+      <span style={{ fontSize: "3rem" }}>{icon}</span>
+      <span style={{ fontSize: "12px", fontWeight: 600, fontFamily: "Montserrat, sans-serif", color: "#6b7280", letterSpacing: "0.05em", textTransform: "uppercase" }}>
+        {label}
+      </span>
+    </div>
+  );
+}
 
+/* ─── Section Wrapper ─────────────────────────────────────────── */
+function Section({ id, children, bg = "white", pad = true }: { id?: string; children: React.ReactNode; bg?: string; pad?: boolean }) {
+  const { ref, inView } = useInView(0.1);
   return (
     <section
-      id="produtos"
+      id={id}
       ref={ref}
-      style={{
-        padding: "80px 24px",
-        backgroundColor: "#f9fafb",
-      }}
+      className={`section-reveal ${inView ? "visible" : ""} ${pad ? "section-pad" : ""}`}
+      style={{ backgroundColor: bg, padding: pad ? "80px 24px" : undefined }}
     >
-      <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-        {/* Título */}
-        <div style={{ textAlign: "center", marginBottom: "48px" }}>
-          <h2 style={{
-            fontSize: "36px",
-            fontWeight: 800,
-            color: "#1a202c",
-            fontFamily: "Montserrat, sans-serif",
-            marginBottom: "12px",
-          }}>
-            Os nossos produtos
-          </h2>
-          <p style={{
-            fontSize: "16px",
-            color: "#718096",
-            fontFamily: "Open Sans, sans-serif",
-          }}>
-            Sublimação e vinil de alta qualidade para todos os momentos especiais
-          </p>
-        </div>
-
-        {/* Abas */}
-        <div style={{
-          display: "flex",
-          gap: "8px",
-          marginBottom: "40px",
-          flexWrap: "wrap",
-          justifyContent: "center",
-        }}>
-          {Object.entries(categoryLabels).map(([key, label]) => (
-            <button
-              key={key}
-              onClick={() => setActiveTab(key as keyof typeof productCategories)}
-              style={{
-                padding: "12px 20px",
-                fontSize: "14px",
-                fontWeight: 600,
-                fontFamily: "Montserrat, sans-serif",
-                border: activeTab === key ? "2px solid #2B4EAF" : "2px solid #e2e8f0",
-                backgroundColor: activeTab === key ? "#2B4EAF" : "white",
-                color: activeTab === key ? "white" : "#2D3748",
-                borderRadius: "8px",
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-                minHeight: "44px",
-              }}
-              onMouseEnter={(e) => {
-                if (activeTab !== key) {
-                  e.currentTarget.style.borderColor = "#2B4EAF";
-                  e.currentTarget.style.backgroundColor = "#f0f4ff";
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (activeTab !== key) {
-                  e.currentTarget.style.borderColor = "#e2e8f0";
-                  e.currentTarget.style.backgroundColor = "white";
-                }
-              }}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-
-        {/* Grid de Produtos */}
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-          gap: "24px",
-        }}>
-          {productCategories[activeTab].map((product) => (
-            <div
-              key={product.id}
-              style={{
-                backgroundColor: "white",
-                borderRadius: "12px",
-                padding: "24px",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-                transition: "all 0.3s ease",
-                cursor: "pointer",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = "0 8px 24px rgba(43,78,175,0.15)";
-                e.currentTarget.style.transform = "translateY(-4px)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.06)";
-                e.currentTarget.style.transform = "translateY(0)";
-              }}
-            >
-              <div style={{ fontSize: "48px", marginBottom: "16px" }}>{product.icon}</div>
-              <h3 style={{
-                fontSize: "18px",
-                fontWeight: 700,
-                color: "#1a202c",
-                fontFamily: "Montserrat, sans-serif",
-                marginBottom: "8px",
-              }}>
-                {product.name}
-              </h3>
-              <p style={{
-                fontSize: "14px",
-                color: "#718096",
-                fontFamily: "Open Sans, sans-serif",
-                marginBottom: "16px",
-              }}>
-                {product.description}
-              </p>
-              <a
-                href={WHATSAPP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  color: "#2B4EAF",
-                  textDecoration: "none",
-                  fontSize: "14px",
-                  fontWeight: 600,
-                  fontFamily: "Montserrat, sans-serif",
-                  transition: "all 0.2s ease",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = "#C9A227";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = "#2B4EAF";
-                }}
-              >
-                Encomendar →
-              </a>
-            </div>
-          ))}
-        </div>
+      <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
+        {children}
       </div>
     </section>
   );
 }
 
-// ─── Main Home Component ───────────────────────────────────────────────────────
-export default function Home() {
-  const { ref: heroRef, inView: heroInView } = useInView(0.3);
+/* ─── Products Data ───────────────────────────────────────────── */
+const PRODUCTS = [
+  { icon: "👕", name: "T-shirts personalizadas", desc: "Com vinil ou sublimação. O teu design, a tua mensagem." },
+  { icon: "☕", name: "Canecas", desc: "Personalizadas com foto, nome ou frase especial." },
+  { icon: "🛋️", name: "Almofadas", desc: "Com imagem ou mensagem — perfeitas para presente." },
+  { icon: "🖼️", name: "Azulejos personalizados", desc: "Arte portuguesa com o teu toque pessoal." },
+  { icon: "🎁", name: "Kits presente", desc: "Conjuntos personalizados para surpreender." },
+];
+
+const DIA_MAE_ITEMS = [
+  "Kits personalizados",
+  "Canecas",
+  "Copos personalizados",
+  "Caixas com fotografias",
+];
+
+const DIFERENCIAIS = [
+  { icon: "❤️", text: "Feito com carinho" },
+  { icon: "🎨", text: "Design único" },
+  { icon: "⚡", text: "Produção rápida" },
+  { icon: "🤝", text: "Atendimento próximo" },
+  { icon: "✨", text: "Personalização total" },
+];
+
+/* ─── Newsletter ──────────────────────────────────────────────── */
+function NewsletterInline() {
+  const [email, setEmail] = useState("");
+  const [done, setDone] = useState(false);
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.includes("@")) { toast.error("Email inválido"); return; }
+    const code = `NINHO${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+    toast.success(`Código de 10% desconto: ${code}`, { duration: 8000 });
+    setDone(true);
+  };
+
+  if (done) return (
+    <p style={{ color: "#25D366", fontWeight: 600, fontFamily: "Montserrat, sans-serif", fontSize: "14px" }}>
+      Obrigado! Verifica o teu email.
+    </p>
+  );
 
   return (
-    <div style={{ backgroundColor: "white", minHeight: "100vh" }}>
-      <Toaster position="top-right" />
-      <PromotionBanner />
+    <form onSubmit={submit} style={{ display: "flex", gap: "8px", flexWrap: "wrap", maxWidth: "420px" }}>
+      <input type="email" placeholder="O teu email..." value={email} onChange={e => setEmail(e.target.value)}
+        style={{
+          flex: 1, minWidth: "180px", padding: "10px 14px", borderRadius: "8px",
+          border: "2px solid #e5e7eb", fontSize: "14px", fontFamily: "Open Sans, sans-serif",
+          outline: "none", transition: "border-color 0.2s",
+        }}
+        onFocus={e => e.currentTarget.style.borderColor = "#2B4EAF"}
+        onBlur={e => e.currentTarget.style.borderColor = "#e5e7eb"}
+      />
+      <button type="submit" className="btn-primary" style={{ padding: "10px 20px", borderRadius: "8px", fontSize: "13px" }}>
+        Subscrever
+      </button>
+    </form>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
+/*                          HOME PAGE                             */
+/* ═══════════════════════════════════════════════════════════════ */
+export default function Home() {
+  return (
+    <>
+      <Toaster position="top-center" richColors />
       <Navbar />
-      <main>
 
-      {/* Hero Section */}
-      <section
-        ref={heroRef}
-        style={{
-          paddingTop: "70px",
-          paddingBottom: "60px",
-          backgroundColor: "#f0f4ff",
-          backgroundImage: `linear-gradient(135deg, rgba(43,78,175,0.08) 0%, rgba(201,162,39,0.05) 100%)`,
-        }}
-      >
-        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px" }}>
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "48px",
-            alignItems: "center",
-            gridAutoFlow: "dense",
-          }} className="hero-grid">
-            {/* Left: Text */}
-            <div>
-              <div style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "8px",
-                backgroundColor: "#e6f0ff",
-                padding: "8px 16px",
-                borderRadius: "24px",
-                marginBottom: "24px",
-              }}>
-                <span style={{ fontSize: "12px", fontWeight: 600, color: "#2B4EAF", fontFamily: "Montserrat, sans-serif" }}>
-                  ● Personalização ao vivo na Ovibeja 2026
-                </span>
-              </div>
+      <main style={{ paddingTop: "64px" }}>
 
-              <h1 className="hero-title" style={{
-                fontSize: "48px",
-                fontWeight: 800,
-                lineHeight: 1.2,
-                marginBottom: "24px",
-                fontFamily: "Montserrat, sans-serif",
-                color: "#1a202c",
-              }}>
-                Damos forma <br />
-                <span style={{ color: "#2B4EAF" }}>aos teus</span> <span style={{ fontStyle: "italic", color: "#C9A227" }}>momentos</span>
-              </h1>
-
-              <p style={{
-                fontSize: "16px",
-                lineHeight: 1.6,
-                color: "#4a5568",
-                marginBottom: "32px",
-                fontFamily: "Open Sans, sans-serif",
-              }}>
-                Produtos personalizados únicos com sublimação e vinil. Canecas, t-shirts, garrafas e muito mais — feitos com amor para as tuas memórias especiais.
-              </p>
-
-              <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
-                <a
-                  href="#produtos"
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    backgroundColor: "#2B4EAF",
-                    color: "white",
-                    padding: "12px 28px",
-                    borderRadius: "8px",
-                    textDecoration: "none",
-                    fontSize: "15px",
-                    fontWeight: 700,
-                    fontFamily: "Montserrat, sans-serif",
-                    transition: "all 0.3s ease",
-                    boxShadow: "0 4px 12px rgba(43,78,175,0.3)",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "#1e3a8a";
-                    e.currentTarget.style.transform = "translateY(-2px)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "#2B4EAF";
-                    e.currentTarget.style.transform = "translateY(0)";
-                  }}
-                >
-                  Encomendar agora →
-                </a>
-                <a
-                  href="#produtos"
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    backgroundColor: "white",
-                    color: "#2B4EAF",
-                    padding: "12px 28px",
-                    borderRadius: "8px",
-                    textDecoration: "none",
-                    fontSize: "15px",
-                    fontWeight: 700,
-                    fontFamily: "Montserrat, sans-serif",
-                    border: "2px solid #2B4EAF",
-                    transition: "all 0.3s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "#f0f4ff";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "white";
-                  }}
-                >
-                  Ver produtos
-                </a>
-              </div>
-            </div>
-
-            {/* Right: Image */}
-            <div className="hero-image-container" style={{
-              position: "relative",
-              height: "400px",
-              borderRadius: "16px",
-              overflow: "hidden",
-              boxShadow: "0 20px 40px rgba(43,78,175,0.15)",
-            }}>
-              <img
-                src={HERO_IMG}
-                alt="Edição Especial Ovibeja 2026 - Moldura com azulejos Feito em Portugal"
-                className="hero-image"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  opacity: heroInView ? 1 : 0.8,
-                  transition: "opacity 0.6s ease",
-                }}
-              />
-              <div style={{
-                position: "absolute",
-                bottom: "20px",
-                right: "20px",
-                backgroundColor: "#C9A227",
-                color: "white",
-                padding: "16px 20px",
-                borderRadius: "12px",
-                fontSize: "14px",
-                fontWeight: 700,
-                fontFamily: "Montserrat, sans-serif",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-              }}>
-                ⭐ 100% Personalizado<br />
-                <span style={{ fontSize: "12px", fontWeight: 500 }}>Feito especialmente para ti</span>
-              </div>
-              <div className="ovibeja-badge" style={{
-                position: "absolute",
-                top: "20px",
-                right: "20px",
-                backgroundColor: "#C9A227",
-                color: "white",
-                padding: "12px 16px",
-                borderRadius: "50%",
-                fontSize: "24px",
-                width: "60px",
-                height: "60px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontWeight: 700,
-                boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-              }}>
-                Ovibeja<br />2026
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Dia da Mãe Section */}
-      <section
-        id="dia-da-mae"
-        style={{
-          padding: "80px 24px",
-          backgroundColor: "#fdf2f8",
-        }}
-      >
-        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: "16px" }}>
-            <span style={{
-              display: "inline-block",
-              fontSize: "14px",
-              fontWeight: 600,
-              color: "#e91e8c",
+        {/* ─── 1. HERO ─────────────────────────────────────────── */}
+        <section style={{
+          padding: "80px 24px 60px",
+          background: "linear-gradient(180deg, #f8faff 0%, #ffffff 100%)",
+          textAlign: "center",
+        }}>
+          <div style={{ maxWidth: "720px", margin: "0 auto" }}>
+            <h1 className="hero-title" style={{
               fontFamily: "Montserrat, sans-serif",
-              marginBottom: "12px",
+              fontSize: "42px",
+              fontWeight: 800,
+              color: "#1a1a2e",
+              lineHeight: 1.15,
+              marginBottom: "20px",
             }}>
-              💝 3 de Maio de 2026
-            </span>
-          </div>
-          <h2 style={{
-            fontSize: "36px",
-            fontWeight: 800,
-            textAlign: "center",
-            color: "#1a202c",
-            fontFamily: "Montserrat, sans-serif",
-            marginBottom: "12px",
-          }}>
-            Dia da Mãe
-          </h2>
-          <p style={{
-            fontSize: "16px",
-            textAlign: "center",
-            color: "#718096",
-            fontFamily: "Playfair Display, serif",
-            fontStyle: "italic",
-            marginBottom: "48px",
-          }}>
-            "Surpreende a tua mãe com algo único e especial"
-          </p>
-
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "40px",
-            alignItems: "center",
-          }} className="dia-mae-grid">
-            {/* Image */}
-            <div style={{
-              borderRadius: "16px",
-              overflow: "hidden",
-              boxShadow: "0 20px 40px rgba(233,30,140,0.15)",
+              Peças personalizadas que guardam{" "}
+              <span style={{ color: "#C9A227" }}>momentos únicos</span>
+            </h1>
+            <p style={{
+              fontSize: "17px",
+              color: "#6b7280",
+              lineHeight: 1.7,
+              maxWidth: "560px",
+              margin: "0 auto 32px",
             }}>
-              <img
-                src={DIA_MAE_IMG}
-                alt="Dia da Mãe"
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  objectFit: "cover",
-                }}
-              />
-            </div>
+              Criamos presentes com significado — feitos à tua medida para surpreender quem mais importa.
+            </p>
 
-            {/* Products Grid */}
-            <div>
-              <div style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "16px",
-              }}>
-                {diaMAeProducts.map((product, idx) => (
-                  <div
-                    key={idx}
-                    style={{
-                      backgroundColor: "white",
-                      padding: "16px",
-                      borderRadius: "12px",
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-                    }}
-                  >
-                    <div style={{ fontSize: "32px", marginBottom: "8px" }}>{product.icon}</div>
-                    <h3 style={{
-                      fontSize: "14px",
-                      fontWeight: 700,
-                      color: "#1a202c",
-                      fontFamily: "Montserrat, sans-serif",
-                      marginBottom: "4px",
-                    }}>
-                      {product.name}
-                    </h3>
-                    <p style={{
-                      fontSize: "12px",
-                      color: "#718096",
-                      fontFamily: "Open Sans, sans-serif",
-                    }}>
-                      {product.desc}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              <a
-                href={WHATSAPP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  marginTop: "24px",
-                  backgroundColor: "#e91e8c",
-                  color: "white",
-                  padding: "12px 28px",
-                  borderRadius: "8px",
-                  textDecoration: "none",
-                  fontSize: "15px",
-                  fontWeight: 700,
-                  fontFamily: "Montserrat, sans-serif",
-                  transition: "all 0.3s ease",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "#c71670";
-                  e.currentTarget.style.transform = "translateY(-2px)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "#e91e8c";
-                  e.currentTarget.style.transform = "translateY(0)";
-                }}
-              >
-                💝 Encomendar para o Dia da Mãe
+            <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap", marginBottom: "20px" }}>
+              <a href={WA_MSG("Olá! Gostava de fazer uma encomenda.")} target="_blank" rel="noopener noreferrer"
+                className="btn-whatsapp"
+                style={{ padding: "14px 28px", borderRadius: "10px", fontSize: "15px", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "8px" }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.387 0-4.592-.826-6.326-2.207l-.442-.362-3.248 1.089 1.089-3.248-.362-.442A9.96 9.96 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></svg>
+                Encomendar no WhatsApp
               </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Catálogo com Abas */}
-      <ProductCatalog />
-
-      {/* Ovibeja Section */}
-      <section
-        id="ovibeja"
-        style={{
-          padding: "80px 24px",
-          backgroundColor: "white",
-        }}
-      >
-        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "48px",
-            alignItems: "center",
-          }} className="ovibeja-grid">
-            {/* Left: Content */}
-            <div>
-              <div style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "8px",
-                backgroundColor: "#fef3c7",
-                padding: "8px 16px",
-                borderRadius: "24px",
-                marginBottom: "24px",
-              }}>
-                <span style={{ fontSize: "14px", fontWeight: 600, color: "#92400e", fontFamily: "Montserrat, sans-serif" }}>
-                  📍 Beja, Alentejo
-                </span>
-              </div>
-
-              <h2 style={{
-                fontSize: "36px",
-                fontWeight: 800,
-                marginBottom: "12px",
+              <a href="#produtos" style={{
+                padding: "14px 28px", borderRadius: "10px", fontSize: "15px",
+                textDecoration: "none", color: "#2B4EAF", fontWeight: 700,
                 fontFamily: "Montserrat, sans-serif",
-                color: "#1a202c",
-              }}>
-                Ovibeja 2026
-              </h2>
-
-              <p style={{
-                fontSize: "16px",
-                color: "#718096",
-                fontFamily: "Playfair Display, serif",
-                fontStyle: "italic",
-                marginBottom: "24px",
-              }}>
-                "Personalização ao vivo na maior feira agropecuária do Alentejo"
-              </p>
-
-              <p style={{
-                fontSize: "15px",
-                lineHeight: 1.7,
-                color: "#4a5568",
-                fontFamily: "Open Sans, sans-serif",
-                marginBottom: "32px",
-              }}>
-                Visita o nosso stand na Ovibeja 2026 e personaliza os teus produtos em tempo real. Escolhe o design, adiciona o teu nome ou foto, e leva para casa uma lembrança única do Alentejo.
-              </p>
-
-              <div style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "24px",
-                marginBottom: "32px",
-              }}>
-                <div>
-                  <div style={{ fontSize: "14px", fontWeight: 600, color: "#718096", fontFamily: "Montserrat, sans-serif", marginBottom: "4px" }}>📅 Data</div>
-                  <div style={{ fontSize: "18px", fontWeight: 700, color: "#1a202c", fontFamily: "Montserrat, sans-serif" }}>Maio 2026</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: "14px", fontWeight: 600, color: "#718096", fontFamily: "Montserrat, sans-serif", marginBottom: "4px" }}>📍 Local</div>
-                  <div style={{ fontSize: "18px", fontWeight: 700, color: "#1a202c", fontFamily: "Montserrat, sans-serif" }}>Beja, Alentejo</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: "14px", fontWeight: 600, color: "#718096", fontFamily: "Montserrat, sans-serif", marginBottom: "4px" }}>🎨 Serviço</div>
-                  <div style={{ fontSize: "18px", fontWeight: 700, color: "#1a202c", fontFamily: "Montserrat, sans-serif" }}>Personalização ao vivo</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: "14px", fontWeight: 600, color: "#718096", fontFamily: "Montserrat, sans-serif", marginBottom: "4px" }}>⚡ Entrega</div>
-                  <div style={{ fontSize: "18px", fontWeight: 700, color: "#1a202c", fontFamily: "Montserrat, sans-serif" }}>Na hora</div>
-                </div>
-              </div>
-
-              <a
-                href="https://www.ovibeja.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  backgroundColor: "#2B4EAF",
-                  color: "white",
-                  padding: "12px 28px",
-                  borderRadius: "8px",
-                  textDecoration: "none",
-                  fontSize: "15px",
-                  fontWeight: 700,
-                  fontFamily: "Montserrat, sans-serif",
-                  transition: "all 0.3s ease",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "#1e3a8a";
-                  e.currentTarget.style.transform = "translateY(-2px)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "#2B4EAF";
-                  e.currentTarget.style.transform = "translateY(0)";
-                }}
+                border: "2px solid #2B4EAF", display: "inline-block",
+                transition: "all 0.2s ease",
+              }}
+                onMouseEnter={e => { e.currentTarget.style.backgroundColor = "#2B4EAF"; e.currentTarget.style.color = "white"; }}
+                onMouseLeave={e => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "#2B4EAF"; }}
               >
-                Saber mais sobre a Ovibeja
+                Ver produtos
               </a>
             </div>
 
-            {/* Right: Image */}
-            <div style={{
-              borderRadius: "16px",
-              overflow: "hidden",
-              boxShadow: "0 20px 40px rgba(43,78,175,0.15)",
+            <p style={{ fontSize: "13px", color: "#9ca3af", fontWeight: 500 }}>
+              ✔ Resposta rápida no WhatsApp
+            </p>
+          </div>
+        </section>
+
+        {/* ─── 2. DESTAQUE OVIBEJA ─────────────────────────────── */}
+        <Section id="ovibeja" bg="#fafafa">
+          <div style={{ textAlign: "center", marginBottom: "32px" }}>
+            <span style={{
+              display: "inline-block", backgroundColor: "#FEF3C7", color: "#92400e",
+              padding: "6px 16px", borderRadius: "20px", fontSize: "13px", fontWeight: 700,
+              fontFamily: "Montserrat, sans-serif", marginBottom: "12px",
             }}>
+              Edição limitada
+            </span>
+            <h2 className="text-responsive-lg" style={{
+              fontFamily: "Montserrat, sans-serif", fontSize: "32px", fontWeight: 800,
+              color: "#1a1a2e", marginBottom: "8px",
+            }}>
+              Destaque Ovibeja 2026
+            </h2>
+            <p style={{ fontSize: "16px", color: "#6b7280", maxWidth: "500px", margin: "0 auto" }}>
+              Peça exclusiva personalizada — criada especialmente para este momento
+            </p>
+          </div>
+
+          <div className="grid-responsive" style={{
+            display: "grid", gridTemplateColumns: "1fr 1fr", gap: "40px", alignItems: "center",
+          }}>
+            <div style={{ borderRadius: "16px", overflow: "hidden", boxShadow: "0 12px 40px rgba(0,0,0,0.1)" }}>
               <img
                 src={OVIBEJA_IMG}
-                alt="Ovibeja 2026"
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  objectFit: "cover",
-                }}
+                alt="Edição Especial Ovibeja 2026 — Moldura com azulejos Feito em Portugal"
+                className="ovibeja-img"
+                style={{ width: "100%", height: "auto", display: "block" }}
               />
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Sobre Section */}
-      <section
-        id="sobre"
-        style={{
-          padding: "80px 24px",
-          backgroundColor: "#f9fafb",
-        }}
-      >
-        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-          <h2 style={{
-            fontSize: "36px",
-            fontWeight: 800,
-            textAlign: "center",
-            marginBottom: "48px",
-            fontFamily: "Montserrat, sans-serif",
-            color: "#1a202c",
-          }}>
-            Sobre o Ninho do Dragão
-          </h2>
-
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "48px",
-            alignItems: "center",
-          }} className="sobre-grid">
-            {/* Left: Quote */}
             <div>
               <p style={{
-                fontSize: "24px",
-                fontStyle: "italic",
-                color: "#2B4EAF",
-                fontFamily: "Playfair Display, serif",
-                marginBottom: "24px",
-                lineHeight: 1.6,
+                fontSize: "17px", color: "#374151", lineHeight: 1.8, marginBottom: "24px",
               }}>
-                "Damos forma aos teus momentos"
+                Perfeito para oferecer ou guardar uma memória única. Uma peça com azulejos portugueses, feita com alma alentejana.
               </p>
-
-              <p style={{
-                fontSize: "15px",
-                lineHeight: 1.8,
-                color: "#4a5568",
-                fontFamily: "Open Sans, sans-serif",
-                marginBottom: "24px",
-              }}>
-                Somos uma empresa portuguesa especializada em personalização de produtos através de sublimação e vinil. Cada produto que criamos é único — feito com dedicação para transformar os teus momentos especiais em memórias duradouras.
-              </p>
-
-              <p style={{
-                fontSize: "15px",
-                lineHeight: 1.8,
-                color: "#4a5568",
-                fontFamily: "Open Sans, sans-serif",
-              }}>
-                Da caneca do dia a dia ao presente perfeito para o Dia da Mãe, passando pela lembrança exclusiva da Ovibeja — estamos aqui para dar vida às tuas ideias.
-              </p>
+              <a href={WA_MSG("Olá! Quero a peça especial Ovibeja 2026!")} target="_blank" rel="noopener noreferrer"
+                className="btn-whatsapp"
+                style={{ padding: "14px 28px", borderRadius: "10px", fontSize: "15px", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "8px" }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.387 0-4.592-.826-6.326-2.207l-.442-.362-3.248 1.089 1.089-3.248-.362-.442A9.96 9.96 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></svg>
+                Quero este
+              </a>
             </div>
+          </div>
+        </Section>
 
-            {/* Right: Services */}
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "1fr",
-              gap: "24px",
+        {/* ─── 3. PRODUTOS ─────────────────────────────────────── */}
+        <Section id="produtos">
+          <div style={{ textAlign: "center", marginBottom: "48px" }}>
+            <h2 className="text-responsive-lg" style={{
+              fontFamily: "Montserrat, sans-serif", fontSize: "32px", fontWeight: 800,
+              color: "#1a1a2e", marginBottom: "8px",
             }}>
-              <div style={{
-                backgroundColor: "white",
-                padding: "24px",
-                borderRadius: "12px",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+              Os nossos produtos
+            </h2>
+            <p style={{ fontSize: "16px", color: "#6b7280" }}>
+              Tudo personalizado, tudo feito para ti
+            </p>
+          </div>
+
+          <div className="grid-responsive-2" style={{
+            display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "24px",
+          }}>
+            {PRODUCTS.map((p, i) => (
+              <div key={i} className="product-card" style={{
+                backgroundColor: "white", borderRadius: "14px", overflow: "hidden",
+                border: "1px solid #f0f0f0",
               }}>
-                <h3 style={{
-                  fontSize: "18px",
-                  fontWeight: 700,
-                  color: "#2B4EAF",
-                  fontFamily: "Montserrat, sans-serif",
-                  marginBottom: "12px",
-                }}>
-                  Sublimação
-                </h3>
-                <p style={{
-                  fontSize: "14px",
-                  color: "#718096",
-                  fontFamily: "Open Sans, sans-serif",
-                  lineHeight: 1.6,
-                }}>
-                  Impressão de alta qualidade em cerâmica, inox e têxteis sintéticos. Cores vibrantes e duradouras.
+                <PlaceholderImg icon={p.icon} label="Em breve" h="180px" />
+                <div style={{ padding: "20px" }}>
+                  <h3 style={{
+                    fontFamily: "Montserrat, sans-serif", fontSize: "16px", fontWeight: 700,
+                    color: "#1a1a2e", marginBottom: "6px",
+                  }}>
+                    {p.name}
+                  </h3>
+                  <p style={{ fontSize: "14px", color: "#6b7280", lineHeight: 1.5, marginBottom: "16px" }}>
+                    {p.desc}
+                  </p>
+                  <a href={WA_MSG(`Olá! Quero saber mais sobre: ${p.name}`)} target="_blank" rel="noopener noreferrer"
+                    className="btn-whatsapp"
+                    style={{
+                      padding: "10px 18px", borderRadius: "8px", fontSize: "13px",
+                      textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "6px",
+                      width: "100%", justifyContent: "center",
+                    }}>
+                    Pedir no WhatsApp
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        {/* ─── 4. DIA DA MÃE ──────────────────────────────────── */}
+        <Section id="dia-mae" bg="#FFF7F9">
+          <div className="grid-responsive" style={{
+            display: "grid", gridTemplateColumns: "1fr 1fr", gap: "48px", alignItems: "center",
+          }}>
+            <div>
+              <span style={{
+                display: "inline-block", backgroundColor: "#fce7f3", color: "#be185d",
+                padding: "6px 16px", borderRadius: "20px", fontSize: "13px", fontWeight: 700,
+                fontFamily: "Montserrat, sans-serif", marginBottom: "16px",
+              }}>
+                💝 Dia da Mãe — 4 de Maio
+              </span>
+              <h2 className="text-responsive-lg" style={{
+                fontFamily: "Montserrat, sans-serif", fontSize: "30px", fontWeight: 800,
+                color: "#1a1a2e", lineHeight: 1.2, marginBottom: "16px",
+              }}>
+                Tens presentes que dizem tudo sem uma palavra.
+              </h2>
+              <p style={{ fontSize: "16px", color: "#6b7280", lineHeight: 1.7, marginBottom: "8px" }}>
+                Neste Dia da Mãe, cria algo único:
+              </p>
+              <p style={{ fontSize: "16px", color: "#374151", lineHeight: 1.7, marginBottom: "20px", fontStyle: "italic" }}>
+                com nome,<br />com fotografia,<br />com mensagem especial.
+              </p>
+
+              <ul style={{ listStyle: "none", padding: 0, marginBottom: "20px" }}>
+                {DIA_MAE_ITEMS.map((item, i) => (
+                  <li key={i} style={{
+                    padding: "8px 0", fontSize: "15px", color: "#374151", fontWeight: 500,
+                    display: "flex", alignItems: "center", gap: "10px",
+                  }}>
+                    <span style={{ color: "#C9A227", fontSize: "16px" }}>✦</span> {item}
+                  </li>
+                ))}
+              </ul>
+
+              <p style={{
+                fontSize: "14px", fontWeight: 700, color: "#be185d",
+                fontFamily: "Montserrat, sans-serif", marginBottom: "20px",
+                backgroundColor: "#fce7f3", display: "inline-block", padding: "8px 16px", borderRadius: "8px",
+              }}>
+                Encomendas até 28 de abril
+              </p>
+
+              <div>
+                <a href={WA_MSG("Olá! Quero encomendar para o Dia da Mãe!")} target="_blank" rel="noopener noreferrer"
+                  className="btn-whatsapp"
+                  style={{ padding: "14px 24px", borderRadius: "10px", fontSize: "15px", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "8px" }}>
+                  Encomendar antes que esgote
+                </a>
+              </div>
+            </div>
+
+            <div>
+              <PlaceholderImg icon="💝" label="Dia da Mãe" h="380px" />
+            </div>
+          </div>
+        </Section>
+
+        {/* ─── 5. PERSONALIZAÇÃO ───────────────────────────────── */}
+        <Section bg="white">
+          <div style={{ textAlign: "center", maxWidth: "600px", margin: "0 auto" }}>
+            <h2 className="text-responsive-lg" style={{
+              fontFamily: "Montserrat, sans-serif", fontSize: "32px", fontWeight: 800,
+              color: "#1a1a2e", marginBottom: "12px",
+            }}>
+              Personalizamos qualquer ideia
+            </h2>
+            <p style={{ fontSize: "17px", color: "#6b7280", lineHeight: 1.7 }}>
+              Desde frases emotivas até designs únicos — criamos exatamente como imaginas.
+            </p>
+          </div>
+        </Section>
+
+        {/* ─── 6. DIFERENCIAÇÃO ────────────────────────────────── */}
+        <Section bg="#f9fafb">
+          <div style={{
+            display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "20px",
+          }}>
+            {DIFERENCIAIS.map((d, i) => (
+              <div key={i} style={{
+                backgroundColor: "white", borderRadius: "12px", padding: "24px 28px",
+                textAlign: "center", minWidth: "160px", flex: "1 1 160px", maxWidth: "200px",
+                border: "1px solid #f0f0f0",
+                transition: "transform 0.3s ease, box-shadow 0.3s ease",
+              }}
+                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.06)"; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
+              >
+                <div style={{ fontSize: "28px", marginBottom: "8px" }}>{d.icon}</div>
+                <p style={{ fontSize: "14px", fontWeight: 700, color: "#1a1a2e", fontFamily: "Montserrat, sans-serif" }}>
+                  {d.text}
                 </p>
               </div>
+            ))}
+          </div>
+        </Section>
 
-              <div style={{
-                backgroundColor: "white",
-                padding: "24px",
-                borderRadius: "12px",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+        {/* ─── 7. CTA FINAL ────────────────────────────────────── */}
+        <Section id="contacto" bg="#2B4EAF">
+          <div style={{ textAlign: "center" }}>
+            <h2 style={{
+              fontFamily: "Montserrat, sans-serif", fontSize: "32px", fontWeight: 800,
+              color: "white", marginBottom: "12px",
+            }}>
+              Tens uma ideia? Nós damos-lhe vida.
+            </h2>
+            <p style={{ fontSize: "16px", color: "rgba(255,255,255,0.8)", marginBottom: "32px" }}>
+              Fala connosco e transforma a tua ideia num produto único.
+            </p>
+            <a href={WA_MSG("Olá! Tenho uma ideia para personalizar!")} target="_blank" rel="noopener noreferrer"
+              className="btn-whatsapp"
+              style={{
+                padding: "18px 40px", borderRadius: "12px", fontSize: "17px",
+                textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "10px",
               }}>
-                <h3 style={{
-                  fontSize: "18px",
-                  fontWeight: 700,
-                  color: "#2B4EAF",
-                  fontFamily: "Montserrat, sans-serif",
-                  marginBottom: "12px",
-                }}>
-                  Vinil Termocolante
-                </h3>
-                <p style={{
-                  fontSize: "14px",
-                  color: "#718096",
-                  fontFamily: "Open Sans, sans-serif",
-                  lineHeight: 1.6,
-                }}>
-                  Corte de vinil para t-shirts, sacos e superfícies rígidas. Acabamento profissional e resistente.
-                </p>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.387 0-4.592-.826-6.326-2.207l-.442-.362-3.248 1.089 1.089-3.248-.362-.442A9.96 9.96 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></svg>
+              Falar no WhatsApp agora
+            </a>
+
+            <div style={{ marginTop: "32px" }}>
+              <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "13px", marginBottom: "8px" }}>
+                Subscreve e recebe 10% de desconto na primeira encomenda
+              </p>
+              <div style={{ display: "flex", justifyContent: "center" }}>
+                <NewsletterInline />
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section
-        id="contacto"
-        style={{
-          padding: "80px 24px",
-          backgroundColor: "#f0f4ff",
-          backgroundImage: `linear-gradient(135deg, rgba(43,78,175,0.08) 0%, rgba(201,162,39,0.05) 100%)`,
-        }}
-      >
-        <div style={{ maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
-          <h2 style={{
-            fontSize: "36px",
-            fontWeight: 800,
-            marginBottom: "12px",
-            fontFamily: "Montserrat, sans-serif",
-            color: "#1a202c",
-          }}>
-            Vamos criar algo especial?
-          </h2>
-
-          <p style={{
-            fontSize: "16px",
-            color: "#718096",
-            fontFamily: "Playfair Display, serif",
-            fontStyle: "italic",
-            marginBottom: "32px",
-          }}>
-            "Cada encomenda é única, tal como tu"
-          </p>
-
-          <p style={{
-            fontSize: "15px",
-            lineHeight: 1.8,
-            color: "#4a5568",
-            fontFamily: "Open Sans, sans-serif",
-            marginBottom: "24px",
-          }}>
-            Subscreve à nossa newsletter e recebe <strong>10% de desconto</strong> na tua primeira encomenda!
-          </p>
-
-          <div style={{ marginBottom: "32px" }}>
-            <NewsletterForm />
-          </div>
-
-          <p style={{
-            fontSize: "15px",
-            lineHeight: 1.8,
-            color: "#4a5568",
-            fontFamily: "Open Sans, sans-serif",
-            marginBottom: "32px",
-          }}>
-            Ou fala connosco pelo WhatsApp para fazer a tua encomenda, tirar dúvidas ou pedir um orçamento personalizado. Respondemos rapidamente!
-          </p>
-
-          <a
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "8px",
-              backgroundColor: "#25D366",
-              color: "white",
-              padding: "14px 32px",
-              borderRadius: "8px",
-              textDecoration: "none",
-              fontSize: "16px",
-              fontWeight: 700,
-              fontFamily: "Montserrat, sans-serif",
-              transition: "all 0.3s ease",
-              boxShadow: "0 4px 12px rgba(37,211,102,0.3)",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = "#1ea855";
-              e.currentTarget.style.transform = "translateY(-2px)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "#25D366";
-              e.currentTarget.style.transform = "translateY(0)";
-            }}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-            </svg>
-            Encomendar pelo WhatsApp
-          </a>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer style={{
-        backgroundColor: "#1a202c",
-        color: "white",
-        padding: "40px 24px",
-        textAlign: "center",
-      }}>
-        <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-          <div style={{
-            display: "flex",
-            gap: "24px",
-            justifyContent: "center",
-            marginBottom: "24px",
-            flexWrap: "wrap",
-          }}>
-            <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" style={{ color: "white", textDecoration: "none", fontSize: "14px", fontFamily: "Montserrat, sans-serif" }}>
-              Instagram
-            </a>
-            <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" style={{ color: "white", textDecoration: "none", fontSize: "14px", fontFamily: "Montserrat, sans-serif" }}>
-              Facebook
-            </a>
-            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" style={{ color: "white", textDecoration: "none", fontSize: "14px", fontFamily: "Montserrat, sans-serif" }}>
-              Encomendar pelo WhatsApp
-            </a>
-          </div>
-          <p style={{ fontSize: "13px", color: "#a0aec0", fontFamily: "Open Sans, sans-serif" }}>
-            © 2026 Ninho do Dragão. Todos os direitos reservados.
-          </p>
-        </div>
-      </footer>
+        </Section>
 
       </main>
 
-      {/* WhatsApp Floating Button */}
+      {/* ─── 8. FOOTER ─────────────────────────────────────────── */}
+      <footer style={{ backgroundColor: "#111827", padding: "48px 24px 32px" }}>
+        <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
+          <div className="footer-grid" style={{
+            display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "32px", marginBottom: "32px",
+          }}>
+            <div>
+              <span style={{
+                fontFamily: "'Dancing Script', cursive", fontSize: "24px", fontWeight: 700,
+                color: "white", display: "block", marginBottom: "8px",
+              }}>
+                Ninho do Dragão
+              </span>
+              <p style={{ fontSize: "14px", color: "#9ca3af", lineHeight: 1.6 }}>
+                Damos forma aos teus momentos
+              </p>
+            </div>
+            <div>
+              <p style={{ fontSize: "13px", fontWeight: 700, color: "white", fontFamily: "Montserrat, sans-serif", marginBottom: "12px", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                Redes sociais
+              </p>
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                <a href={IG} target="_blank" rel="noopener noreferrer" style={{ color: "#9ca3af", fontSize: "14px", textDecoration: "none", transition: "color 0.2s" }}
+                  onMouseEnter={e => e.currentTarget.style.color = "white"}
+                  onMouseLeave={e => e.currentTarget.style.color = "#9ca3af"}>
+                  Instagram — @ninhododragao.pt
+                </a>
+                <a href={FB} target="_blank" rel="noopener noreferrer" style={{ color: "#9ca3af", fontSize: "14px", textDecoration: "none", transition: "color 0.2s" }}
+                  onMouseEnter={e => e.currentTarget.style.color = "white"}
+                  onMouseLeave={e => e.currentTarget.style.color = "#9ca3af"}>
+                  Facebook — Ninho do Dragão
+                </a>
+              </div>
+            </div>
+            <div>
+              <p style={{ fontSize: "13px", fontWeight: 700, color: "white", fontFamily: "Montserrat, sans-serif", marginBottom: "12px", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                Contacto
+              </p>
+              <a href={WA} target="_blank" rel="noopener noreferrer" style={{ color: "#25D366", fontSize: "14px", textDecoration: "none", fontWeight: 600 }}>
+                +351 935 852 703
+              </a>
+            </div>
+          </div>
+
+          <div style={{ borderTop: "1px solid #1f2937", paddingTop: "20px", textAlign: "center" }}>
+            <p style={{ fontSize: "12px", color: "#6b7280" }}>
+              Ninho do Dragão — damos forma aos teus momentos
+            </p>
+          </div>
+        </div>
+      </footer>
+
+      {/* ─── WhatsApp Floating Button ──────────────────────────── */}
       <a
-        href={WHATSAPP_URL}
+        href={WA_MSG("Olá! Gostava de saber mais sobre os vossos produtos.")}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Contactar pelo WhatsApp"
+        className="whatsapp-pulse"
         style={{
-          position: "fixed",
-          bottom: "24px",
-          right: "24px",
-          backgroundColor: "#25D366",
-          color: "white",
-          width: "56px",
-          height: "56px",
-          borderRadius: "50%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          textDecoration: "none",
-          boxShadow: "0 4px 12px rgba(37,211,102,0.4)",
-          zIndex: 999,
-          animation: "pulse 2s infinite",
+          position: "fixed", bottom: "24px", right: "24px", zIndex: 40,
+          width: "56px", height: "56px", borderRadius: "50%",
+          backgroundColor: "#25D366", display: "flex", alignItems: "center", justifyContent: "center",
+          boxShadow: "0 4px 16px rgba(37,211,102,0.4)",
+          transition: "transform 0.2s ease",
         }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = "scale(1.1)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = "scale(1)";
-        }}
+        onMouseEnter={e => e.currentTarget.style.transform = "scale(1.1)"}
+        onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
       >
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-        </svg>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.387 0-4.592-.826-6.326-2.207l-.442-.362-3.248 1.089 1.089-3.248-.362-.442A9.96 9.96 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></svg>
       </a>
-
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.7; }
-        }
-      `}</style>
-    </div>
+    </>
   );
 }

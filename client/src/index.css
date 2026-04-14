@@ -4,10 +4,10 @@
 @custom-variant dark (&:is(.dark *));
 
 /* 
-  NINHO DO DRAGÃO — Design System
-  Filosofia: "Artesanal Digital Moderno"
-  Cores: Azul principal (#2B4EAF), Azul claro (#5B8FD4), Dourado (#C9A227)
-  Fontes: Montserrat (títulos) + Open Sans (corpo) + Playfair Display (acentos)
+  NINHO DO DRAGÃO — Design System v2
+  Filosofia: Limpo, profissional, emocional. Conversão via WhatsApp.
+  Cores: Azul (#2B4EAF), Dourado (#C9A227), Branco, Cinza escuro
+  Fontes: Montserrat (títulos) + Open Sans (corpo) + Dancing Script (marca)
 */
 
 @theme inline {
@@ -52,39 +52,29 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-
-  /* Brand Colors */
-  --color-brand-blue: oklch(0.38 0.18 265);       /* #2B4EAF azul principal */
-  --color-brand-blue-light: oklch(0.55 0.15 255);  /* #5B8FD4 azul claro */
-  --color-brand-gold: oklch(0.72 0.14 80);          /* #C9A227 dourado */
-  --color-brand-cream: oklch(0.98 0.003 80);        /* #F8F7F4 fundo creme */
-  --color-brand-pink: oklch(0.96 0.02 10);          /* #FFF0F3 rosa suave Dia da Mãe */
-  --color-brand-blue-bg: oklch(0.96 0.01 255);      /* #EEF4FF fundo azul claro */
 }
 
 :root {
-  /* Ninho do Dragão — Paleta Azul/Dourado */
-  --primary: oklch(0.38 0.18 265);           /* Azul principal #2B4EAF */
-  --primary-foreground: oklch(0.98 0 0);     /* Branco */
-  --secondary: oklch(0.72 0.14 80);          /* Dourado #C9A227 */
-  --secondary-foreground: oklch(0.20 0 0);   /* Texto escuro */
-  --accent: oklch(0.55 0.15 255);            /* Azul claro #5B8FD4 */
+  --primary: oklch(0.38 0.18 265);
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.72 0.14 80);
+  --secondary-foreground: oklch(0.20 0 0);
+  --accent: oklch(0.55 0.15 255);
   --accent-foreground: oklch(0.98 0 0);
-  --background: oklch(1 0 0);               /* Branco puro */
-  --foreground: oklch(0.22 0.02 265);        /* Cinza escuro #2D3748 */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.22 0.02 265);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.22 0.02 265);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.22 0.02 265);
-  --muted: oklch(0.96 0.003 265);
+  --muted: oklch(0.97 0.003 265);
   --muted-foreground: oklch(0.55 0.02 265);
   --destructive: oklch(0.58 0.22 25);
   --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(0.92 0.005 265);
   --input: oklch(0.96 0.003 265);
   --ring: oklch(0.38 0.18 265);
-  --radius: 0.5rem;
-
+  --radius: 0.625rem;
   --sidebar: oklch(0.98 0.003 265);
   --sidebar-foreground: oklch(0.22 0.02 265);
   --sidebar-primary: oklch(0.38 0.18 265);
@@ -93,7 +83,6 @@
   --sidebar-accent-foreground: oklch(0.38 0.18 265);
   --sidebar-border: oklch(0.92 0.005 265);
   --sidebar-ring: oklch(0.38 0.18 265);
-
   --chart-1: oklch(0.38 0.18 265);
   --chart-2: oklch(0.72 0.14 80);
   --chart-3: oklch(0.55 0.15 255);
@@ -108,73 +97,56 @@
   body {
     @apply bg-background text-foreground;
     font-family: "Open Sans", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: "Montserrat", sans-serif;
   }
 }
 
-/* Smooth scroll */
 html {
   scroll-behavior: smooth;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-::-webkit-scrollbar-thumb {
-  background: #2B4EAF;
-  border-radius: 3px;
-}
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: #f8f8f8; }
+::-webkit-scrollbar-thumb { background: #2B4EAF; border-radius: 3px; }
 
-/* Animations */
+/* ─── Animations ───────────────────────────────────────────────── */
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
-
 @keyframes pulse-whatsapp {
   0%, 100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4); }
-  50% { box-shadow: 0 0 0 10px rgba(37, 211, 102, 0); }
+  50% { box-shadow: 0 0 0 12px rgba(37, 211, 102, 0); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
 
-.animate-fade-in-up {
-  animation: fadeInUp 0.6s ease-out forwards;
-}
+.animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+.animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+.whatsapp-pulse { animation: pulse-whatsapp 2s infinite; }
+.animate-float { animation: float 3s ease-in-out infinite; }
 
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
-}
-
-.whatsapp-pulse {
-  animation: pulse-whatsapp 2s infinite;
-}
-
-/* Product card hover */
+/* Product card */
 .product-card {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .product-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(43, 78, 175, 0.15);
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(43, 78, 175, 0.12);
 }
 
-/* Nav link hover */
+/* Nav link underline */
 .nav-link {
   position: relative;
   transition: color 0.2s ease;
@@ -189,108 +161,74 @@ html {
   background: #C9A227;
   transition: width 0.3s ease;
 }
-.nav-link:hover::after,
-.nav-link.active::after {
-  width: 100%;
-}
+.nav-link:hover::after { width: 100%; }
 
-/* Section transitions */
-.section-enter {
+/* Section reveal */
+.section-reveal {
   opacity: 0;
   transform: translateY(30px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition: opacity 0.7s ease, transform 0.7s ease;
 }
-.section-enter.visible {
+.section-reveal.visible {
   opacity: 1;
   transform: translateY(0);
 }
 
-/* ─── Mobile Responsive ─────────────────────────────────────────────────────── */
+/* Placeholder image */
+.placeholder-img {
+  background: linear-gradient(135deg, #EEF4FF 0%, #e8e0d4 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2B4EAF;
+  font-size: 2.5rem;
+}
+
+/* WhatsApp button style */
+.btn-whatsapp {
+  background-color: #25D366;
+  color: white;
+  font-weight: 700;
+  font-family: "Montserrat", sans-serif;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.btn-whatsapp:hover {
+  background-color: #1da851;
+  transform: scale(1.02);
+}
+
+.btn-primary {
+  background-color: #2B4EAF;
+  color: white;
+  font-weight: 700;
+  font-family: "Montserrat", sans-serif;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.btn-primary:hover {
+  background-color: #1e3a8a;
+  transform: scale(1.02);
+}
+
+/* ─── Mobile First Responsive ──────────────────────────────────── */
 @media (max-width: 768px) {
-  .hero-grid {
-    grid-template-columns: 1fr !important;
-    gap: 24px !important;
-  }
-  .hero-title {
-    font-size: 32px !important;
-  }
-  .hero-image-container {
-    height: auto !important;
-    min-height: unset !important;
-  }
-  .hero-image {
-    object-fit: contain !important;
-    height: auto !important;
-  }
-  .promotion-banner-text {
-    font-size: 12px !important;
-    line-height: 1.4 !important;
-  }
-  .promotion-banner-inner {
-    flex-wrap: nowrap !important;
-    gap: 8px !important;
-    padding: 0 !important;
-  }
-  .dia-mae-grid {
-    grid-template-columns: 1fr !important;
-  }
-  .dia-mae-products-grid {
-    grid-template-columns: 1fr 1fr !important;
-  }
-  .catalog-grid {
-    grid-template-columns: 1fr !important;
-  }
-  .ovibeja-grid {
-    grid-template-columns: 1fr !important;
-  }
-  .sobre-grid {
-    grid-template-columns: 1fr !important;
-  }
-  .cta-grid {
-    grid-template-columns: 1fr !important;
-  }
-  .footer-grid {
-    grid-template-columns: 1fr !important;
-    text-align: center;
-  }
-  .nav-desktop-links {
-    display: none !important;
-  }
-  .nav-mobile-button {
-    display: flex !important;
-  }
-  .nav-brand-name {
-    font-size: 22px !important;
-  }
-  .nav-brand-parent {
-    position: relative !important;
-    left: auto !important;
-    transform: none !important;
-  }
-  .ovibeja-badge {
-    width: 48px !important;
-    height: 48px !important;
-    font-size: 10px !important;
-    padding: 6px !important;
-  }
-  .section-padding {
-    padding: 48px 16px !important;
-  }
-  .catalog-tabs {
-    flex-wrap: wrap !important;
-    gap: 8px !important;
-  }
-  .catalog-tab-btn {
-    padding: 8px 14px !important;
-    font-size: 12px !important;
-  }
+  .nav-desktop { display: none !important; }
+  .nav-mobile-btn { display: flex !important; }
+  .grid-responsive { grid-template-columns: 1fr !important; }
+  .grid-responsive-2 { grid-template-columns: 1fr 1fr !important; }
+  .section-pad { padding: 48px 20px !important; }
+  .hero-title { font-size: 28px !important; line-height: 1.2 !important; }
+  .text-responsive-lg { font-size: 24px !important; }
+  .text-responsive-md { font-size: 18px !important; }
+  .ovibeja-img { max-height: 400px !important; }
+  .footer-grid { grid-template-columns: 1fr !important; text-align: center; }
+  .hide-mobile { display: none !important; }
 }
 
 @media (min-width: 769px) {
-  .nav-mobile-button {
-    display: none !important;
-  }
-  .nav-desktop-links {
-    display: flex !important;
-  }
+  .nav-mobile-btn { display: none !important; }
+  .nav-desktop { display: flex !important; }
 }
