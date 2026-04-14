@@ -637,7 +637,8 @@ export default function Home() {
             }}>
               <img
                 src={HERO_IMG}
-                alt="Produtos Ninho do Dragão"
+                alt="Edição Especial Ovibeja 2026 - Moldura com azulejos Feito em Portugal"
+                className="hero-image"
                 style={{
                   width: "100%",
                   height: "100%",

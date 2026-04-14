@@ -158,9 +158,9 @@ export function PromotionBanner() {
         animation: "slideDown 0.3s ease",
       }}
     >
-      <div style={{ maxWidth: "1200px", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap" }}>
-        <div style={{ flex: 1, minWidth: "250px" }}>
-          <p style={{
+      <div className="promotion-banner-inner" style={{ maxWidth: "1200px", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap" }}>
+        <div style={{ flex: 1, minWidth: "0" }}>
+          <p className="promotion-banner-text" style={{
             fontSize: "15px",
             fontWeight: 700,
             color: "#92400e",

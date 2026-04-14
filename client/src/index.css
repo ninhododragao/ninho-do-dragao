@@ -215,7 +215,21 @@ html {
     font-size: 32px !important;
   }
   .hero-image-container {
-    height: 280px !important;
+    height: auto !important;
+    min-height: unset !important;
+  }
+  .hero-image {
+    object-fit: contain !important;
+    height: auto !important;
+  }
+  .promotion-banner-text {
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+  }
+  .promotion-banner-inner {
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+    padding: 0 !important;
   }
   .dia-mae-grid {
     grid-template-columns: 1fr !important;
