@@ -563,9 +563,35 @@ export default function Home() {
             </div>
           </div>
 
-          <div style={{ borderTop: "1px solid #1f2937", paddingTop: "20px", textAlign: "center" }}>
-            <p style={{ fontSize: "12px", color: "#6b7280" }}>
-              Ninho do Dragão — damos forma aos teus momentos
+          {/* Políticas */}
+          <div style={{ borderTop: "1px solid #1f2937", paddingTop: "20px", marginBottom: "16px" }}>
+            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "8px 24px", marginBottom: "12px" }}>
+              <a href="/termos" style={{ color: "#9ca3af", fontSize: "13px", textDecoration: "none", transition: "color 0.2s" }}
+                onMouseEnter={e => e.currentTarget.style.color = "white"}
+                onMouseLeave={e => e.currentTarget.style.color = "#9ca3af"}>
+                Termos e Condições
+              </a>
+              <a href="/privacidade" style={{ color: "#9ca3af", fontSize: "13px", textDecoration: "none", transition: "color 0.2s" }}
+                onMouseEnter={e => e.currentTarget.style.color = "white"}
+                onMouseLeave={e => e.currentTarget.style.color = "#9ca3af"}>
+                Política de Privacidade
+              </a>
+              <a href="/devolucoes" style={{ color: "#9ca3af", fontSize: "13px", textDecoration: "none", transition: "color 0.2s" }}
+                onMouseEnter={e => e.currentTarget.style.color = "white"}
+                onMouseLeave={e => e.currentTarget.style.color = "#9ca3af"}>
+                Devoluções e Trocas
+              </a>
+              <a href="/envio" style={{ color: "#9ca3af", fontSize: "13px", textDecoration: "none", transition: "color 0.2s" }}
+                onMouseEnter={e => e.currentTarget.style.color = "white"}
+                onMouseLeave={e => e.currentTarget.style.color = "#9ca3af"}>
+                Envio e Entrega
+              </a>
+            </div>
+            <p style={{ fontSize: "11px", color: "#6b7280", textAlign: "center", marginBottom: "8px" }}>
+              IVA — Regime de Isenção (artigos 36.º e 40.º do CIVA)
+            </p>
+            <p style={{ fontSize: "12px", color: "#6b7280", textAlign: "center" }}>
+              © 2026 Ninho do Dragão — damos forma aos teus momentos
             </p>
           </div>
         </div>
