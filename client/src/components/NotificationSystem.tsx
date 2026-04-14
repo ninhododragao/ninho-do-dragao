@@ -172,13 +172,19 @@ export function PromotionBanner() {
         </div>
         <button
           onClick={() => setVisible(false)}
+          aria-label="Fechar banner de promoção"
           style={{
             background: "none",
             border: "none",
             fontSize: "20px",
             cursor: "pointer",
-            padding: "4px 8px",
+            padding: "8px 12px",
+            minWidth: "44px",
+            minHeight: "44px",
             color: "#92400e",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
           ✕

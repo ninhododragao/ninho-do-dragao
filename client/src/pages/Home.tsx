@@ -261,6 +261,7 @@ function Navbar() {
             target="_blank"
             rel="noopener noreferrer"
             title="Contactar pelo WhatsApp"
+            aria-label="Contactar pelo WhatsApp"
             style={{
               display: "flex",
               alignItems: "center",
@@ -293,6 +294,8 @@ function Navbar() {
           {/* Mobile menu button */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
+            aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
+            aria-expanded={menuOpen}
             style={{
               display: "flex",
               flexDirection: "column",
@@ -300,7 +303,11 @@ function Navbar() {
               background: "none",
               border: "none",
               cursor: "pointer",
-              padding: "4px",
+              padding: "8px",
+              minWidth: "44px",
+              minHeight: "44px",
+              alignItems: "center",
+              justifyContent: "center",
             }}
             className="flex md:hidden"
           >
@@ -411,7 +418,7 @@ function ProductCatalog() {
               key={key}
               onClick={() => setActiveTab(key as keyof typeof productCategories)}
               style={{
-                padding: "10px 20px",
+                padding: "12px 20px",
                 fontSize: "14px",
                 fontWeight: 600,
                 fontFamily: "Montserrat, sans-serif",
@@ -421,6 +428,7 @@ function ProductCatalog() {
                 borderRadius: "8px",
                 cursor: "pointer",
                 transition: "all 0.2s ease",
+                minHeight: "44px",
               }}
               onMouseEnter={(e) => {
                 if (activeTab !== key) {
@@ -525,6 +533,7 @@ export default function Home() {
       <Toaster position="top-right" />
       <PromotionBanner />
       <Navbar />
+      <main>
 
       {/* Hero Section */}
       <section
@@ -782,7 +791,7 @@ export default function Home() {
                     }}
                   >
                     <div style={{ fontSize: "32px", marginBottom: "8px" }}>{product.icon}</div>
-                    <h4 style={{
+                    <h3 style={{
                       fontSize: "14px",
                       fontWeight: 700,
                       color: "#1a202c",
@@ -790,7 +799,7 @@ export default function Home() {
                       marginBottom: "4px",
                     }}>
                       {product.name}
-                    </h4>
+                    </h3>
                     <p style={{
                       fontSize: "12px",
                       color: "#718096",
@@ -1216,11 +1225,14 @@ export default function Home() {
         </div>
       </footer>
 
+      </main>
+
       {/* WhatsApp Floating Button */}
       <a
         href={WHATSAPP_URL}
         target="_blank"
         rel="noopener noreferrer"
+        aria-label="Contactar pelo WhatsApp"
         style={{
           position: "fixed",
           bottom: "24px",
