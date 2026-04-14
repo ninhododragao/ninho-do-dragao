@@ -316,14 +316,18 @@ export default function Home() {
           <div className="text-center">
             <p className="text-lg font-semibold mb-6">Segue-nos para mais inspiração!</p>
             <div className="flex gap-4 justify-center">
-              <Button size="lg" variant="outline" className="border-pink-600 text-pink-600 hover:bg-pink-50">
-                <Instagram className="w-5 h-5 mr-2" />
-                Instagram
-              </Button>
-              <Button size="lg" variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50">
-                <Facebook className="w-5 h-5 mr-2" />
-                Facebook
-              </Button>
+              <a href="https://instagram.com/ninhododragao.pt" target="_blank" rel="noopener noreferrer">
+                <Button size="lg" variant="outline" className="border-pink-600 text-pink-600 hover:bg-pink-50">
+                  <Instagram className="w-5 h-5 mr-2" />
+                  Instagram
+                </Button>
+              </a>
+              <a href="https://facebook.com/ninhododragao.pt" target="_blank" rel="noopener noreferrer">
+                <Button size="lg" variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50">
+                  <Facebook className="w-5 h-5 mr-2" />
+                  Facebook
+                </Button>
+              </a>
             </div>
           </div>
         </div>
@@ -437,10 +441,10 @@ export default function Home() {
             <div>
               <p className="font-semibold mb-4">Redes Sociais</p>
               <div className="flex gap-4">
-                <a href="https://instagram.com" className="w-10 h-10 rounded-full bg-primary flex items-center justify-center hover:bg-primary/80 transition">
+                <a href="https://instagram.com/ninhododragao.pt" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-primary flex items-center justify-center hover:bg-primary/80 transition">
                   <Instagram className="w-5 h-5 text-primary-foreground" />
                 </a>
-                <a href="https://facebook.com" className="w-10 h-10 rounded-full bg-primary flex items-center justify-center hover:bg-primary/80 transition">
+                <a href="https://facebook.com/ninhododragao.pt" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-primary flex items-center justify-center hover:bg-primary/80 transition">
                   <Facebook className="w-5 h-5 text-primary-foreground" />
                 </a>
               </div>
