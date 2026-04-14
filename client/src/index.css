@@ -204,3 +204,79 @@ html {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* ─── Mobile Responsive ─────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+  .hero-title {
+    font-size: 32px !important;
+  }
+  .hero-image-container {
+    height: 280px !important;
+  }
+  .dia-mae-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .dia-mae-products-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .catalog-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .ovibeja-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .sobre-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .cta-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+    text-align: center;
+  }
+  .nav-desktop-links {
+    display: none !important;
+  }
+  .nav-mobile-button {
+    display: flex !important;
+  }
+  .nav-brand-name {
+    font-size: 22px !important;
+  }
+  .nav-brand-parent {
+    position: relative !important;
+    left: auto !important;
+    transform: none !important;
+  }
+  .ovibeja-badge {
+    width: 48px !important;
+    height: 48px !important;
+    font-size: 10px !important;
+    padding: 6px !important;
+  }
+  .section-padding {
+    padding: 48px 16px !important;
+  }
+  .catalog-tabs {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+  .catalog-tab-btn {
+    padding: 8px 14px !important;
+    font-size: 12px !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .nav-mobile-button {
+    display: none !important;
+  }
+  .nav-desktop-links {
+    display: flex !important;
+  }
+}
