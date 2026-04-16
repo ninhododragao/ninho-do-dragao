@@ -18,8 +18,14 @@ function App() {
       <Route path="/devolucoes">
         <Policies initialTab="devolucoes" />
       </Route>
-      <Route path="/envio">
-        <Policies initialTab="envio" />
+      <Route path="/garantia">
+        <Policies initialTab="garantia" />
+      </Route>
+      <Route path="/ral">
+        <Policies initialTab="ral" />
+      </Route>
+      <Route path="/livro-reclamacoes">
+        <Policies initialTab="livro-reclamacoes" />
       </Route>
     </Switch>
   );

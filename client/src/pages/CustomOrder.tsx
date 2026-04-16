@@ -22,6 +22,7 @@ export default function CustomOrder() {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -237,18 +238,39 @@ export default function CustomOrder() {
                 </div>
               </div>
 
-              {/* Terms */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 space-y-3">
-              <p className="text-sm text-muted-foreground">
-                <span className="font-semibold text-primary">Próximos passos:</span> Após submeter este formulário, serás redirecionado para WhatsApp onde poderemos discutir os detalhes, design e enviar um orçamento personalizado.
-              </p>
+              {/* Privacy Notice */}
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-6 space-y-3">
+                <p className="text-xs text-muted-foreground">
+                  <span className="font-semibold text-primary">Privacidade:</span> Os teus dados pessoais serão utilizados apenas para processar a tua encomenda e comunicação relacionada. Consulta a nossa <a href="/privacidade" target="_blank" className="text-blue-600 underline">Política de Privacidade</a> para mais informações.
+                </p>
+              </div>
+
+              {/* Terms Acceptance */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 space-y-4">
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    id="termsAccepted"
+                    checked={termsAccepted}
+                    onChange={(e) => setTermsAccepted(e.target.checked)}
+                    required
+                    className="mt-1 w-4 h-4 rounded border-border focus:ring-2 focus:ring-orange-500"
+                  />
+                  <label htmlFor="termsAccepted" className="text-sm text-muted-foreground">
+                    Concordo com os <a href="/termos" target="_blank" className="text-blue-600 underline font-semibold">Termos e Condições</a> e <a href="/devolucoes" target="_blank" className="text-blue-600 underline font-semibold">Política de Devoluções</a>. Entendo que produtos personalizados não podem ser devolvidos por arrependimento. *
+                  </label>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  <span className="font-semibold text-primary">Próximos passos:</span> Após submeter este formulário, serás redirecionado para WhatsApp onde poderemos discutir os detalhes, design e enviar um orçamento personalizado.
+                </p>
               </div>
 
               {/* Submit Button */}
               <div className="flex gap-4">
                 <Button
                   type="submit"
-                  className="btn-magical flex-1 gap-2 py-6 text-lg"
+                  disabled={!termsAccepted}
+                  className="btn-magical flex-1 gap-2 py-6 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Send className="w-5 h-5" />
                   Enviar Ideia
@@ -310,25 +332,30 @@ export default function CustomOrder() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-primary text-white py-12">
+      <footer className="bg-gray-900 text-white py-12">
         <div className="container">
-          <div className="grid md:grid-cols-3 gap-8 mb-8">
-            <div className="space-y-3">
-              <h4 className="font-bold text-lg">Ninho do Dragão</h4>
-              <p className="text-blue-100">Artigos personalizados com magia e qualidade.</p>
+          <div className="grid md:grid-cols-2 gap-8 mb-8 text-sm">
+            <div className="space-y-2">
+              <h4 className="font-bold text-base">Ninho do Dragão - by Makiwa</h4>
+              <p className="text-gray-300">Laila Fernandes Chreim | NIF: 254047750</p>
+              <p className="text-gray-300">Rua das Parreiras 4, 7800-655 Vila Azedo, Beja</p>
             </div>
-            <div className="space-y-3">
-              <h4 className="font-bold">Contacto</h4>
-              <p className="text-blue-100">WhatsApp: Disponível</p>
-              <p className="text-blue-100">Email: contacto@ninhododragao.pt</p>
-            </div>
-            <div className="space-y-3">
-              <h4 className="font-bold">Informações</h4>
-              <p className="text-blue-100">Sobre Nós</p>
-              <p className="text-blue-100">Política de Privacidade</p>
+            <div className="space-y-2">
+              <h4 className="font-bold text-base">Contacto</h4>
+              <p className="text-gray-300">Telefone: 925 865 347</p>
+              <p className="text-gray-300">Email: makiwa.arts@gmail.com</p>
             </div>
           </div>
-          <div className="border-t border-blue-800 pt-8 text-center text-blue-100">
+          <div className="border-t border-gray-700 pt-6 text-center text-gray-400 text-xs space-y-2">
+            <div className="flex flex-wrap justify-center gap-4">
+              <a href="/termos" className="hover:text-white">Termos</a>
+              <span>•</span>
+              <a href="/privacidade" className="hover:text-white">Privacidade</a>
+              <span>•</span>
+              <a href="/devolucoes" className="hover:text-white">Devoluções</a>
+              <span>•</span>
+              <a href="/livro-reclamacoes" className="hover:text-white">Reclamações</a>
+            </div>
             <p>&copy; 2026 Ninho do Dragão. Todos os direitos reservados.</p>
           </div>
         </div>

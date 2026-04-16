@@ -563,34 +563,62 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Políticas */}
-          <div style={{ borderTop: "1px solid #1f2937", paddingTop: "20px", marginBottom: "16px" }}>
-            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "8px 24px", marginBottom: "12px" }}>
-              <a href="/termos" style={{ color: "#9ca3af", fontSize: "13px", textDecoration: "none", transition: "color 0.2s" }}
+          {/* Informação Legal */}
+          <div style={{ borderTop: "1px solid #1f2937", paddingTop: "24px", marginBottom: "24px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px", marginBottom: "24px", fontSize: "12px", color: "#9ca3af" }}>
+              <div>
+                <p style={{ fontSize: "11px", fontWeight: 700, color: "white", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "8px" }}>Ninho do Dragão – by Makiwa</p>
+                <p style={{ margin: "4px 0", fontSize: "11px" }}>Laila Fernandes Chreim</p>
+                <p style={{ margin: "4px 0", fontSize: "11px" }}>NIF: 254047750</p>
+                <p style={{ margin: "4px 0", fontSize: "11px" }}>Rua das Parreiras 4, 7800-655 Vila Azedo, Beja</p>
+              </div>
+              <div>
+                <p style={{ fontSize: "11px", fontWeight: 700, color: "white", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "8px" }}>Contacto</p>
+                <p style={{ margin: "4px 0", fontSize: "11px" }}>Telefone: 925 865 347</p>
+                <p style={{ margin: "4px 0", fontSize: "11px" }}>Email: makiwa.arts@gmail.com</p>
+                <p style={{ margin: "4px 0", fontSize: "11px" }}>IVA — Regime de Isenção (CIVA)</p>
+              </div>
+            </div>
+
+            {/* Políticas e Links Legais */}
+            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "8px 16px", marginBottom: "16px", fontSize: "12px" }}>
+              <a href="/termos" style={{ color: "#9ca3af", textDecoration: "none", transition: "color 0.2s" }}
                 onMouseEnter={e => e.currentTarget.style.color = "white"}
                 onMouseLeave={e => e.currentTarget.style.color = "#9ca3af"}>
                 Termos e Condições
               </a>
-              <a href="/privacidade" style={{ color: "#9ca3af", fontSize: "13px", textDecoration: "none", transition: "color 0.2s" }}
+              <span style={{ color: "#4b5563" }}>•</span>
+              <a href="/privacidade" style={{ color: "#9ca3af", textDecoration: "none", transition: "color 0.2s" }}
                 onMouseEnter={e => e.currentTarget.style.color = "white"}
                 onMouseLeave={e => e.currentTarget.style.color = "#9ca3af"}>
-                Política de Privacidade
+                Privacidade
               </a>
-              <a href="/devolucoes" style={{ color: "#9ca3af", fontSize: "13px", textDecoration: "none", transition: "color 0.2s" }}
+              <span style={{ color: "#4b5563" }}>•</span>
+              <a href="/devolucoes" style={{ color: "#9ca3af", textDecoration: "none", transition: "color 0.2s" }}
                 onMouseEnter={e => e.currentTarget.style.color = "white"}
                 onMouseLeave={e => e.currentTarget.style.color = "#9ca3af"}>
-                Devoluções e Trocas
+                Devoluções
               </a>
-              <a href="/envio" style={{ color: "#9ca3af", fontSize: "13px", textDecoration: "none", transition: "color 0.2s" }}
+              <span style={{ color: "#4b5563" }}>•</span>
+              <a href="/garantia" style={{ color: "#9ca3af", textDecoration: "none", transition: "color 0.2s" }}
                 onMouseEnter={e => e.currentTarget.style.color = "white"}
                 onMouseLeave={e => e.currentTarget.style.color = "#9ca3af"}>
-                Envio e Entrega
+                Garantia
+              </a>
+              <span style={{ color: "#4b5563" }}>•</span>
+              <a href="/livro-reclamacoes" style={{ color: "#9ca3af", textDecoration: "none", transition: "color 0.2s" }}
+                onMouseEnter={e => e.currentTarget.style.color = "white"}
+                onMouseLeave={e => e.currentTarget.style.color = "#9ca3af"}>
+                Reclamações
+              </a>
+              <span style={{ color: "#4b5563" }}>•</span>
+              <a href="/ral" style={{ color: "#9ca3af", textDecoration: "none", transition: "color 0.2s" }}
+                onMouseEnter={e => e.currentTarget.style.color = "white"}
+                onMouseLeave={e => e.currentTarget.style.color = "#9ca3af"}>
+                RAL
               </a>
             </div>
-            <p style={{ fontSize: "11px", color: "#6b7280", textAlign: "center", marginBottom: "8px" }}>
-              IVA — Regime de Isenção (artigos 36.º e 40.º do CIVA)
-            </p>
-            <p style={{ fontSize: "12px", color: "#6b7280", textAlign: "center" }}>
+            <p style={{ fontSize: "11px", color: "#6b7280", textAlign: "center" }}>
               © 2026 Ninho do Dragão — damos forma aos teus momentos
             </p>
           </div>
