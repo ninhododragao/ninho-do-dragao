@@ -1,0 +1,207 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "public/images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  - name: "homepage"
+    label: "Homepage"
+    files:
+      - name: "homepage"
+        label: "Conteúdo da Homepage"
+        file: "src/data/homepage.json"
+        fields:
+          - label: "Título Principal"
+            name: "title"
+            widget: "string"
+            default: "Peças personalizadas que guardam momentos únicos"
+          
+          - label: "Subtítulo"
+            name: "subtitle"
+            widget: "string"
+            default: "Criamos presentes com significado — feitos à tua medida para surpreender quem mais importa."
+          
+          - label: "Secção Produtos"
+            name: "products_section"
+            widget: "object"
+            fields:
+              - label: "Título"
+                name: "title"
+                widget: "string"
+                default: "Os nossos produtos"
+              
+              - label: "Descrição"
+                name: "description"
+                widget: "string"
+                default: "Tudo personalizado, tudo feito para ti"
+              
+              - label: "Produtos"
+                name: "items"
+                widget: "list"
+                fields:
+                  - label: "Nome do Produto"
+                    name: "name"
+                    widget: "string"
+                  
+                  - label: "Emoji"
+                    name: "emoji"
+                    widget: "string"
+                  
+                  - label: "Descrição"
+                    name: "description"
+                    widget: "string"
+                  
+                  - label: "Status"
+                    name: "status"
+                    widget: "select"
+                    options: ["Em breve", "Disponível"]
+          
+          - label: "Secção Dia da Mãe"
+            name: "mothers_day"
+            widget: "object"
+            fields:
+              - label: "Ativo?"
+                name: "active"
+                widget: "boolean"
+              
+              - label: "Título"
+                name: "title"
+                widget: "string"
+                default: "Dia da Mãe — 4 de Maio"
+              
+              - label: "Descrição"
+                name: "description"
+                widget: "text"
+              
+              - label: "Data Limite de Encomenda"
+                name: "deadline"
+                widget: "string"
+                default: "28 de abril"
+              
+              - label: "Desconto"
+                name: "discount"
+                widget: "string"
+                default: "10%"
+          
+          - label: "Secção Ovibeja"
+            name: "ovibeja"
+            widget: "object"
+            fields:
+              - label: "Ativo?"
+                name: "active"
+                widget: "boolean"
+              
+              - label: "Título"
+                name: "title"
+                widget: "string"
+                default: "Destaque Ovibeja 2026"
+              
+              - label: "Descrição"
+                name: "description"
+                widget: "text"
+              
+              - label: "Imagem"
+                name: "image"
+                widget: "image"
+
+  - name: "policies"
+    label: "Políticas"
+    files:
+      - name: "terms"
+        label: "Termos e Condições"
+        file: "src/data/policies/terms.md"
+        widget: "markdown"
+      
+      - name: "privacy"
+        label: "Política de Privacidade"
+        file: "src/data/policies/privacy.md"
+        widget: "markdown"
+      
+      - name: "returns"
+        label: "Devoluções e Trocas"
+        file: "src/data/policies/returns.md"
+        widget: "markdown"
+      
+      - name: "warranty"
+        label: "Garantia"
+        file: "src/data/policies/warranty.md"
+        widget: "markdown"
+
+  - name: "settings"
+    label: "Configurações"
+    files:
+      - name: "general"
+        label: "Informações Gerais"
+        file: "src/data/settings.json"
+        fields:
+          - label: "Nome da Empresa"
+            name: "company_name"
+            widget: "string"
+            default: "Ninho do Dragão – by Makiwa"
+          
+          - label: "NIF"
+            name: "nif"
+            widget: "string"
+            default: "254047750"
+          
+          - label: "Morada"
+            name: "address"
+            widget: "string"
+            default: "Rua das Parreiras 4, 7800-655 Vila Azedo, Beja"
+          
+          - label: "Telefone"
+            name: "phone"
+            widget: "string"
+            default: "+351 935 852 703"
+          
+          - label: "Email"
+            name: "email"
+            widget: "string"
+            default: "makiwa.arts@gmail.com"
+          
+          - label: "Instagram"
+            name: "instagram"
+            widget: "string"
+            default: "@ninhododragao.pt"
+          
+          - label: "Facebook"
+            name: "facebook"
+            widget: "string"
+            default: "Ninho do Dragão"
+          
+          - label: "WhatsApp"
+            name: "whatsapp"
+            widget: "string"
+            default: "+351 935 852 703"
+
+  - name: "blog"
+    label: "Blog"
+    folder: "src/data/blog"
+    create: true
+    fields:
+      - label: "Título"
+        name: "title"
+        widget: "string"
+      
+      - label: "Data"
+        name: "date"
+        widget: "datetime"
+      
+      - label: "Descrição Curta"
+        name: "excerpt"
+        widget: "string"
+      
+      - label: "Imagem"
+        name: "image"
+        widget: "image"
+      
+      - label: "Conteúdo"
+        name: "body"
+        widget: "markdown"
+      
+      - label: "Categorias"
+        name: "categories"
+        widget: "list"
+        default: ["Presentes"]
