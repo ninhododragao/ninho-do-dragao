@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendador de Posts - Ovibeja 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .post-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .post-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+            transform: translateY(-5px);
+        }
+        
+        .post-card.selected {
+            background: #e7f3ff;
+            border-color: #667eea;
+        }
+        
+        .post-day {
+            font-size: 0.9em;
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .post-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .post-preview {
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.5;
+            max-height: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 10px;
+        }
+        
+        .post-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 30px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #e9ecef;
+            color: #333;
+        }
+        
+        .btn-secondary:hover {
+            background: #dee2e6;
+        }
+        
+        .instructions {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+        
+        .instructions h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ol {
+            margin-left: 20px;
+            color: #856404;
+            line-height: 1.8;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 30px;
+            border: 1px solid #888;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: #000;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔥 Agendador de Posts - Ovibeja 2026</h1>
+            <p>Agenda automaticamente todos os 10 posts para as próximas 10 dias</p>
+        </div>
+        
+        <div class="content">
+            <div class="success-message" id="successMessage">
+                ✅ Posts copiados com sucesso! Agora cola no Meta Business Suite.
+            </div>
+            
+            <div class="instructions">
+                <h3>📋 Como Usar:</h3>
+                <ol>
+                    <li>Seleciona os posts que queres agendar</li>
+                    <li>Clica em "Copiar Posts Selecionados"</li>
+                    <li>Abre o Meta Business Suite (https://business.facebook.com)</li>
+                    <li>Cria uma publicação e cola o texto</li>
+                    <li>Define a data e hora indicadas</li>
+                    <li>Clica em "Agendar"</li>
+                </ol>
+            </div>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalPosts">10</div>
+                    <div class="stat-label">Posts Disponíveis</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="selectedPosts">0</div>
+                    <div class="stat-label">Posts Selecionados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">19:00</div>
+                    <div class="stat-label">Horário de Publicação</div>
+                </div>
+            </div>
+            
+            <h2 style="margin-bottom: 20px; color: #333;">📅 Posts Disponíveis</h2>
+            
+            <div class="posts-grid" id="postsGrid"></div>
+            
+            <div class="action-buttons">
+                <button class="btn-primary" onclick="selectAll()">✅ Selecionar Todos</button>
+                <button class="btn-secondary" onclick="deselectAll()">❌ Desselecionar Todos</button>
+                <button class="btn-primary" onclick="copySelectedPosts()">📋 Copiar Posts Selecionados</button>
+                <button class="btn-secondary" onclick="downloadCSV()">📥 Descarregar CSV</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="postModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <p id="modalDate"></p>
+            <div id="modalText"></div>
+            <button class="btn-primary" onclick="copyToClipboard(document.getElementById('modalText').innerText); closeModal();">📋 Copiar</button>
+        </div>
+    </div>
+    
+    <script>
+        const posts = [
+            {
+                day: 1,
+                date: "22 de Abril",
+                time: "19:00",
+                title: "Testimonial - Satisfação",
+                type: "Testimonial",
+                text: `💚 "Adorei! Ficou PERFEITO! Vou oferecer na Ovibeja!" - João
+
+Primeira pessoa a encomendar a peça Ovibeja 2026.
+
+Resultado? Satisfação 100%.
+
+Quer fazer o mesmo?
+
+Apenas 100 peças.
+
+25% desconto se encomendar ESTA SEMANA.
+
+De 60€ para 45€.
+
+Link no bio 👆
+
+#Ovibeja2026 #ClientesSatisfeitos #NinhoDoDragao #Presentes #Personalizados`
+            },
+            {
+                day: 2,
+                date: "23 de Abril",
+                time: "19:00",
+                title: "Educação - Razões",
+                type: "Educação",
+                text: `💡 Porque é que a peça Ovibeja 2026 é ESPECIAL?
+
+1️⃣ Azulejos portugueses = Tradição
+2️⃣ Ilustração Ovibeja = Memória
+3️⃣ Personalização = Único
+
+Resultado? Presente que marca.
+
+Presente que conta história.
+
+Presente que a pessoa nunca esquece.
+
+Apenas 100 peças.
+
+25% desconto se encomendar ESTA SEMANA.
+
+De 60€ para 45€.
+
+Link no bio 👆
+
+#Ovibeja2026 #PortugalArt #NinhoDoDragao #Presentes #Personalizados`
+            },
+            {
+                day: 3,
+                date: "24 de Abril",
+                time: "19:00",
+                title: "Urgência - 3 Dias",
+                type: "Urgência",
+                text: `⏰ 3 DIAS PARA TERMINAR O DESCONTO
+
+Peça Ovibeja 2026
+
+25% desconto se encomendar ATÉ DOMINGO.
+
+De 60€ para 45€.
+
+Depois sobe para 55€.
+
+Apenas 100 peças (já vendidas 15!).
+
+Não deixes para a última hora.
+
+Encomenda AGORA: [link]
+
+#Ovibeja2026 #UltimaHora #NinhoDoDragao #Presentes #Personalizados`
+            },
+            {
+                day: 4,
+                date: "25 de Abril",
+                time: "19:00",
+                title: "Comparação - Nós vs Outros",
+                type: "Comparação",
+                text: `Nós vs. Outros
+
+ELES: Presentes genéricos
+NÓS: Peça Ovibeja 2026 (EXCLUSIVA)
+
+ELES: Sem significado
+NÓS: Com história portuguesa
+
+ELES: Stock ilimitado
+NÓS: Apenas 100 peças
+
+ELES: Sem urgência
+NÓS: 25% desconto ATÉ DOMINGO
+
+ELES: Sem personalização
+NÓS: 100% personalizado
+
+Qual é a diferença?
+
+NÓS CUIDAMOS.
+
+Encomenda a tua peça: [link]
+
+#Ovibeja2026 #Exclusivo #NinhoDoDragao #Presentes #Personalizados`
+            },
+            {
+                day: 5,
+                date: "26 de Abril",
+                time: "19:00",
+                title: "Inspiração - Ideias",
+                type: "Inspiração",
+                text: `🎨 Ideias para a Peça Ovibeja 2026:
+
+1️⃣ Oferecer na Ovibeja
+2️⃣ Guardar como memória
+3️⃣ Presente para amigo/a
+4️⃣ Decoração de casa
+5️⃣ Investimento em arte portuguesa
+
+Qual é a tua ideia?
+
+Encomenda a tua peça: [link]
+
+25% desconto ATÉ DOMINGO.
+
+#Ovibeja2026 #Ideias #NinhoDoDragao #Presentes #Personalizados`
+            },
+            {
+                day: 6,
+                date: "27 de Abril",
+                time: "19:00",
+                title: "Último Dia - Urgência Máxima",
+                type: "Último Dia",
+                text: `🚨 ÚLTIMO DIA: 25% DESCONTO
+
+Peça Ovibeja 2026
+
+De 60€ para 45€.
+
+Depois sobe para 55€.
+
+Apenas 100 peças (já vendidas 25!).
+
+HOJE é o último dia.
+
+Encomenda AGORA: [link]
+
+Não percas! 🔥
+
+#Ovibeja2026 #UltimoDia #NinhoDoDragao #Presentes #Personalizados`
+            },
+            {
+                day: 7,
+                date: "28 de Abril",
+                time: "19:00",
+                title: "Novo Desconto - 15%",
+                type: "Novo Desconto",
+                text: `📢 NOVO DESCONTO: 15%
+
+Peça Ovibeja 2026
+
+De 60€ para 51€.
+
+Apenas 100 peças (já vendidas 30!).
+
+Stock a diminuir.
+
+Encomenda agora: [link]
+
+#Ovibeja2026 #NinhoDoDragao #Presentes #Personalizados`
+            },
+            {
+                day: 8,
+                date: "29 de Abril",
+                time: "19:00",
+                title: "Testimonial 2 - Repetição",
+                type: "Testimonial",
+                text: `💚 "Ficou perfeito! Já encomendei mais uma!" - Maria
+
+Clientes satisfeitos voltam a encomendar.
+
+Apenas 100 peças (já vendidas 35!).
+
+15% desconto enquanto houver stock.
+
+De 60€ para 51€.
+
+Encomenda agora: [link]
+
+#Ovibeja2026 #ClientesSatisfeitos #NinhoDoDragao #Presentes #Personalizados`
+            },
+            {
+                day: 9,
+                date: "30 de Abril",
+                time: "19:00",
+                title: "Behind-the-Scenes - Processo",
+                type: "Behind-the-Scenes",
+                text: `🎨 Vê como criamos a peça Ovibeja 2026:
+
+1. Azulejos portugueses
+2. Ilustração Ovibeja
+3. Personalização
+4. Resultado: ARTE
+
+Apenas 100 peças (já vendidas 40!).
+
+15% desconto enquanto houver stock.
+
+De 60€ para 51€.
+
+Encomenda agora: [link]
+
+#Ovibeja2026 #BehindTheScenes #NinhoDoDragao #Presentes #Personalizados`
+            },
+            {
+                day: 10,
+                date: "01 de Maio",
+                time: "19:00",
+                title: "Stock a Diminuir - Urgência",
+                type: "Urgência Contínua",
+                text: `⏰ STOCK A DIMINUIR
+
+Peça Ovibeja 2026
+
+Apenas 100 peças (já vendidas 45!).
+
+15% desconto enquanto houver stock.
+
+De 60€ para 51€.
+
+Encomenda agora: [link]
+
+#Ovibeja2026 #LimitedStock #NinhoDoDragao #Presentes #Personalizados`
+            }
+        ];
+        
+        function renderPosts() {
+            const grid = document.getElementById('postsGrid');
+            grid.innerHTML = '';
+            
+            posts.forEach((post, index) => {
+                const card = document.createElement('div');
+                card.className = 'post-card';
+                card.innerHTML = `
+                    <div class="post-day">Dia ${post.day} - ${post.date} às ${post.time}</div>
+                    <div class="post-title">${post.title}</div>
+                    <div class="post-preview">${post.text.substring(0, 100)}...</div>
+                    <label>
+                        <input type="checkbox" class="post-checkbox" data-index="${index}" onchange="updateStats()">
+                        Selecionar
+                    </label>
+                `;
+                card.onclick = () => showModal(post);
+                grid.appendChild(card);
+            });
+        }
+        
+        function showModal(post) {
+            document.getElementById('modalTitle').textContent = post.title;
+            document.getElementById('modalDate').textContent = `${post.date} às ${post.time}`;
+            document.getElementById('modalText').textContent = post.text;
+            document.getElementById('postModal').style.display = 'block';
+        }
+        
+        function closeModal() {
+            document.getElementById('postModal').style.display = 'none';
+        }
+        
+        function selectAll() {
+            document.querySelectorAll('.post-checkbox').forEach(cb => cb.checked = true);
+            updateStats();
+        }
+        
+        function deselectAll() {
+            document.querySelectorAll('.post-checkbox').forEach(cb => cb.checked = false);
+            updateStats();
+        }
+        
+        function updateStats() {
+            const selected = document.querySelectorAll('.post-checkbox:checked').length;
+            document.getElementById('selectedPosts').textContent = selected;
+        }
+        
+        function copySelectedPosts() {
+            const selected = [];
+            document.querySelectorAll('.post-checkbox:checked').forEach(cb => {
+                const index = cb.dataset.index;
+                selected.push(posts[index]);
+            });
+            
+            if (selected.length === 0) {
+                alert('Seleciona pelo menos um post!');
+                return;
+            }
+            
+            let text = 'POSTS SELECIONADOS PARA AGENDAR\n\n';
+            selected.forEach(post => {
+                text += `📅 ${post.date} às ${post.time}\n`;
+                text += `📝 ${post.title}\n`;
+                text += `---\n`;
+                text += post.text + '\n\n';
+                text += '='.repeat(50) + '\n\n';
+            });
+            
+            copyToClipboard(text);
+            document.getElementById('successMessage').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('successMessage').style.display = 'none';
+            }, 3000);
+        }
+        
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                console.log('Copiado para clipboard!');
+            });
+        }
+        
+        function downloadCSV() {
+            let csv = 'Data,Hora,Tipo,Título,Texto\n';
+            posts.forEach(post => {
+                const text = post.text.replace(/"/g, '""').replace(/\n/g, ' ');
+                csv += `"${post.date}","${post.time}","${post.type}","${post.title}","${text}"\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'posts_ovibeja_2026.csv';
+            a.click();
+        }
+        
+        // Initialize
+        renderPosts();
+        window.onclick = function(event) {
+            const modal = document.getElementById('postModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
