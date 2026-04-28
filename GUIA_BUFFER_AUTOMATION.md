@@ -12,38 +12,57 @@ Um script Python que **automatiza completamente** o agendamento de todos os 10 p
 
 ### Passo 1: Criar Conta no Buffer (se ainda não tiveres)
 
-1. Vai a https://buffer.com
-2. Clica em "Sign up"
-3. Cria uma conta com email
-4. Conecta o teu Instagram/Facebook
+1. Vai a [https://buffer.com](https://buffer.com)
+
+1. Clica em "Sign up"
+
+1. Cria uma conta com email
+
+1. Conecta o teu Instagram/Facebook
 
 ### Passo 2: Obter o Token de API
 
-1. Vai a https://buffer.com/app/settings/apps
-2. Clica em "Create New App"
-3. Preenche os dados:
-   - **App Name:** Ninho do Dragão Automation
-   - **Description:** Automação de posts Ovibeja
-4. Clica em "Create"
-5. **Copia o token** (algo como: `abc123xyz...`)
+1. Vai a [https://buffer.com/app/settings/apps](https://buffer.com/app/settings/apps)
+
+1. Clica em "Create New App"
+
+1. Preenche os dados:
+  - **App Name:** Ninho do Dragão Automation
+  - **Description:** Automação de posts Ovibeja
+
+1. Clica em "Create"
+
+1. **Copia o token** (algo como: `abc123xyz...` )
 
 ### Passo 3: Obter o ID do Perfil
 
-1. Vai a https://buffer.com/app/dashboard
-2. Clica no teu perfil Instagram/Facebook
-3. Na URL, procura o ID (ex: `profile_id=123456`)
-4. **Copia o ID**
+1. Vai a [https://buffer.com/app/dashboard](https://buffer.com/app/dashboard)
+
+1. Clica no teu perfil Instagram/Facebook
+
+1. Na URL, procura o ID (ex: `profile_id=123456` )
+
+1. **Copia o ID**
 
 ### Passo 4: Configurar Variáveis de Ambiente
 
 **No terminal, executa:**
 
 ```bash
-export BUFFER_API_TOKEN='seu_token_aqui'
+export BUFFER_API_TOKEN=
+```
+
+S-26puQqKck6yGhioTptMEqIxuKIWpQ1lU7iD9gB3TH
+
+
+
+```bash
+
 export BUFFER_PROFILE_ID='seu_profile_id_aqui'
 ```
 
 **Exemplo:**
+
 ```bash
 export BUFFER_API_TOKEN='abc123xyz789'
 export BUFFER_PROFILE_ID='123456789'
@@ -60,6 +79,7 @@ python3 /home/ubuntu/buffer_automation.py
 ```
 
 **Resultado esperado:**
+
 ```
 ============================================================
 🔥 AUTOMATIZADOR DE POSTS - OVIBEJA 2026
@@ -98,10 +118,14 @@ python3 /home/ubuntu/buffer_automation.py --image 'https://tua-imagem.com/ovibej
 ## 📊 O que Acontece?
 
 1. ✅ Script lê o CSV com os 10 posts
-2. ✅ Converte datas de português para ISO
-3. ✅ Envia cada post para o Buffer via API
-4. ✅ Buffer agenda automaticamente
-5. ✅ Posts publicam nos horários definidos
+
+1. ✅ Converte datas de português para ISO
+
+1. ✅ Envia cada post para o Buffer via API
+
+1. ✅ Buffer agenda automaticamente
+
+1. ✅ Posts publicam nos horários definidos
 
 **Tempo total:** ~30 segundos para os 10 posts
 
@@ -110,23 +134,29 @@ python3 /home/ubuntu/buffer_automation.py --image 'https://tua-imagem.com/ovibej
 ## ❌ Troubleshooting
 
 ### Erro: "Token não configurado"
+
 **Solução:** Executa os comandos de configuração de variáveis de ambiente
 
 ### Erro: "Profile ID inválido"
+
 **Solução:** Verifica o ID no dashboard do Buffer
 
 ### Erro: "Ficheiro CSV não encontrado"
+
 **Solução:** Verifica se o ficheiro está em `/home/ubuntu/ninho-do-dragao/OVIBEJA_POSTS_AGENDADOS.csv`
 
 ### Posts não aparecem no Buffer
+
 **Solução:** Aguarda 30 segundos e recarrega o dashboard do Buffer
 
 ---
 
 ## 📝 Ficheiros Necessários
 
-- ✅ `OVIBEJA_POSTS_AGENDADOS.csv` (já criado)
+- ✅ `OVIBEJA_POSTS_AGENDADOS.csv` (já criado )
+
 - ✅ `buffer_automation.py` (script)
+
 - ✅ Imagem Ovibeja (URL pública)
 
 ---
@@ -135,19 +165,19 @@ python3 /home/ubuntu/buffer_automation.py --image 'https://tua-imagem.com/ovibej
 
 Depois de executar o script:
 
-1. Vai a https://buffer.com/app/dashboard
-2. Verás todos os 10 posts agendados
-3. Clica em "Publish" para publicar imediatamente
-4. Ou deixa agendados para as datas definidas
+1. Vai a [https://buffer.com/app/dashboard](https://buffer.com/app/dashboard)
+
+1. Verás todos os 10 posts agendados
+
+1. Clica em "Publish" para publicar imediatamente
+
+1. Ou deixa agendados para as datas definidas
 
 ---
 
 ## 💡 Dicas
 
-✅ **Executa o script uma vez** - Todos os posts são agendados de uma vez
-✅ **Podes modificar o CSV** - Se quiseres mudar textos, edita o ficheiro
-✅ **Podes cancelar posts** - No Buffer, clica em "Delete" para remover
-✅ **Podes reagendar** - No Buffer, clica em "Reschedule" para mudar data/hora
+✅ **Executa o script uma vez** - Todos os posts são agendados de uma vez✅ **Podes modificar o CSV** - Se quiseres mudar textos, edita o ficheiro✅ **Podes cancelar posts** - No Buffer, clica em "Delete" para remover✅ **Podes reagendar** - No Buffer, clica em "Reschedule" para mudar data/hora
 
 ---
 
@@ -156,10 +186,14 @@ Depois de executar o script:
 Se tiveres problemas:
 
 1. Verifica se o token está correto
-2. Verifica se o profile ID está correto
-3. Verifica se o CSV tem dados válidos
-4. Tenta executar novamente
+
+1. Verifica se o profile ID está correto
+
+1. Verifica se o CSV tem dados válidos
+
+1. Tenta executar novamente
 
 ---
 
 **Pronto! Agora tens automação completa! 🚀**
+
