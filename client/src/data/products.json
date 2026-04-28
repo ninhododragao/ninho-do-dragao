@@ -4,265 +4,341 @@
       "id": "TS01",
       "name": "T-shirt Personalizada - 1 Estampa",
       "category": "Têxteis",
-      "price": 19.99,
-      "description": "T-shirt de qualidade premium com 1 estampa personalizada. Disponível em várias cores.",
-      "image": "/produtos-texteis.png"
+      "price": 14.99,
+      "originalPrice": 19.99,
+      "description": "T-shirt de qualidade premium com 1 estampa personalizada. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-texteis.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
     },
     {
       "id": "TS02",
       "name": "T-shirt Personalizada - 2 Estampas",
       "category": "Têxteis",
-      "price": 24.99,
-      "description": "T-shirt de qualidade premium com 2 estampas personalizadas. Frente e costas.",
-      "image": "/produtos-texteis.png"
+      "price": 18.99,
+      "originalPrice": 24.99,
+      "description": "T-shirt de qualidade premium com 2 estampas personalizadas. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-texteis.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
     },
     {
       "id": "SW01",
       "name": "Sweat Personalizada - 1 Estampa",
       "category": "Têxteis",
-      "price": 29.99,
-      "description": "Sweat confortável com 1 estampa personalizada. Perfeita para o dia a dia.",
-      "image": "/produtos-texteis.png"
+      "price": 22.99,
+      "originalPrice": 29.99,
+      "description": "Sweat confortável com 1 estampa personalizada. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-texteis.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
     },
     {
       "id": "SW02",
       "name": "Sweat Personalizada - 2 Estampas",
       "category": "Têxteis",
-      "price": 34.99,
-      "description": "Sweat premium com 2 estampas personalizadas. Frente e costas.",
-      "image": "/produtos-texteis.png"
+      "price": 26.99,
+      "originalPrice": 34.99,
+      "description": "Sweat premium com 2 estampas personalizadas. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-texteis.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
     },
     {
       "id": "HD01",
       "name": "Hoodie Personalizada - 1 Estampa",
       "category": "Têxteis",
-      "price": 34.99,
-      "description": "Hoodie confortável com 1 estampa personalizada. Ideal para o inverno.",
-      "image": "/produtos-texteis.png"
+      "price": 26.99,
+      "originalPrice": 34.99,
+      "description": "Hoodie confortável com 1 estampa personalizada. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-texteis.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
     },
     {
       "id": "HD02",
       "name": "Hoodie Personalizada - 2 Estampas",
       "category": "Têxteis",
-      "price": 39.99,
-      "description": "Hoodie premium com 2 estampas personalizadas. Frente e costas.",
-      "image": "/produtos-texteis.png"
+      "price": 29.99,
+      "originalPrice": 39.99,
+      "description": "Hoodie premium com 2 estampas personalizadas. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-texteis.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
     },
     {
       "id": "CN01",
-      "name": "Caneca Personalizada",
+      "name": "Caneca Personalizada - 1 Lado",
       "category": "Presentes",
-      "price": 12.99,
-      "description": "Caneca de cerâmica com impressão personalizada. Perfeita para café ou chá.",
-      "image": "/produtos-presentes.png"
+      "price": 7.99,
+      "originalPrice": 9.99,
+      "description": "Caneca de cerâmica com 1 lado personalizado. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-presentes.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
     },
     {
-      "id": "CH01",
-      "name": "Chávena de Café Personalizada",
+      "id": "CN02",
+      "name": "Caneca Personalizada - 2 Lados",
       "category": "Presentes",
       "price": 9.99,
-      "description": "Chávena de café com design personalizado. Presente ideal para amigos.",
-      "image": "/produtos-presentes.png"
-    },
-    {
-      "id": "CT01",
-      "name": "Copo Térmico Personalizado",
-      "category": "Presentes",
-      "price": 18.99,
-      "description": "Copo térmico com isolamento duplo e personalização. Mantém bebidas quentes/frias.",
-      "image": "/produtos-presentes.png"
-    },
-    {
-      "id": "GF01",
-      "name": "Garrafa Personalizada",
-      "category": "Presentes",
-      "price": 16.99,
-      "description": "Garrafa reutilizável com personalização. Eco-friendly e prática.",
-      "image": "/produtos-presentes.png"
+      "originalPrice": 12.99,
+      "description": "Caneca de cerâmica com 2 lados personalizados. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-presentes.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
     },
     {
       "id": "AZ01",
-      "name": "Azulejo Personalizado",
+      "name": "Azulejo Personalizado - 10x10cm",
+      "category": "Presentes",
+      "price": 9.99,
+      "originalPrice": 14.99,
+      "description": "Azulejo de porcelana com 1 imagem personalizada. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-presentes.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
+    },
+    {
+      "id": "AZ02",
+      "name": "Azulejo Personalizado - 15x15cm",
       "category": "Presentes",
       "price": 14.99,
-      "description": "Azulejo português com design personalizado. Peça decorativa única.",
-      "image": "/produtos-presentes.png"
+      "originalPrice": 19.99,
+      "description": "Azulejo de porcelana grande com 1 imagem personalizada. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-presentes.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
     },
     {
       "id": "AL01",
-      "name": "Almofada Personalizada",
+      "name": "Almofada Personalizada - 40x40cm",
+      "category": "Presentes",
+      "price": 14.99,
+      "originalPrice": 19.99,
+      "description": "Almofada decorativa com 1 imagem personalizada. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-presentes.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
+    },
+    {
+      "id": "AL02",
+      "name": "Almofada Personalizada - 50x50cm",
       "category": "Presentes",
       "price": 19.99,
-      "description": "Almofada confortável com capa personalizada. Presente perfeito para casa.",
-      "image": "/produtos-presentes.png"
+      "originalPrice": 24.99,
+      "description": "Almofada grande com 1 imagem personalizada. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-presentes.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
     },
     {
-      "id": "MT01",
-      "name": "Manta Personalizada",
+      "id": "MG01",
+      "name": "Mug Personalizado - Branco",
       "category": "Presentes",
-      "price": 29.99,
-      "description": "Manta morna com design personalizado. Ideal para noites aconchego.",
-      "image": "/produtos-presentes.png"
+      "price": 8.99,
+      "originalPrice": 11.99,
+      "description": "Mug de qualidade com 1 imagem personalizada. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-presentes.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
     },
     {
-      "id": "PC01",
-      "name": "Porta-chaves Personalizado",
+      "id": "MG02",
+      "name": "Mug Personalizado - Preto",
       "category": "Presentes",
-      "price": 6.99,
-      "description": "Porta-chaves com personalização. Presente prático e acessível.",
-      "image": "/produtos-presentes.png"
+      "price": 8.99,
+      "originalPrice": 11.99,
+      "description": "Mug preto de qualidade com 1 imagem personalizada. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-presentes.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
     },
     {
-      "id": "IM01",
-      "name": "Íman Personalizado",
+      "id": "PZ01",
+      "name": "Puzzle Personalizado - 500 peças",
       "category": "Presentes",
+      "price": 19.99,
+      "originalPrice": 24.99,
+      "description": "Puzzle com 1 imagem personalizada. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-presentes.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
+    },
+    {
+      "id": "PZ02",
+      "name": "Puzzle Personalizado - 1000 peças",
+      "category": "Presentes",
+      "price": 24.99,
+      "originalPrice": 29.99,
+      "description": "Puzzle grande com 1 imagem personalizada. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-presentes.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
+    },
+    {
+      "id": "BL01",
+      "name": "Bloco de Notas Personalizado - A5",
+      "category": "Papelaria",
       "price": 4.99,
-      "description": "Íman para frigorífico com design personalizado. Presente pequeno mas especial.",
-      "image": "/produtos-presentes.png"
+      "originalPrice": 6.99,
+      "description": "Bloco de notas com capa personalizada. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-papelaria.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
+    },
+    {
+      "id": "BL02",
+      "name": "Bloco de Notas Personalizado - A4",
+      "category": "Papelaria",
+      "price": 7.99,
+      "originalPrice": 9.99,
+      "description": "Bloco de notas grande com capa personalizada. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-papelaria.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
     },
     {
       "id": "CV01",
-      "name": "Convite Digital",
-      "category": "Festas",
-      "price": 15.00,
-      "description": "Convite digital personalizado. Enviado por email ou WhatsApp.",
-      "image": "/produtos-festas.png"
-    },
-    {
-      "id": "CI01",
-      "name": "Convite Impresso",
-      "category": "Festas",
-      "price": 20.00,
-      "description": "Convite impresso em papel de qualidade. Entrega física.",
-      "image": "/produtos-festas.png"
-    },
-    {
-      "id": "TB01",
-      "name": "Topo de Bolo",
-      "category": "Festas",
-      "price": 10.00,
-      "description": "Topo de bolo personalizado. Perfeito para decorar o bolo da festa.",
-      "image": "/produtos-festas.png"
-    },
-    {
-      "id": "TC01",
-      "name": "Toppers Cupcake",
-      "category": "Festas",
-      "price": 12.00,
-      "description": "Toppers para cupcakes personalizados. Conjunto de 12 unidades.",
-      "image": "/produtos-festas.png"
-    },
-    {
-      "id": "BD01",
-      "name": "Bandeirolas Personalizadas",
-      "category": "Festas",
-      "price": 10.00,
-      "description": "Bandeirolas decorativas personalizadas. Ideal para festas e eventos.",
-      "image": "/produtos-festas.png"
-    },
-    {
-      "id": "CL01",
-      "name": "Caixas Lembrança",
-      "category": "Festas",
-      "price": 2.00,
-      "description": "Caixas pequenas para lembrança. Perfeitas para pequenos presentes.",
-      "image": "/produtos-festas.png"
-    },
-    {
-      "id": "SF01",
-      "name": "Saquinhos de Festa",
-      "category": "Festas",
-      "price": 1.80,
-      "description": "Saquinhos decorativos para festa. Embalagem prática e bonita.",
-      "image": "/produtos-festas.png"
-    },
-    {
-      "id": "KE01",
-      "name": "Kit Essencial",
-      "category": "Kits festa",
-      "price": 35.00,
-      "description": "Kit completo com convite, toppers e bandeirolas. Solução all-in-one para festas.",
-      "image": "/produtos-festas.png"
-    },
-    {
-      "id": "KP01",
-      "name": "Kit Plus",
-      "category": "Kits festa",
-      "price": 75.00,
-      "description": "Kit premium com convite, toppers, bandeirolas, caixas e saquinhos. Tudo para a festa perfeita.",
-      "image": "/produtos-festas.png"
-    },
-    {
-      "id": "CA01",
-      "name": "Cartões Personalizados",
+      "name": "Caderno Personalizado - 100 folhas",
       "category": "Papelaria",
-      "price": 2.00,
-      "description": "Cartões de visita ou convites personalizados. Pacote de 100 unidades.",
-      "image": "/produtos-papelaria.png"
+      "price": 9.99,
+      "originalPrice": 12.99,
+      "description": "Caderno com capa personalizada. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-papelaria.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
     },
     {
-      "id": "ML01",
-      "name": "Marcadores de Livro",
-      "category": "Papelaria",
-      "price": 3.50,
-      "description": "Marcadores de livro personalizados. Presente ideal para leitores.",
-      "image": "/produtos-papelaria.png"
-    },
-    {
-      "id": "AU01",
-      "name": "Autocolantes Personalizados",
-      "category": "Papelaria",
-      "price": 4.00,
-      "description": "Autocolantes com design personalizado. Pacote de 50 unidades.",
-      "image": "/produtos-papelaria.png"
-    },
-    {
-      "id": "ET01",
-      "name": "Etiquetas Personalizadas",
-      "category": "Papelaria",
-      "price": 3.00,
-      "description": "Etiquetas adesivas personalizadas. Pacote de 100 unidades.",
-      "image": "/produtos-papelaria.png"
-    },
-    {
-      "id": "CD01",
-      "name": "Caderno Personalizado",
+      "id": "CV02",
+      "name": "Caderno Personalizado - 200 folhas",
       "category": "Papelaria",
       "price": 12.99,
-      "description": "Caderno com capa personalizada. Perfeito para anotações.",
-      "image": "/produtos-papelaria.png"
+      "originalPrice": 16.99,
+      "description": "Caderno grande com capa personalizada. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-papelaria.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
     },
     {
-      "id": "AG01",
-      "name": "Agenda Personalizada",
+      "id": "MR01",
+      "name": "Marcador Personalizado - Simples",
       "category": "Papelaria",
-      "price": 16.99,
-      "description": "Agenda anual com capa personalizada. Presente prático e elegante.",
-      "image": "/produtos-papelaria.png"
+      "price": 2.99,
+      "originalPrice": 3.99,
+      "description": "Marcador de página personalizado. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-papelaria.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
     },
     {
-      "id": "CC01",
-      "name": "Calendário Personalizado",
+      "id": "MR02",
+      "name": "Marcador Personalizado - Luxo",
       "category": "Papelaria",
-      "price": 14.99,
-      "description": "Calendário anual com fotos personalizadas. Presente memorável.",
-      "image": "/produtos-papelaria.png"
+      "price": 4.99,
+      "originalPrice": 6.99,
+      "description": "Marcador de página personalizado premium. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-papelaria.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
     },
     {
-      "id": "TG01",
-      "name": "T-shirt Personalizada para Grupo",
-      "category": "Encomendas de grupo",
-      "price": 23.00,
-      "description": "T-shirt personalizada para grupos. Preço especial a partir de 10 unidades.",
-      "image": "/produtos-texteis.png"
+      "id": "EV01",
+      "name": "Envelope Personalizado - 100 unidades",
+      "category": "Papelaria",
+      "price": 19.99,
+      "originalPrice": 24.99,
+      "description": "Envelopes personalizados com seu design. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-papelaria.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
     },
     {
-      "id": "SG01",
-      "name": "Sweat Personalizada para Grupo",
-      "category": "Encomendas de grupo",
-      "price": 35.00,
-      "description": "Sweat personalizada para grupos. Preço especial a partir de 10 unidades.",
-      "image": "/produtos-texteis.png"
+      "id": "BL03",
+      "name": "Balão Personalizado - Pack 10",
+      "category": "Artigos de Festa",
+      "price": 9.99,
+      "originalPrice": 12.99,
+      "description": "Pack de 10 balões personalizados. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-festas.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
+    },
+    {
+      "id": "BL04",
+      "name": "Balão Personalizado - Pack 25",
+      "category": "Artigos de Festa",
+      "price": 19.99,
+      "originalPrice": 24.99,
+      "description": "Pack de 25 balões personalizados. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-festas.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
+    },
+    {
+      "id": "FB01",
+      "name": "Fita Personalizada - 1 rolo",
+      "category": "Artigos de Festa",
+      "price": 7.99,
+      "originalPrice": 9.99,
+      "description": "Fita decorativa personalizada. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-festas.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
+    },
+    {
+      "id": "FB02",
+      "name": "Fita Personalizada - 3 rolos",
+      "category": "Artigos de Festa",
+      "price": 19.99,
+      "originalPrice": 24.99,
+      "description": "Pack de 3 rolos de fita decorativa personalizada. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-festas.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
+    },
+    {
+      "id": "BN01",
+      "name": "Bandeirola Personalizada - Pack 10",
+      "category": "Artigos de Festa",
+      "price": 12.99,
+      "originalPrice": 16.99,
+      "description": "Pack de 10 bandeirolas personalizadas. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-festas.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
+    },
+    {
+      "id": "BN02",
+      "name": "Bandeirola Personalizada - Pack 25",
+      "category": "Artigos de Festa",
+      "price": 24.99,
+      "originalPrice": 34.99,
+      "description": "Pack de 25 bandeirolas personalizadas. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-festas.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
+    },
+    {
+      "id": "KT01",
+      "name": "Kit Presente - Básico",
+      "category": "Kits Presente",
+      "price": 34.99,
+      "originalPrice": 44.99,
+      "description": "Kit com 3 produtos personalizados. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-presentes.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
+    },
+    {
+      "id": "KT02",
+      "name": "Kit Presente - Premium",
+      "category": "Kits Presente",
+      "price": 59.99,
+      "originalPrice": 79.99,
+      "description": "Kit com 5 produtos personalizados premium. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-presentes.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
+    },
+    {
+      "id": "KT03",
+      "name": "Kit Presente - Deluxe",
+      "category": "Kits Presente",
+      "price": 89.99,
+      "originalPrice": 119.99,
+      "description": "Kit com 8 produtos personalizados deluxe. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-presentes.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
+    },
+    {
+      "id": "GRP01",
+      "name": "Encomenda de Grupo - 10 peças",
+      "category": "Encomendas de Grupo",
+      "price": 99.99,
+      "originalPrice": 129.99,
+      "description": "Encomenda de grupo com 10 peças personalizadas. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-presentes.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
+    },
+    {
+      "id": "GRP02",
+      "name": "Encomenda de Grupo - 25 peças",
+      "category": "Encomendas de Grupo",
+      "price": 199.99,
+      "originalPrice": 269.99,
+      "description": "Encomenda de grupo com 25 peças personalizadas. 🎁 ÚLTIMOS DIAS - Dia da Mãe",
+      "image": "/produtos-presentes.png",
+      "badge": "⏰ ÚLTIMOS DIAS"
     }
   ]
 }
