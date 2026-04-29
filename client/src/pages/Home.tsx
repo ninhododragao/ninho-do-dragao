@@ -164,11 +164,12 @@ function Section({ id, children, bg = "white", pad = true }: { id?: string; chil
 
 /* ─── Products Data ───────────────────────────────────────────── */
 const PRODUCTS = [
-  { icon: "👕", name: "T-shirts personalizadas", desc: "Com vinil ou sublimação. O teu design, a tua mensagem." },
-  { icon: "☕", name: "Canecas", desc: "Personalizadas com foto, nome ou frase especial." },
-  { icon: "🛋️", name: "Almofadas", desc: "Com imagem ou mensagem — perfeitas para presente." },
-  { icon: "🖼️", name: "Azulejos personalizados", desc: "Arte portuguesa com o teu toque pessoal." },
-  { icon: "🎁", name: "Kits presente", desc: "Conjuntos personalizados para surpreender." },
+  { icon: "👕", name: "T-shirts personalizadas", desc: "Com vinil ou sublimação. O teu design, a tua mensagem.", price: "14,99€" },
+  { icon: "☕", name: "Canecas", desc: "Personalizadas com foto, nome ou frase especial.", price: "7,99€" },
+  { icon: "🛋️", name: "Almofadas", desc: "Com imagem ou mensagem — perfeitas para presente.", price: "12,99€" },
+  { icon: "🖼️", name: "Azulejos personalizados", desc: "Arte portuguesa com o teu toque pessoal.", price: "9,99€" },
+  { icon: "🎁", name: "Kits presente", desc: "Conjuntos personalizados para surpreender.", price: "24,99€" },
+  { icon: "🎨", name: "Copos personalizados", desc: "Copos com design único e personalizado.", price: "5,99€" },
 ];
 
 const DIA_MAE_ITEMS = [
@@ -367,9 +368,14 @@ export default function Home() {
                   }}>
                     {p.name}
                   </h3>
-                  <p style={{ fontSize: "14px", color: "#6b7280", lineHeight: 1.5, marginBottom: "16px" }}>
+                  <p style={{ fontSize: "14px", color: "#6b7280", lineHeight: 1.5, marginBottom: "8px" }}>
                     {p.desc}
                   </p>
+                  {p.price && (
+                    <p style={{ fontSize: "16px", fontWeight: 700, color: "#2B4EAF", marginBottom: "16px" }}>
+                      A partir de {p.price}
+                    </p>
+                  )}
                   <a href={WA_MSG(`Olá! Quero saber mais sobre: ${p.name}`)} target="_blank" rel="noopener noreferrer"
                     className="btn-whatsapp"
                     style={{
@@ -396,7 +402,7 @@ export default function Home() {
                 padding: "6px 16px", borderRadius: "20px", fontSize: "13px", fontWeight: 700,
                 fontFamily: "Montserrat, sans-serif", marginBottom: "16px",
               }}>
-                💝 Dia da Mãe — 4 de Maio
+                💝 Dia da Mãe — 3 de Maio
               </span>
               <h2 className="text-responsive-lg" style={{
                 fontFamily: "Montserrat, sans-serif", fontSize: "30px", fontWeight: 800,
