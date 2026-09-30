@@ -2,6 +2,9 @@
   command = "cd client && pnpm install && pnpm build"
   publish = "client/dist"
 
+[functions]
+  directory = "netlify/functions"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

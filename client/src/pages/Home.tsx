@@ -44,6 +44,7 @@ function Navbar() {
   const links = [
     { label: "Produtos", href: "#produtos" },
     { label: "Catálogos", href: "#catalogos" },
+    { label: "Brindes", href: "/brindes" },
     { label: "Contacto", href: "#contacto" },
   ];
 
