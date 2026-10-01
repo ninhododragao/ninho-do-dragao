@@ -83,7 +83,7 @@ export default function Natal() {
           </div>
           <div className="nt-hero-art" aria-hidden="true">
             <div className="nt-bauble b1"><img src={img("ND-NAT-07")} alt="" referrerPolicy="no-referrer" /></div>
-            <div className="nt-bauble b2"><img src={img("ND-NAT-09")} alt="" referrerPolicy="no-referrer" /></div>
+            <div className="nt-bauble b2"><img src={img("ND-NAT-01")} alt="" referrerPolicy="no-referrer" /></div>
             <div className="nt-bauble b3"><img src={img("ND-NAT-06")} alt="" referrerPolicy="no-referrer" /></div>
           </div>
         </div>
@@ -197,7 +197,7 @@ const CSS = `
 .nt-card:hover{box-shadow:0 14px 34px rgba(22,58,44,.12);transform:translateY(-2px)}
 .nt-ph{position:relative;aspect-ratio:1;background:#f1ebde}
 .nt-ph img{width:100%;height:100%;object-fit:cover}
-.nt-tag{position:absolute;left:12px;top:12px;background:var(--berry);color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px}
+.nt-tag{position:absolute;left:12px;bottom:12px;background:var(--berry);color:#fff;font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px}
 .nt-body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:10px;flex:1}
 .nt-card h3{font-family:Fraunces,serif;font-size:20px;line-height:1.2;margin:0;font-weight:700}
 .nt-card p{margin:0;color:var(--muted);font-size:15px}
