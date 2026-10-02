@@ -42,7 +42,6 @@ function Navbar() {
   }, []);
 
   const links = [
-    { label: "🎄 Natal", href: "/natal" },
     { label: "Produtos", href: "#produtos" },
     { label: "Catálogos", href: "#catalogos" },
     { label: "Contacto", href: "#contacto" },
@@ -387,30 +386,7 @@ export default function Home() {
         </section>
 
 
-        {/* ─── 2. NATAL 2026 ───────────────────────────────────── */}
-        <section style={{ padding: "0 24px 24px" }}>
-          <a href="/natal" style={{
-            display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "16px",
-            maxWidth: "1100px", margin: "0 auto", padding: "28px 32px", borderRadius: "20px",
-            background: "linear-gradient(120deg, #163a2c 0%, #1f4d3a 60%, #2a6049 100%)",
-            color: "#fbf6ec", textDecoration: "none", boxShadow: "0 12px 30px rgba(22,58,44,0.25)",
-          }}>
-            <div>
-              <p style={{ margin: 0, fontSize: "12px", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#c9a24a", fontFamily: "Montserrat, sans-serif" }}>
-                ✦ Nova coleção
-              </p>
-              <h2 style={{ margin: "6px 0 4px", fontFamily: "Montserrat, sans-serif", fontSize: "26px", fontWeight: 800, color: "#fbf6ec" }}>
-                🎄 Natal personalizado 2026
-              </h2>
-              <p style={{ margin: 0, fontSize: "15px", color: "#e9e2d2" }}>
-                Enfeites, molduras, calendários do Advento e meias com as vossas fotos. Encomendas até 30 de novembro.
-              </p>
-            </div>
-            <span style={{ background: "#c9a24a", color: "#163a2c", padding: "12px 22px", borderRadius: "999px", fontWeight: 800, fontSize: "14px", fontFamily: "Montserrat, sans-serif", whiteSpace: "nowrap" }}>
-              Ver coleção de Natal →
-            </span>
-          </a>
-        </section>
+        {/* ─── 2. NATAL 2026 — suspenso até haver fotos autorizadas (ver histórico git) */}
 
         {/* ─── 3. PRODUTOS ─────────────────────────────────────── */}
         <Section id="produtos">
