@@ -4,13 +4,17 @@
  * O token NUNCA fica no código (o repositório é público).
  * Configurar no Netlify: Site configuration → Environment variables
  *   CIFRA_TOKEN   (obrigatório)  token da API da Cifra
- *   CIFRA_MARGEM  (opcional)     multiplicador sobre o PVP da Cifra. Ex.: 1.2 = +20%. Por defeito 1.
+ *   CIFRA_MARGEM  (opcional)     margem em % sobre o preço confidencial (custo). Ex.: 100 = dobro do custo. Por defeito 100.
+ *   CIFRA_IVA     (opcional)     IVA em %. Por defeito 23.
+ *
+ * Preço mostrado = preço confidencial × (1 + margem) × (1 + IVA)  — a mesma regra do Excel.
+ * O preço confidencial (custo) NUNCA sai desta função: o site só recebe o preço de venda já calculado.
  *
  * Endpoint público: /.netlify/functions/catalogo-cifra
  * A resposta fica em cache na CDN do Netlify durante 6 horas.
  */
 
-const API = "https://api.cifrashop.com/products";
+const API = "https://api.cifrashop.com/tariff";
 const CATEGORIAS_EXCLUIDAS = ["covid-19", "outlet"];
 
 const num = (v) => {
@@ -42,11 +46,11 @@ const imagens = (p) => {
   return lista;
 };
 
-export function transformar(raw, margem = 1) {
+export function transformar(raw, fator = 1) {
   const grupos = new Map();
 
   for (const p of Array.isArray(raw) ? raw : []) {
-    const preco = num(p.price_pvp);
+    const preco = num(p.confidential_price);
     const nome = texto(p.name);
     const categoria = texto(p.category) || "Outros";
     if (!preco || !nome) continue;
@@ -75,7 +79,7 @@ export function transformar(raw, margem = 1) {
       grupos.set(id, g);
     }
 
-    g.preco = Math.min(g.preco, preco * margem);
+    g.preco = Math.min(g.preco, preco * fator);
     g.stock += stock;
     if (!g.imagem && imgs[0]) g.imagem = imgs[0];
     g.variantes.push({
@@ -87,7 +91,7 @@ export function transformar(raw, margem = 1) {
   }
 
   return [...grupos.values()]
-    .map((g) => ({ ...g, preco: Math.round(g.preco * 1000) / 1000 }))
+    .map((g) => ({ ...g, preco: Math.round(g.preco * 100) / 100 }))
     .sort((a, b) => a.categoriaPrincipal.localeCompare(b.categoriaPrincipal, "pt") || a.nome.localeCompare(b.nome, "pt"));
 }
 
@@ -96,12 +100,14 @@ export default async () => {
   if (!token) {
     return Response.json({ erro: "CIFRA_TOKEN não está configurado no Netlify." }, { status: 500 });
   }
-  const margem = num(process.env.CIFRA_MARGEM) || 1;
+  const margem = process.env.CIFRA_MARGEM ? num(process.env.CIFRA_MARGEM) : 100;
+  const iva = process.env.CIFRA_IVA ? num(process.env.CIFRA_IVA) : 23;
+  const fator = (1 + margem / 100) * (1 + iva / 100);
 
   try {
     const r = await fetch(`${API}/${encodeURIComponent(token)}/pt`, { headers: { Accept: "application/json" } });
     if (!r.ok) throw new Error(`A Cifra respondeu com o estado ${r.status}`);
-    const produtos = transformar(await r.json(), margem);
+    const produtos = transformar(await r.json(), fator);
 
     return Response.json(
       { atualizado: new Date().toISOString(), total: produtos.length, produtos },

@@ -27,7 +27,7 @@ type Produto = {
 };
 
 const euro = (v: number) =>
-  v.toLocaleString("pt-PT", { style: "currency", currency: "EUR", minimumFractionDigits: 2, maximumFractionDigits: v < 1 ? 3 : 2 });
+  v.toLocaleString("pt-PT", { style: "currency", currency: "EUR", minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 const semAcentos = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
@@ -175,7 +175,7 @@ export default function Brindes() {
                       <span style={{ fontSize: "12px", color: "#6b7280" }}>desde </span>
                       <span style={{ fontSize: "18px", fontWeight: 800, color: "#2B4EAF", fontFamily: font }}>{euro(p.preco)}</span>
                       <span style={{ fontSize: "12px", color: "#6b7280" }}>/un.</span>
-                      <div style={{ fontSize: "11px", color: "#9ca3af" }}>preço indicativo, sem personalização</div>
+                      <div style={{ fontSize: "11px", color: "#9ca3af" }}>IVA incluído · sem personalização</div>
                     </div>
                     <a href={pedir(p)} target="_blank" rel="noopener noreferrer" className="btn-whatsapp"
                       style={{ marginTop: "8px", padding: "10px", borderRadius: "8px", fontSize: "13px", textDecoration: "none", textAlign: "center", fontWeight: 600 }}>
@@ -218,7 +218,7 @@ export default function Brindes() {
                 <div>
                   <span style={{ fontSize: "13px", color: "#6b7280" }}>desde </span>
                   <span style={{ fontSize: "22px", fontWeight: 800, color: "#2B4EAF", fontFamily: font }}>{euro(aberto.preco)}</span>
-                  <span style={{ fontSize: "13px", color: "#6b7280" }}>/un. · preço indicativo, sem personalização</span>
+                  <span style={{ fontSize: "13px", color: "#6b7280" }}>/un. · IVA incluído · sem personalização</span>
                 </div>
                 {aberto.descricao && <p style={{ fontSize: "14px", color: "#374151", lineHeight: 1.6, whiteSpace: "pre-line", margin: 0 }}>{aberto.descricao}</p>}
                 <ul style={{ fontSize: "13px", color: "#374151", margin: 0, paddingLeft: "18px", lineHeight: 1.7 }}>
