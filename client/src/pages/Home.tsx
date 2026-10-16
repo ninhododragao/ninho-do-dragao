@@ -164,10 +164,10 @@ function Section({ id, children, bg = "white", pad = true }: { id?: string; chil
 
 /* ─── Products Data ───────────────────────────────────────────── */
 const PRODUCTS = [
-  { icon: "👕", name: "T-shirts personalizadas", desc: "Com vinil ou sublimação. O teu design, a tua mensagem.", price: "14,99€" },
-  { icon: "☕", name: "Canecas", desc: "Personalizadas com foto, nome ou frase especial.", price: "7,99€" },
-  { icon: "🛋️", name: "Almofadas", desc: "Com imagem ou mensagem — perfeitas para presente.", price: "12,99€" },
-  { icon: "🖼️", name: "Azulejos personalizados", desc: "Arte portuguesa com o teu toque pessoal.", price: "9,99€" },
+  { icon: "👕", name: "T-shirts personalizadas", desc: "Com vinil ou sublimação. O teu design, a tua mensagem.", price: "12,90€" },
+  { icon: "☕", name: "Canecas", desc: "Personalizadas com foto, nome ou frase especial.", price: "10,90€" },
+  { icon: "🛋️", name: "Almofadas", desc: "Com imagem ou mensagem — perfeitas para presente.", price: "19,99€" },
+  { icon: "🖼️", name: "Azulejos personalizados", desc: "Arte portuguesa com o teu toque pessoal.", price: "11,90€" },
   { icon: "🎁", name: "Kits presente", desc: "Conjuntos personalizados para surpreender.", price: "24,99€" },
   { icon: "🎨", name: "Copos personalizados", desc: "Copos com design único e personalizado.", price: "5,99€" },
 ];
