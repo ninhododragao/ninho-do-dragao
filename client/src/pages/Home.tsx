@@ -228,8 +228,9 @@ function NewsletterInline() {
 /*                          HOME PAGE                             */
 /* ═══════════════════════════════════════════════════════════════ */
 export default function Home() {
-  const [showOvibejaModal, setShowOvibejaModal] = useState(true);
-  const [showChildrenDayModal, setShowChildrenDayModal] = useState(true);
+  // Avisos antigos (Ovibeja e Dia da Criança, maio/junho 2026) desligados. Mudar para true para voltar a mostrar.
+  const [showOvibejaModal, setShowOvibejaModal] = useState(false);
+  const [showChildrenDayModal, setShowChildrenDayModal] = useState(false);
 
   return (
     <>
@@ -385,6 +386,8 @@ export default function Home() {
           </div>
         </section>
 
+
+        {/* ─── 2. NATAL 2026 — suspenso até haver fotos autorizadas (ver histórico git) */}
 
         {/* ─── 3. PRODUTOS ─────────────────────────────────────── */}
         <Section id="produtos">
