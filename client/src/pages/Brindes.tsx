@@ -238,7 +238,7 @@ export default function Brindes() {
                 {aberto.variantes.length > 1 && (
                   <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                     {aberto.variantes.map(v => (
-                      <a key={v.ref} href={pedir(aberto, v.cor || v.ref)} target="_blank" rel="noopener noreferrer" title={`${v.cor || "Cor " + v.ref}${v.stock === 0 ? " (sem stock)" : ""}`}
+                      <a key={v.ref} href={pedir(aberto, v.cor || v.ref)} target="_blank" rel="noopener noreferrer" title={`${v.cor || "Cor " + v.ref.split("-").pop()}${v.stock === 0 ? " (sem stock)" : ""}`}
                         style={{ width: "52px", height: "52px", border: "1px solid #e5e7eb", borderRadius: "8px", overflow: "hidden", opacity: v.stock !== 0 ? 1 : 0.4, display: "block", backgroundColor: !v.imagem && v.hex ? v.hex : undefined }}>
                         {v.imagem && <img src={v.imagem} alt={v.cor || v.ref} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "contain" }} />}
                       </a>
