@@ -1,6 +1,7 @@
 /*
  * Brindes.tsx — catálogo de brindes e artigos promocionais
- * Os produtos vêm automaticamente do fornecedor (função Netlify catalogo-cifra).
+ * Os produtos vêm da função Netlify catalogo-cifra (stock e preço em tempo real)
+ * e do ficheiro /catalogo/pubeivil.json (têxtil, roupa de trabalho e brindes; sob encomenda).
  * Stock e preços atualizam sozinhos (cache de 6 horas).
  */
 
@@ -10,7 +11,7 @@ const WA = "https://wa.me/351935852703";
 const WA_MSG = (msg: string) => `${WA}?text=${encodeURIComponent(msg)}`;
 const POR_PAGINA = 48;
 
-type Variante = { ref: string; cor: string; imagem: string; stock: number };
+type Variante = { ref: string; cor: string; imagem: string; stock: number; hex?: string };
 type Produto = {
   ref: string;
   nome: string;
@@ -24,6 +25,7 @@ type Produto = {
   material: string;
   gravacao: string;
   variantes: Variante[];
+  tamanhos?: string;
 };
 
 const euro = (v: number) =>
@@ -43,14 +45,19 @@ export default function Brindes() {
   const [aberto, setAberto] = useState<Produto | null>(null);
 
   useEffect(() => {
-    document.title = "Brindes e artigos promocionais personalizados | Ninho do Dragão";
-    fetch("/.netlify/functions/catalogo-cifra")
-      .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
-      .then(d => {
-        setProdutos(d.produtos || []);
-        setEstado("ok");
-      })
-      .catch(() => setEstado("erro"));
+    document.title = "Brindes, têxtil e artigos promocionais personalizados | Ninho do Dragão";
+    const carregar = (url: string) =>
+      fetch(url)
+        .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
+        .then(d => (d.produtos || []) as Produto[])
+        .catch(() => null);
+    Promise.all([carregar("/.netlify/functions/catalogo-cifra"), carregar("/catalogo/pubeivil.json")]).then(([a, b]) => {
+      if (!a && !b) return setEstado("erro");
+      const vistos = new Set<string>();
+      const todos = [...(a || []), ...(b || [])].filter(p => (vistos.has(p.ref) ? false : (vistos.add(p.ref), true)));
+      setProdutos(todos);
+      setEstado("ok");
+    });
   }, []);
 
   const categorias = useMemo(
@@ -62,7 +69,7 @@ export default function Brindes() {
     const q = semAcentos(pesquisa.trim());
     return produtos.filter(p => {
       if (categoria && p.categoriaPrincipal !== categoria) return false;
-      if (soStock && p.stock <= 0) return false;
+      if (soStock && p.stock === 0) return false;
       if (q && !semAcentos(`${p.nome} ${p.ref} ${p.categoria} ${p.material}`).includes(q)) return false;
       return true;
     });
@@ -72,8 +79,8 @@ export default function Brindes() {
 
   const pedir = (p: Produto, cor?: string) =>
     WA_MSG(
-      `Olá! Gostava de pedir orçamento para este brinde personalizado:\n` +
-        `• ${p.nome} (ref. ${p.ref}${cor ? `, cor ${cor}` : ""})\n` +
+      `Olá! Gostava de pedir orçamento para este artigo personalizado:\n` +
+        `• ${p.nome} (ref. ${p.ref}${cor ? `, cor ${cor}` : ""})\n` + (p.tamanhos ? `• Tamanho(s): \n` : "") +
         `• Quantidade: \n• Personalização (logótipo/texto): `
     );
 
@@ -110,7 +117,7 @@ export default function Brindes() {
             Brindes e artigos promocionais
           </h1>
           <p style={{ fontSize: "16px", color: "#6b7280", maxWidth: "620px", margin: "0 auto", lineHeight: 1.6 }}>
-            Canetas, sacos, garrafas, cadernos e muito mais — personalizados com o teu logótipo ou mensagem.
+            T-shirts, polos, roupa de trabalho, canetas, sacos, garrafas e muito mais — personalizados com o teu logótipo ou mensagem.
             Ideal para empresas, eventos, casamentos, batizados e escolas.
           </p>
         </div>
@@ -122,7 +129,7 @@ export default function Brindes() {
               type="search"
               value={pesquisa}
               onChange={e => setPesquisa(e.target.value)}
-              placeholder="Procurar (ex.: caneta, garrafa, saco…)"
+              placeholder="Procurar (ex.: t-shirt, polo, caneta, garrafa…)"
               style={{ flex: "1 1 260px", padding: "12px 16px", borderRadius: "10px", border: "2px solid #e5e7eb", fontSize: "15px", outline: "none" }}
             />
             <label style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "14px", color: "#374151", fontFamily: font, fontWeight: 600, cursor: "pointer" }}>
@@ -225,13 +232,14 @@ export default function Brindes() {
                   {aberto.material && <li>Material: {aberto.material}</li>}
                   {aberto.gravacao && <li>Área de personalização: {aberto.gravacao}</li>}
                   {aberto.multiplos > 1 && <li>Vendido em múltiplos de {aberto.multiplos} unidades</li>}
-                  <li>{aberto.stock > 0 ? `Em stock (${aberto.stock.toLocaleString("pt-PT")} un.)` : "Sob consulta"}</li>
+                  {aberto.tamanhos && <li>Tamanhos: {aberto.tamanhos}</li>}
+                  <li>{aberto.stock > 0 ? `Em stock (${aberto.stock.toLocaleString("pt-PT")} un.)` : aberto.stock < 0 ? "Por encomenda" : "Sob consulta"}</li>
                 </ul>
                 {aberto.variantes.length > 1 && (
                   <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                     {aberto.variantes.map(v => (
-                      <a key={v.ref} href={pedir(aberto, v.cor || v.ref)} target="_blank" rel="noopener noreferrer" title={`${v.cor || v.ref}${v.stock > 0 ? "" : " (sem stock)"}`}
-                        style={{ width: "52px", height: "52px", border: "1px solid #e5e7eb", borderRadius: "8px", overflow: "hidden", opacity: v.stock > 0 ? 1 : 0.4, display: "block" }}>
+                      <a key={v.ref} href={pedir(aberto, v.cor || v.ref)} target="_blank" rel="noopener noreferrer" title={`${v.cor || "Cor " + v.ref}${v.stock === 0 ? " (sem stock)" : ""}`}
+                        style={{ width: "52px", height: "52px", border: "1px solid #e5e7eb", borderRadius: "8px", overflow: "hidden", opacity: v.stock !== 0 ? 1 : 0.4, display: "block", backgroundColor: !v.imagem && v.hex ? v.hex : undefined }}>
                         {v.imagem && <img src={v.imagem} alt={v.cor || v.ref} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "contain" }} />}
                       </a>
                     ))}
