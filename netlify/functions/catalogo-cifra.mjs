@@ -47,6 +47,47 @@ const imagens = (p) => {
 };
 
 // Margem por escalões, sobre o custo já com IVA
+// A Cifra devolve o catálogo em CSV (separador ";", aspas duplas). Converte para objetos.
+export function lerCSV(txt) {
+  const linhas = [];
+  let campo = "", linha = [], aspas = false;
+  const t = txt.replace(/^\uFEFF/, "");
+  for (let i = 0; i < t.length; i++) {
+    const c = t[i];
+    if (aspas) {
+      if (c === '"') {
+        if (t[i + 1] === '"') { campo += '"'; i++; } else aspas = false;
+      } else campo += c;
+    } else if (c === '"') aspas = true;
+    else if (c === ";") { linha.push(campo); campo = ""; }
+    else if (c === "\n" || c === "\r") {
+      if (c === "\r" && t[i + 1] === "\n") i++;
+      linha.push(campo); campo = "";
+      if (linha.length > 1 || linha[0] !== "") linhas.push(linha);
+      linha = [];
+    } else campo += c;
+  }
+  if (campo !== "" || linha.length) { linha.push(campo); linhas.push(linha); }
+  const [cab, ...dados] = linhas;
+  const k = (n) => cab.indexOf(n);
+  const v = (l, n) => (k(n) >= 0 ? l[k(n)] : "");
+  return dados.map((l) => ({
+    model: v(l, "Model"),
+    rootmodel: v(l, "Root model"),
+    name: ((n) => n.charAt(0).toUpperCase() + n.slice(1).toLowerCase())(v(l, "Name").trim()),
+    description: v(l, "Description"),
+    category: v(l, "Subcategory") || v(l, "Category"),
+    parent_category: v(l, "Category"),
+    image: v(l, "Picture"),
+    quantity: v(l, "Stock"),
+    confidential_price: v(l, "Confidential Price"),
+    material: v(l, "Material"),
+    mgrabacion: [v(l, "Printing technique"), v(l, "Printing measurements")].filter((x) => x && x.trim()).join(" · "),
+    color: v(l, "Color"),
+    multiples: v(l, "Multiples"),
+  }));
+}
+
 export const multiplicador = (custoComIva) =>
   custoComIva <= 5 ? 2.5 : custoComIva <= 20 ? 2 : custoComIva <= 50 ? 1.6 : 1.4;
 
@@ -64,6 +105,7 @@ export function transformar(raw, iva = 23) {
     const categoria = texto(p.category) || "Outros";
     if (!preco || !nome) continue;
     if (CATEGORIAS_EXCLUIDAS.includes(categoria.toLowerCase())) continue;
+    if (CATEGORIAS_EXCLUIDAS.includes(texto(p.parent_category).toLowerCase())) continue;
 
     const id = String(p.rootmodel || p.model).trim();
     const stock = num(p.quantity);
@@ -112,9 +154,11 @@ export default async () => {
   const iva = process.env.CIFRA_IVA ? num(process.env.CIFRA_IVA) : 23;
 
   try {
-    const r = await fetch(`${API}/${encodeURIComponent(token)}/pt`, { headers: { Accept: "application/json" } });
+    const r = await fetch(`${API}/${encodeURIComponent(token)}/pt`);
     if (!r.ok) throw new Error(`A Cifra respondeu com o estado ${r.status}`);
-    const produtos = transformar(await r.json(), iva);
+    const txt = await r.text();
+    const raw = /^\s*[\[{]/.test(txt) ? JSON.parse(txt) : lerCSV(txt);
+    const produtos = transformar(raw, iva);
 
     return Response.json(
       { atualizado: new Date().toISOString(), total: produtos.length, produtos },
