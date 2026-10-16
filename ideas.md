@@ -124,3 +124,5 @@ Interações vívidas e responsivas. Feedback visual alegre. Animações que cha
 **Justificativa:** O tema "Ninho do Dragão" com o slogan "Damos forma aos teus momentos" pede uma abordagem que combine autenticidade, personalização e encanto. O design artesanal comunica que cada produto é especial e feito com cuidado. A magia do dragão adiciona uma camada emocional que diferencia a marca no mercado de personalizações genéricas.
 
 **Aplicação:** Ilustrações custom do dragão, texturas naturais, animações suaves que criam sensação de descoberta, e uma paleta que evoca conforto e exclusividade.
+
+<!-- pré-visualização do site (16/10/2026) -->
