@@ -4,10 +4,10 @@
  * O token NUNCA fica no código (o repositório é público).
  * Configurar no Netlify: Site configuration → Environment variables
  *   CIFRA_TOKEN   (obrigatório)  token da API da Cifra
- *   CIFRA_MARGEM  (opcional)     margem em % sobre o preço confidencial (custo). Ex.: 100 = dobro do custo. Por defeito 100.
  *   CIFRA_IVA     (opcional)     IVA em %. Por defeito 23.
  *
- * Preço mostrado = preço confidencial × (1 + margem) × (1 + IVA)  — a mesma regra do Excel.
+ * Preço mostrado = custo com IVA × multiplicador por escalões (igual para todos os fornecedores):
+ *   até 5 € ×2,5 · 5–20 € ×2 · 20–50 € ×1,6 · mais de 50 € ×1,4
  * O preço confidencial (custo) NUNCA sai desta função: o site só recebe o preço de venda já calculado.
  *
  * Endpoint público: /.netlify/functions/catalogo-cifra
@@ -46,7 +46,16 @@ const imagens = (p) => {
   return lista;
 };
 
-export function transformar(raw, fator = 1) {
+// Margem por escalões, sobre o custo já com IVA
+export const multiplicador = (custoComIva) =>
+  custoComIva <= 5 ? 2.5 : custoComIva <= 20 ? 2 : custoComIva <= 50 ? 1.6 : 1.4;
+
+export function transformar(raw, iva = 23) {
+  const venda = (custo) => {
+    const c = custo * (1 + iva / 100);
+    return c * multiplicador(c);
+  };
+
   const grupos = new Map();
 
   for (const p of Array.isArray(raw) ? raw : []) {
@@ -79,7 +88,7 @@ export function transformar(raw, fator = 1) {
       grupos.set(id, g);
     }
 
-    g.preco = Math.min(g.preco, preco * fator);
+    g.preco = Math.min(g.preco, venda(preco));
     g.stock += stock;
     if (!g.imagem && imgs[0]) g.imagem = imgs[0];
     g.variantes.push({
@@ -100,14 +109,12 @@ export default async () => {
   if (!token) {
     return Response.json({ erro: "CIFRA_TOKEN não está configurado no Netlify." }, { status: 500 });
   }
-  const margem = process.env.CIFRA_MARGEM ? num(process.env.CIFRA_MARGEM) : 100;
   const iva = process.env.CIFRA_IVA ? num(process.env.CIFRA_IVA) : 23;
-  const fator = (1 + margem / 100) * (1 + iva / 100);
 
   try {
     const r = await fetch(`${API}/${encodeURIComponent(token)}/pt`, { headers: { Accept: "application/json" } });
     if (!r.ok) throw new Error(`A Cifra respondeu com o estado ${r.status}`);
-    const produtos = transformar(await r.json(), fator);
+    const produtos = transformar(await r.json(), iva);
 
     return Response.json(
       { atualizado: new Date().toISOString(), total: produtos.length, produtos },
