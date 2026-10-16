@@ -125,4 +125,4 @@ Interações vívidas e responsivas. Feedback visual alegre. Animações que cha
 
 **Aplicação:** Ilustrações custom do dragão, texturas naturais, animações suaves que criam sensação de descoberta, e uma paleta que evoca conforto e exclusividade.
 
-<!-- pré-visualização do site (16/10/2026, v3) -->
+<!-- pré-visualização do site (16/10/2026, v4) -->
