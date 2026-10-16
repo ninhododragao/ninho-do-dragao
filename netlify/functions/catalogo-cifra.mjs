@@ -10,6 +10,9 @@
  *   até 5 € ×2,5 · 5–20 € ×2 · 20–50 € ×1,6 · mais de 50 € ×1,4
  * O preço confidencial (custo) NUNCA sai desta função: o site só recebe o preço de venda já calculado.
  *
+ * Referências: o site mostra só códigos do Ninho do Dragão (ND-XXXXXX), nunca a referência da Cifra.
+ * O mesmo código está na folha Produtos_Fornecedores do Sistema de gestão (coluna "Código ND").
+ *
  * Endpoint público: /.netlify/functions/catalogo-cifra
  * A resposta fica em cache na CDN do Netlify durante 6 horas.
  */
@@ -23,16 +26,40 @@ const num = (v) => {
   return Number.isFinite(n) ? n : 0;
 };
 
+// Código ND: sempre o mesmo para cada produto e não revela o fornecedor (igual ao do Excel)
+const ND_LETRAS = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+export function codigoND(chave) {
+  let h = 0x811c9dc5;
+  for (const b of new TextEncoder().encode(chave)) {
+    h ^= b;
+    h = Math.imul(h, 0x01000193) >>> 0;
+  }
+  let s = "";
+  for (let i = 0; i < 6; i++) {
+    s = ND_LETRAS[h % 32] + s;
+    h = Math.floor(h / 32);
+  }
+  return "ND-" + s;
+}
+
+const ACENTOS = { acute: "\u0301", grave: "\u0300", tilde: "\u0303", circ: "\u0302", uml: "\u0308", cedil: "\u0327" };
+const ENTIDADES = { nbsp: " ", amp: "&", quot: '"', apos: "'", lt: "<", gt: ">", ordm: "º", ordf: "ª", deg: "°", euro: "€", laquo: "«", raquo: "»", ndash: "–", mdash: "—", rsquo: "’", lsquo: "‘", ldquo: "“", rdquo: "”", hellip: "…", middot: "·", reg: "®", copy: "©", trade: "™", times: "×", frac12: "½", sup2: "²", sup3: "³" };
+const entidades = (s) =>
+  s
+    .replace(/&([a-zA-Z])(acute|grave|tilde|circ|uml|cedil);/g, (_, l, a) => (l + ACENTOS[a]).normalize("NFC"))
+    .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
+    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
+    .replace(/&([a-z0-9]+);/gi, (m, n) => ENTIDADES[n.toLowerCase()] ?? m);
+
 const texto = (v) =>
-  String(v ?? "")
+  entidades(String(v ?? "")
     .replace(/<br\s*\/?>/gi, "\n")
     .replace(/<\/(p|li|div)>/gi, "\n")
     .replace(/<[^>]*>/g, "")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
     .replace(/[ \t]+/g, " ")
     .replace(/\n\s*\n+/g, "\n")
-    .trim();
+    .trim()
+  );
 
 const imagens = (p) => {
   const lista = [];
@@ -108,13 +135,14 @@ export function transformar(raw, iva = 23) {
     if (CATEGORIAS_EXCLUIDAS.includes(texto(p.parent_category).toLowerCase())) continue;
 
     const id = String(p.rootmodel || p.model).trim();
+    const nd = codigoND("C:" + id);
     const stock = num(p.quantity);
     const imgs = imagens(p);
 
     let g = grupos.get(id);
     if (!g) {
       g = {
-        ref: id,
+        ref: nd,
         nome,
         descricao: texto(p.description),
         categoria,
@@ -134,7 +162,7 @@ export function transformar(raw, iva = 23) {
     g.stock += stock;
     if (!g.imagem && imgs[0]) g.imagem = imgs[0];
     g.variantes.push({
-      ref: String(p.model).trim(),
+      ref: nd + "-" + (String(p.model).trim().slice(id.length).replace(/^[-_.]/, "") || g.variantes.length + 1),
       cor: texto(p.color),
       imagem: imgs[0] || "",
       stock,
