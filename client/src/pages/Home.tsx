@@ -164,12 +164,12 @@ function Section({ id, children, bg = "white", pad = true }: { id?: string; chil
 
 /* ─── Products Data ───────────────────────────────────────────── */
 const PRODUCTS = [
-  { icon: "👕", name: "T-shirts personalizadas", desc: "Com vinil ou sublimação. O teu design, a tua mensagem.", price: "12,90€" },
-  { icon: "☕", name: "Canecas", desc: "Personalizadas com foto, nome ou frase especial.", price: "10,90€" },
-  { icon: "🛋️", name: "Almofadas", desc: "Com imagem ou mensagem — perfeitas para presente.", price: "19,99€" },
-  { icon: "🖼️", name: "Azulejos personalizados", desc: "Arte portuguesa com o teu toque pessoal.", price: "11,90€" },
+  { icon: "👕", img: "/exemplo-tshirt.png", name: "T-shirts personalizadas", desc: "Com vinil ou sublimação. O teu design, a tua mensagem.", price: "12,90€" },
+  { icon: "☕", img: "/exemplo-caneca.png", name: "Canecas", desc: "Personalizadas com foto, nome ou frase especial.", price: "10,90€" },
+  { icon: "🛋️", img: "/exemplo-almofada.png", name: "Almofadas", desc: "Com imagem ou mensagem — perfeitas para presente.", price: "19,99€" },
+  { icon: "🖼️", img: "/exemplo-azulejo.png", name: "Azulejos personalizados", desc: "Arte portuguesa com o teu toque pessoal.", price: "11,90€" },
   { icon: "🎁", name: "Kits presente", desc: "Conjuntos personalizados para surpreender.", price: "24,99€" },
-  { icon: "🎨", name: "Copos personalizados", desc: "Copos com design único e personalizado.", price: "5,99€" },
+  { icon: "🎨", img: "/exemplo-copo.png", name: "Copos personalizados", desc: "Copos com design único e personalizado.", price: "5,99€" },
 ];
 
 const DIA_MAE_ITEMS = [
@@ -412,7 +412,7 @@ export default function Home() {
                 border: "1px solid #f0f0f0",
               }}>
                 <div style={{ width: "100%", height: "180px", backgroundColor: "#f0f0f0", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: "8px", position: "relative" }}>
-                  <img src={`/exemplo-${p.name.toLowerCase().replace(/\s+/g, '-')}.png`} alt={p.name} style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", top: 0, left: 0 }} />
+                  {(p as any).img && <img src={(p as any).img} alt={p.name} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", top: 0, left: 0, zIndex: 2 }} />}
                   <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
                     <span style={{ fontSize: "3rem" }}>{p.icon}</span>
                     <span style={{ fontSize: "12px", fontWeight: 600, fontFamily: "Montserrat, sans-serif", color: "#6b7280", letterSpacing: "0.05em", textTransform: "uppercase" }}>Produto</span>
