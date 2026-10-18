@@ -1,6 +1,7 @@
 /*
  * Brindes.tsx — catálogo de brindes e artigos promocionais
  * Os produtos vêm da função Netlify catalogo-cifra (stock e preço em tempo real)
+ * e catalogo-valento (têxtil Valento: fotos, cores, tamanhos e stock em tempo real),
  * e do ficheiro /catalogo/pubeivil.json (têxtil, roupa de trabalho e brindes; sob encomenda).
  * Stock e preços atualizam sozinhos (cache de 6 horas).
  */
@@ -51,10 +52,14 @@ export default function Brindes() {
         .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
         .then(d => (d.produtos || []) as Produto[])
         .catch(() => null);
-    Promise.all([carregar("/.netlify/functions/catalogo-cifra"), carregar("/catalogo/pubeivil.json")]).then(([a, b]) => {
-      if (!a && !b) return setEstado("erro");
+    Promise.all([
+      carregar("/.netlify/functions/catalogo-cifra"),
+      carregar("/.netlify/functions/catalogo-valento"),
+      carregar("/catalogo/pubeivil.json"),
+    ]).then(listas => {
+      if (listas.every(l => !l)) return setEstado("erro");
       const vistos = new Set<string>();
-      const todos = [...(a || []), ...(b || [])].filter(p => (vistos.has(p.ref) ? false : (vistos.add(p.ref), true)));
+      const todos = listas.flatMap(l => l || []).filter(p => (vistos.has(p.ref) ? false : (vistos.add(p.ref), true)));
       setProdutos(todos);
       setEstado("ok");
     });
