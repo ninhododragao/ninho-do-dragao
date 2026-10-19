@@ -69,6 +69,9 @@ const NATAL_PRESENTES = ["manta", "caneca", "taza", "chavena", "vela", "gorro", 
   "termo", "garrafa termica", "conjunto de vinho", "set de vino", "vinho", "peluche", "moldura", "portafotos", "almofada", "pantufa",
   "chocolate", "caixa de oferta", "caja regalo", "saco de oferta", "bolsa de regalo", "difusor", "aroma", "relogio", "coluna", "auricular", "power bank"];
 
+// Material de venda dos fornecedores (catálogos, tabelas, mostruários…) nunca aparece no site
+const NAO_MOSTRAR = /\b(catalog|tarifa|tabela de precos|lista de precos|folleto|folheto|flyer|expositor|muestrario|mostruario|amostra|sample)/;
+
 const semAcentos = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 const grupoDe = (p: Produto) => {
   // "Marca – Tipo" (alguns fornecedores): a marca/nome do modelo não conta, só o tipo
@@ -168,6 +171,7 @@ export default function Catalogo() {
       const todos = listas
         .flatMap(l => l || [])
         .filter(p => p.imagem && p.preco > 0)
+        .filter(p => !NAO_MOSTRAR.test(semAcentos(`${p.nome} ${p.categoria} ${p.categoriaPrincipal}`)))
         .filter(p => (vistos.has(p.ref) ? false : (vistos.add(p.ref), true)))
         .map(p => ({ ...p, nome: traduzirNome(p.nome) }))
         .map(p => ({ ...p, grupo: grupoDe(p) }));
