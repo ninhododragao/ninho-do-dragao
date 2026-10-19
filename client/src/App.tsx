@@ -1,7 +1,7 @@
 import { Route, Switch } from "wouter";
 import Home from "@/pages/Home";
 import Policies from "@/pages/Policies";
-import Brindes from "@/pages/Brindes";
+import Catalogo from "@/pages/Catalogo";
 // Natal 2026 suspenso até haver fotos autorizadas
 // import Natal from "@/pages/Natal";
 
@@ -9,7 +9,8 @@ function App() {
   return (
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/brindes" component={Brindes} />
+      <Route path="/catalogo" component={Catalogo} />
+      <Route path="/brindes" component={Catalogo} />
       {/* <Route path="/natal" component={Natal} /> */}
       <Route path="/politicas">
         <Policies initialTab="termos" />

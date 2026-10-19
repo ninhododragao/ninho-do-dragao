@@ -43,8 +43,7 @@ function Navbar() {
 
   const links = [
     { label: "Produtos", href: "#produtos" },
-    { label: "Catálogos", href: "#catalogos" },
-    { label: "Brindes", href: "/brindes" },
+    { label: "Catálogo", href: "/catalogo" },
     { label: "Contacto", href: "#contacto" },
   ];
 
@@ -445,6 +444,12 @@ export default function Home() {
                 </div>
               </div>
             ))}
+          </div>
+                  <div style={{ textAlign: "center", marginTop: "36px" }}>
+            <a href="/catalogo" style={{ display: "inline-block", padding: "14px 28px", borderRadius: "10px", backgroundColor: "#2B4EAF", color: "white", fontWeight: 700, fontFamily: "Montserrat, sans-serif", textDecoration: "none", fontSize: "15px" }}>
+              Ver o catálogo completo →
+            </a>
+            <p style={{ fontSize: "13px", color: "#6b7280", marginTop: "10px" }}>Centenas de artigos por categoria: t-shirts, sacos, canecas, canetas, brindes para empresas e eventos…</p>
           </div>
         </Section>
 
