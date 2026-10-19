@@ -95,6 +95,16 @@ const MINIMO_BARATOS = 50; // unidades
 const minimoDe = (p: { preco: number; multiplos?: number }) =>
   Math.max(p.preco <= LIMITE_BARATO ? MINIMO_BARATOS : 1, p.multiplos && p.multiplos > 1 ? p.multiplos : 1);
 
+// Peso estimado por unidade (kg), já a contar com o peso que a transportadora cobra (volume da caixa).
+// Base: 10 t-shirts enviadas = 7 kg. Ajusta aqui se os portes reais forem diferentes.
+const PESO_KG: Record<string, number> = {
+  textil: 0.7, casacos: 1.2, trabalho: 0.9, bones: 0.2, sacos: 0.35, bebidas: 0.5, escrita: 0.04, tecnologia: 0.3,
+  festas: 0.1, casa: 0.6, pequenos: 0.05, crianca: 0.25, lazer: 0.4, pessoal: 0.1, ferramentas: 0.3, outros: 0.25,
+};
+const PESO_EMBALAGEM = 0.3; // kg por encomenda
+const PESO_MAXIMO = 30; // acima disto os portes vão no orçamento
+const pesoDe = (p: Produto) => PESO_KG[p.grupo || "outros"] ?? 0.25;
+
 // Ocasiões / coleções (barra do topo). Para acrescentar uma, junta aqui um id, nome, ícone e regra.
 const OCASIOES: { id: string; nome: string; icone: string; descricao: string; regra: (p: Produto) => boolean }[] = [
   ...(NATAL_ATIVO ? [{ id: "natal", nome: "Natal", icone: "🎄", descricao: "Enfeites, canecas, mantas e presentes com nome ou foto", regra: (p: Produto) => pontosNatal(p) > 0 }] : []),
@@ -124,7 +134,7 @@ const euro = (v: number) =>
 const lerSelecaoDoEndereco = () => new URLSearchParams(window.location.search).get("categoria");
 
 // ── Lista de orçamento (fica guardada neste dispositivo) ──────────────────────
-type ItemOrcamento = { ref: string; nome: string; imagem: string; preco: number; cor: string; tamanho: string; quantidade: number; minimo?: number };
+type ItemOrcamento = { ref: string; nome: string; imagem: string; preco: number; cor: string; tamanho: string; quantidade: number; minimo?: number; peso?: number };
 const CHAVE_ORC = "ninho-orcamento";
 const lerOrcamento = (): ItemOrcamento[] => {
   try { return JSON.parse(localStorage.getItem(CHAVE_ORC) || "[]"); } catch { return []; }
@@ -252,15 +262,38 @@ export default function Catalogo() {
     setOrcamento(o => {
       const i = o.findIndex(x => x.ref === p.ref && x.cor === cor && x.tamanho === tamanho);
       if (i >= 0) return o.map((x, k) => (k === i ? { ...x, quantidade: x.quantidade + quantidade } : x));
-      return [...o, { ref: p.ref, nome: p.nome, imagem: p.imagem, preco: p.preco, cor, tamanho, quantidade, minimo }];
+      return [...o, { ref: p.ref, nome: p.nome, imagem: p.imagem, preco: p.preco, cor, tamanho, quantidade, minimo, peso: pesoDe(p) }];
     });
     setAviso(`«${p.nome}» juntado ao orçamento`);
   };
   const [notas, setNotas] = useState("");
+  // Entrega: levantar em Beja (grátis) ou envio (portes calculados pela AllExpress, estimativa para 1 kg)
+  type Opcao = { transportadora: string; servico: string; entrega: string; preco: number };
+  const [entrega, setEntrega] = useState<"beja" | "envio">("beja");
+  const [cp, setCp] = useState("");
+  const [portes, setPortes] = useState<{ estado: "" | "a-calcular" | "ok" | "erro"; opcoes: Opcao[]; msg?: string }>({ estado: "", opcoes: [] });
+  const [opcao, setOpcao] = useState<Opcao | null>(null);
+  const pesoTotal = Math.ceil((orcamento.reduce((s, i) => s + i.quantidade * (i.peso ?? 0.25), 0) + PESO_EMBALAGEM) * 10) / 10;
+  useEffect(() => { setPortes({ estado: "", opcoes: [] }); setOpcao(null); }, [pesoTotal]);
+  const calcularPortes = () => {
+    const c = cp.trim();
+    if (!/^\d{4}-\d{3}$/.test(c)) { setPortes({ estado: "erro", opcoes: [], msg: "Escreve o código postal no formato 0000-000." }); return; }
+    if (pesoTotal > PESO_MAXIMO) { setPortes({ estado: "erro", opcoes: [], msg: `Encomenda grande (cerca de ${pesoTotal} kg): enviamos os portes no orçamento.` }); return; }
+    setPortes({ estado: "a-calcular", opcoes: [] }); setOpcao(null);
+    fetch(`/.netlify/functions/portes?cp=${encodeURIComponent(c)}&peso=${pesoTotal}`)
+      .then(r => r.json().then(d => ({ ok: r.ok, d })))
+      .then(({ ok, d }) => ok && d.opcoes?.length
+        ? (setPortes({ estado: "ok", opcoes: d.opcoes }), setOpcao(d.opcoes[0]))
+        : setPortes({ estado: "erro", opcoes: [], msg: d.erro || "Não foi possível calcular os portes agora. Indicamos o valor no orçamento." }))
+      .catch(() => setPortes({ estado: "erro", opcoes: [], msg: "Não foi possível calcular os portes agora. Indicamos o valor no orçamento." }));
+  };
   const mensagemOrcamento = () =>
     "Olá! Gostava de pedir orçamento para:\n" +
     orcamento.map(i => `• ${i.quantidade} × ${i.nome} (ref. ${i.ref}${i.cor ? `, cor ${i.cor}` : ""}${i.tamanho ? `, tam. ${i.tamanho}` : ""})`).join("\n") +
-    `\n\nPersonalização / notas: ${notas || ""}`;
+    `\n\nEntrega: ${entrega === "beja"
+      ? "levanto em Beja"
+      : `envio para ${cp || "(código postal)"}${opcao ? ` — ${opcao.transportadora} ${opcao.servico} (${opcao.entrega}), portes estimados ${euro(opcao.preco)} para ~${pesoTotal} kg` : ""}`}` +
+    `\nPersonalização / notas: ${notas || ""}`;
 
   const pedirSo = (p: Produto, cor?: string) =>
     WA_MSG(
@@ -536,6 +569,41 @@ export default function Catalogo() {
             </div>
             {orcamento.length > 0 && (
               <div style={{ padding: "14px 16px", borderTop: "1px solid #e5e7eb", display: "flex", flexDirection: "column", gap: "10px" }}>
+                <div style={{ border: "1px solid #e5e7eb", borderRadius: "10px", padding: "10px 12px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <div style={{ fontFamily: font, fontWeight: 800, fontSize: "13px", color: "#1a1a2e" }}>🚚 Entrega</div>
+                  <label style={{ display: "flex", gap: "8px", alignItems: "center", fontSize: "14px", cursor: "pointer" }}>
+                    <input type="radio" name="entrega" checked={entrega === "beja"} onChange={() => setEntrega("beja")} /> Levantar em Beja <span style={{ color: "#166534", fontWeight: 700 }}>(grátis)</span>
+                  </label>
+                  <label style={{ display: "flex", gap: "8px", alignItems: "center", fontSize: "14px", cursor: "pointer" }}>
+                    <input type="radio" name="entrega" checked={entrega === "envio"} onChange={() => setEntrega("envio")} /> Enviar por transportadora (CTT / DPD)
+                  </label>
+                  {entrega === "envio" && (
+                    <>
+                      <div style={{ fontSize: "12px", color: "#6b7280" }}>Peso estimado da encomenda: <strong>{pesoTotal} kg</strong></div>
+                      <div style={{ display: "flex", gap: "8px" }}>
+                        <input value={cp} onChange={e => setCp(e.target.value)} onKeyDown={e => { if (e.key === "Enter") calcularPortes(); }}
+                          placeholder="Código postal (0000-000)" inputMode="numeric" maxLength={8}
+                          style={{ flex: 1, minWidth: 0, padding: "8px 10px", border: "1px solid #d1d5db", borderRadius: "8px", fontSize: "14px" }} />
+                        <button onClick={calcularPortes} style={{ padding: "8px 12px", borderRadius: "8px", border: "none", background: AZUL, color: "white", fontWeight: 700, cursor: "pointer" }}>
+                          {portes.estado === "a-calcular" ? "…" : "Calcular"}
+                        </button>
+                      </div>
+                      {portes.estado === "erro" && <div style={{ fontSize: "12px", color: "#b91c1c" }}>{portes.msg}</div>}
+                      {portes.estado === "ok" && (
+                        <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                          {portes.opcoes.map((o, k) => (
+                            <label key={k} style={{ display: "flex", gap: "8px", alignItems: "center", fontSize: "13px", cursor: "pointer" }}>
+                              <input type="radio" name="opcao" checked={opcao === o} onChange={() => setOpcao(o)} />
+                              <span style={{ flex: 1 }}>{o.transportadora} · {o.servico} <span style={{ color: "#6b7280" }}>({o.entrega})</span></span>
+                              <strong>{euro(o.preco)}</strong>
+                            </label>
+                          ))}
+                          <div style={{ fontSize: "11px", color: "#9ca3af" }}>Portes estimados para ~{pesoTotal} kg (peso calculado pelos artigos da lista). O valor final vai no orçamento.</div>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
                 <textarea value={notas} onChange={e => setNotas(e.target.value)} rows={3}
                   placeholder="Personalização: nome, frase, logótipo, cores, data de entrega…"
                   style={{ width: "100%", boxSizing: "border-box", padding: "10px", border: "1px solid #d1d5db", borderRadius: "8px", fontSize: "14px", fontFamily: "inherit", resize: "vertical" }} />
