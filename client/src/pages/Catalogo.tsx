@@ -613,6 +613,7 @@ export default function Catalogo() {
                         const atual = escalaoAtual(t);
                         return (
                           <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                            <div style={{ fontFamily: font, fontWeight: 800, fontSize: "12px", color: "#1a1a2e", textTransform: "uppercase", letterSpacing: "0.04em" }}>Tabela de preços dos portes</div>
                             <div style={{ overflowX: "auto" }}>
                               <table style={{ borderCollapse: "collapse", fontSize: "12px", width: "100%" }}>
                                 <thead>
@@ -645,7 +646,7 @@ export default function Catalogo() {
                               </table>
                             </div>
                             {!atual && <div style={{ fontSize: "12px", color: "#b91c1c" }}>Encomenda acima de 30 kg: enviamos os portes no orçamento.</div>}
-                            <div style={{ fontSize: "11px", color: "#9ca3af" }}>Preços da transportadora por escalão de peso. A linha ◀ é a da tua encomenda (~{pesoTotal} kg, estimativa). Toca num preço para escolher.</div>
+                            <div style={{ fontSize: "11px", color: "#9ca3af" }}>Escolhe a transportadora que preferes. Os portes são pagos à parte. A linha ◀ é a do peso estimado da tua encomenda (~{pesoTotal} kg); o escalão final confirma-se no orçamento.</div>
                           </div>
                         );
                       })()}
