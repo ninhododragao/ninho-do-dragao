@@ -648,7 +648,7 @@ export default function Home() {
               <div>
                 <p style={{ fontSize: "11px", fontWeight: 700, color: "white", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "8px" }}>Contacto</p>
                 <p style={{ margin: "4px 0", fontSize: "11px" }}>Telefone: 925 865 347</p>
-                <p style={{ margin: "4px 0", fontSize: "11px" }}>Email: makiwa.arts@gmail.com</p>
+                <p style={{ margin: "4px 0", fontSize: "11px" }}>Email: geral.ninhododragao@outlook.com</p>
                 <p style={{ margin: "4px 0", fontSize: "11px" }}>IVA — Regime de Isenção (CIVA)</p>
               </div>
             </div>

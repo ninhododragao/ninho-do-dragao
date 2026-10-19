@@ -10,7 +10,7 @@ const LEGAL_NAME = "Laila Fernandes Chreim";
 const LEGAL_NIF = "254047750";
 const LEGAL_ADDRESS = "Rua das Parreiras 4, 7800-655 Vila Azedo, Beja";
 const LEGAL_PHONE = "925 865 347";
-const LEGAL_EMAIL = "makiwa.arts@gmail.com";
+const LEGAL_EMAIL = "geral.ninhododragao@outlook.com";
 
 type PolicyTab = "privacidade" | "termos" | "devolucoes" | "garantia" | "ral" | "livro-reclamacoes";
 

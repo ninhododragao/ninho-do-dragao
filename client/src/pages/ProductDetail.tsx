@@ -220,7 +220,7 @@ export default function ProductDetail() {
             <div className="space-y-3">
               <h4 className="font-bold">Contacto</h4>
               <p className="text-blue-100">WhatsApp: Disponível</p>
-              <p className="text-blue-100">Email: contacto@ninhododragao.pt</p>
+              <p className="text-blue-100">Email: geral.ninhododragao@outlook.com</p>
             </div>
             <div className="space-y-3">
               <h4 className="font-bold">Informações</h4>

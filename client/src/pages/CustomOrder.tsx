@@ -343,7 +343,7 @@ export default function CustomOrder() {
             <div className="space-y-2">
               <h4 className="font-bold text-base">Contacto</h4>
               <p className="text-gray-300">Telefone: 925 865 347</p>
-              <p className="text-gray-300">Email: makiwa.arts@gmail.com</p>
+              <p className="text-gray-300">Email: geral.ninhododragao@outlook.com</p>
             </div>
           </div>
           <div className="border-t border-gray-700 pt-6 text-center text-gray-400 text-xs space-y-2">

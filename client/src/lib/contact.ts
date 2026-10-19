@@ -8,7 +8,7 @@ export const WHATSAPP_NUMBER = "351XXXXXXXXX"; // Formato: país + número sem e
 
 export const CONTACT_INFO = {
   whatsapp: WHATSAPP_NUMBER,
-  email: "contacto@ninhododragao.pt",
+  email: "geral.ninhododragao@outlook.com",
   instagram: "https://instagram.com/ninhododragao",
   facebook: "https://facebook.com/ninhododragao",
 };
