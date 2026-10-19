@@ -86,10 +86,16 @@ const ECO = ["rpet", "reciclad", "recycled", "bambu", "bamboo", "cortica", "corc
   "eco", "palha de trigo", "trigo", "semente", "fsc", "canhamo", "cañamo", "algodao reciclado", "papel reciclado", "kraft"];
 const eEco = (p: Produto) => temPalavra(textoDe(p), ECO);
 
+// Artigos baratos só por encomenda mínima (preço no site já é o preço de venda)
+const LIMITE_BARATO = 1; // €
+const MINIMO_BARATOS = 50; // unidades
+const minimoDe = (p: { preco: number; multiplos?: number }) =>
+  Math.max(p.preco <= LIMITE_BARATO ? MINIMO_BARATOS : 1, p.multiplos && p.multiplos > 1 ? p.multiplos : 1);
+
 // Ocasiões / coleções (barra do topo). Para acrescentar uma, junta aqui um id, nome, ícone e regra.
 const OCASIOES: { id: string; nome: string; icone: string; descricao: string; regra: (p: Produto) => boolean }[] = [
   ...(NATAL_ATIVO ? [{ id: "natal", nome: "Natal", icone: "🎄", descricao: "Enfeites, canecas, mantas e presentes com nome ou foto", regra: (p: Produto) => pontosNatal(p) > 0 }] : []),
-  { id: "ate1", nome: "Até 1 €", icone: "💶", descricao: "Lembranças baratas para eventos, escolas e empresas", regra: p => p.preco <= 1 },
+  { id: "ate1", nome: "Até 1 €", icone: "💶", descricao: `Lembranças para eventos, escolas e empresas · mín. ${MINIMO_BARATOS} un.`, regra: p => p.preco <= LIMITE_BARATO },
   { id: "eco", nome: "Ecológicos", icone: "🌱", descricao: "Bambu, cortiça, algodão orgânico e materiais reciclados", regra: eEco },
   { id: "premium", nome: "Premium", icone: "⭐", descricao: "Presentes especiais para clientes e colaboradores", regra: p => p.preco >= 15 },
   { id: "trabalho", nome: "Vestuário de trabalho", icone: "🦺", descricao: "Fardas, polos, aventais e roupa de trabalho", regra: p => p.grupo === "trabalho" },
@@ -115,7 +121,7 @@ const euro = (v: number) =>
 const lerSelecaoDoEndereco = () => new URLSearchParams(window.location.search).get("categoria");
 
 // ── Lista de orçamento (fica guardada neste dispositivo) ──────────────────────
-type ItemOrcamento = { ref: string; nome: string; imagem: string; preco: number; cor: string; tamanho: string; quantidade: number };
+type ItemOrcamento = { ref: string; nome: string; imagem: string; preco: number; cor: string; tamanho: string; quantidade: number; minimo?: number };
 const CHAVE_ORC = "ninho-orcamento";
 const lerOrcamento = (): ItemOrcamento[] => {
   try { return JSON.parse(localStorage.getItem(CHAVE_ORC) || "[]"); } catch { return []; }
@@ -236,11 +242,13 @@ export default function Catalogo() {
 
   // ── orçamento ──
   const totalItens = orcamento.reduce((s, i) => s + 1, 0);
-  const adicionar = (p: Produto, cor = "", tamanho = "", quantidade = 1) => {
+  const adicionar = (p: Produto, cor = "", tamanho = "", quantidade = 0) => {
+    const minimo = minimoDe(p);
+    quantidade = Math.max(quantidade || minimo, minimo);
     setOrcamento(o => {
       const i = o.findIndex(x => x.ref === p.ref && x.cor === cor && x.tamanho === tamanho);
       if (i >= 0) return o.map((x, k) => (k === i ? { ...x, quantidade: x.quantidade + quantidade } : x));
-      return [...o, { ref: p.ref, nome: p.nome, imagem: p.imagem, preco: p.preco, cor, tamanho, quantidade }];
+      return [...o, { ref: p.ref, nome: p.nome, imagem: p.imagem, preco: p.preco, cor, tamanho, quantidade, minimo }];
     });
     setAviso(`«${p.nome}» juntado ao orçamento`);
   };
@@ -253,7 +261,7 @@ export default function Catalogo() {
   const pedirSo = (p: Produto, cor?: string) =>
     WA_MSG(
       `Olá! Gostava de pedir orçamento para:\n• ${p.nome} (ref. ${p.ref}${cor ? `, cor ${cor}` : ""})\n` +
-        (p.tamanhos ? `• Tamanho(s): \n` : "") + `• Quantidade: \n• Personalização (logótipo/texto/foto): `
+        (p.tamanhos ? `• Tamanho(s): \n` : "") + `• Quantidade${minimoDe(p) > 1 ? ` (mín. ${minimoDe(p)})` : ""}: \n• Personalização (logótipo/texto/foto): `
     );
 
   // ── peças de interface ──
@@ -278,7 +286,8 @@ export default function Catalogo() {
         </button>
         <span style={{ fontSize: "11px", color: "#9ca3af" }}>{p.ref}{p.variantes.length > 1 ? ` · ${p.variantes.length} cores` : ""}</span>
         <div style={{ marginTop: "auto", paddingTop: "6px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "6px" }}>
-          <span style={{ fontSize: "12px", color: "#6b7280" }}>desde <strong style={{ fontSize: "16px", color: AZUL, fontFamily: font }}>{euro(p.preco)}</strong></span>
+          <span style={{ fontSize: "12px", color: "#6b7280", lineHeight: 1.2 }}>desde <strong style={{ fontSize: "16px", color: AZUL, fontFamily: font }}>{euro(p.preco)}</strong>
+            {minimoDe(p) > 1 && <span style={{ display: "block", fontSize: "11px", color: "#9ca3af" }}>mín. {minimoDe(p)} un.</span>}</span>
           <button onClick={() => adicionar(p)} title="Juntar ao orçamento"
             style={{ border: `1.5px solid ${AZUL}`, color: AZUL, background: "white", borderRadius: "8px", padding: "5px 8px", fontSize: "12px", fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
             + Orçamento
@@ -441,7 +450,7 @@ export default function Catalogo() {
                   {titulo ? `${titulo.icone} ${titulo.nome}` : `Resultados para «${pesquisa.trim()}»`}
                 </h1>
                 <div style={{ fontSize: "13px", color: "#6b7280", marginTop: "4px" }}>
-                  {lista.length} {lista.length === 1 ? "artigo" : "artigos"}{sel === "natal" ? ` · ${NATAL_PRAZO}` : ""}
+                  {lista.length} {lista.length === 1 ? "artigo" : "artigos"}{sel === "natal" ? ` · ${NATAL_PRAZO}` : ""}{sel === "ate1" ? ` · encomenda mínima de ${MINIMO_BARATOS} unidades por artigo` : ""}
                 </div>
               </div>
               <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
@@ -511,9 +520,10 @@ export default function Catalogo() {
                     <div style={{ fontSize: "12px", color: "#6b7280" }}>{i.ref}{i.cor ? ` · ${i.cor}` : ""}{i.tamanho ? ` · tam. ${i.tamanho}` : ""}</div>
                     <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "6px" }}>
                       <label style={{ fontSize: "12px", color: "#374151" }}>Qtd.</label>
-                      <input type="number" min={1} value={i.quantidade}
-                        onChange={e => { const v = Math.max(1, parseInt(e.target.value) || 1); setOrcamento(o => o.map((x, j) => (j === k ? { ...x, quantidade: v } : x))); }}
+                      <input type="number" min={i.minimo || 1} value={i.quantidade}
+                        onChange={e => { const v = Math.max(i.minimo || 1, parseInt(e.target.value) || 1); setOrcamento(o => o.map((x, j) => (j === k ? { ...x, quantidade: v } : x))); }}
                         style={{ width: "72px", padding: "5px 6px", border: "1px solid #d1d5db", borderRadius: "6px" }} />
+                      {(i.minimo || 1) > 1 && <span style={{ fontSize: "11px", color: "#9ca3af" }}>mín. {i.minimo}</span>}
                       <button onClick={() => setOrcamento(o => o.filter((_, j) => j !== k))} style={{ marginLeft: "auto", border: "none", background: "none", color: "#b91c1c", fontSize: "12px", cursor: "pointer" }}>Remover</button>
                     </div>
                   </div>
@@ -549,7 +559,8 @@ function Detalhe({ p, fechar, adicionar, pedirSo }: {
   const [cor, setCor] = useState(p.variantes.length === 1 ? p.variantes[0].cor : "");
   const [imagem, setImagem] = useState(p.imagem);
   const [tamanho, setTamanho] = useState("");
-  const [qtd, setQtd] = useState(p.multiplos > 1 ? p.multiplos : 1);
+  const minimo = minimoDe(p);
+  const [qtd, setQtd] = useState(minimo);
   const tamanhos = (p.tamanhos || "").split(/[,;]\s*/).filter(Boolean);
   return (
     <div onClick={fechar} style={{ position: "fixed", inset: 0, backgroundColor: "rgba(17,24,39,0.6)", zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
@@ -583,7 +594,7 @@ function Detalhe({ p, fechar, adicionar, pedirSo }: {
             <ul style={{ fontSize: "13px", color: "#374151", margin: 0, paddingLeft: "18px", lineHeight: 1.7 }}>
               {p.material && <li>Material: {p.material}</li>}
               {p.gravacao && <li>Área de personalização: {p.gravacao}</li>}
-              {p.multiplos > 1 && <li>Vendido em múltiplos de {p.multiplos} unidades</li>}
+              {minimo > 1 && <li><strong>Encomenda mínima: {minimo} unidades</strong></li>}
               <li>{p.stock > 0 ? "Em stock" : p.stock < 0 ? "Por encomenda" : "Sob consulta"}</li>
             </ul>
             {p.variantes.length > 1 && <div style={{ fontSize: "13px", color: "#374151" }}>Cor: <strong>{cor || "escolhe na foto"}</strong></div>}
@@ -598,10 +609,10 @@ function Detalhe({ p, fechar, adicionar, pedirSo }: {
             )}
             <label style={{ fontSize: "13px", color: "#374151", display: "flex", gap: "8px", alignItems: "center" }}>
               Quantidade:
-              <input type="number" min={1} value={qtd} onChange={e => setQtd(Math.max(1, parseInt(e.target.value) || 1))}
+              <input type="number" min={minimo} value={qtd} onChange={e => setQtd(parseInt(e.target.value) || minimo)} onBlur={() => setQtd(q => Math.max(minimo, q))}
                 style={{ width: "90px", padding: "6px 8px", borderRadius: "8px", border: "1px solid #d1d5db" }} />
             </label>
-            <button onClick={() => { adicionar(p, cor, tamanho, qtd); fechar(); }}
+            <button onClick={() => { adicionar(p, cor, tamanho, Math.max(minimo, qtd)); fechar(); }}
               style={{ padding: "13px", borderRadius: "10px", background: AZUL, color: "white", border: "none", fontWeight: 700, fontSize: "15px", fontFamily: font, cursor: "pointer", marginTop: "4px" }}>
               + Juntar ao orçamento
             </button>
