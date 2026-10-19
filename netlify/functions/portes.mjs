@@ -1,5 +1,5 @@
 /**
- * Portes de envio (AllExpress → CTT / DPD) para a lista de orçamento do site.
+ * Portes de envio (AllExpress — todas as transportadoras que a AllExpress devolver) para a lista de orçamento do site.
  *
  *   GET /.netlify/functions/portes?cp=1000-001
  *

@@ -568,7 +568,7 @@ export default function Catalogo() {
                     <input type="radio" name="entrega" checked={entrega === "beja"} onChange={() => setEntrega("beja")} /> Levantar em Beja <span style={{ color: "#166534", fontWeight: 700 }}>(grátis)</span>
                   </label>
                   <label style={{ display: "flex", gap: "8px", alignItems: "center", fontSize: "14px", cursor: "pointer" }}>
-                    <input type="radio" name="entrega" checked={entrega === "envio"} onChange={() => setEntrega("envio")} /> Enviar por transportadora (CTT / DPD)
+                    <input type="radio" name="entrega" checked={entrega === "envio"} onChange={() => setEntrega("envio")} /> Enviar por transportadora
                   </label>
                   {entrega === "envio" && (
                     <>
