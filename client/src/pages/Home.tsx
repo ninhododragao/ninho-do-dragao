@@ -387,6 +387,16 @@ export default function Home() {
 
 
         {/* ─── 2. NATAL 2026 — suspenso até haver fotos autorizadas (ver histórico git) */}
+        {/* Destaque de Natal (sem fotos de fornecedores): leva para a categoria Natal do catálogo */}
+        <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 20px" }}>
+          <a href="/catalogo?categoria=natal" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap", textDecoration: "none", color: "white", background: "linear-gradient(135deg, #14532d, #166534 55%, #991b1b)", borderRadius: "16px", padding: "22px 24px", margin: "8px 0 0" }}>
+            <div>
+              <div style={{ fontFamily: "Montserrat, sans-serif", fontSize: "22px", fontWeight: 800 }}>🎄 Natal personalizado</div>
+              <div style={{ fontSize: "14px", opacity: 0.92, marginTop: "4px" }}>Canecas, mantas, enfeites e presentes com nome ou foto · Encomendas até 30 de novembro</div>
+            </div>
+            <span style={{ background: "white", color: "#14532d", borderRadius: "999px", padding: "10px 18px", fontWeight: 700, fontFamily: "Montserrat, sans-serif", fontSize: "14px", whiteSpace: "nowrap" }}>Ver ideias de Natal →</span>
+          </a>
+        </div>
 
         {/* ─── 3. PRODUTOS ─────────────────────────────────────── */}
         <Section id="produtos">

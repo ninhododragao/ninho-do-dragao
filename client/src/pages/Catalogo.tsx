@@ -13,6 +13,7 @@
  */
 
 import { useEffect, useMemo, useState } from "react";
+import { traduzirNome } from "@/lib/traducao";
 
 const WA = "https://wa.me/351935852703";
 const WA_MSG = (msg: string) => `${WA}?text=${encodeURIComponent(msg)}`;
@@ -58,6 +59,15 @@ const GRUPOS: { id: string; nome: string; icone: string; palavras: string[] }[] 
   { id: "outros", nome: "Outros brindes", icone: "🎁", palavras: [] },
 ];
 
+// 🎄 Destaque de Natal: artigos de Natal primeiro, depois boas ideias de presente.
+// Para mudar a seleção, edita estas duas listas (ou NATAL_ATIVO para desligar o destaque depois do Natal).
+const NATAL_ATIVO = true;
+const NATAL_PRAZO = "Encomendas para o Natal até 30 de novembro";
+const NATAL_TEMA = ["natal", "navid", "noel", "christmas", "xmas", "arvore", "advento", "rena", "presepio", "bola de natal"];
+const NATAL_PRESENTES = ["manta", "caneca", "taza", "chavena", "vela", "gorro", "meia", "calcetin", "luvas", "guantes", "cachecol", "bufanda",
+  "termo", "garrafa termica", "conjunto de vinho", "set de vino", "vinho", "peluche", "moldura", "portafotos", "almofada", "pantufa",
+  "chocolate", "caixa de oferta", "caja regalo", "saco de oferta", "bolsa de regalo", "difusor", "aroma", "relogio", "coluna", "auricular", "power bank"];
+
 const semAcentos = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 const grupoDe = (p: Produto) => {
   // "Marca – Tipo" (alguns fornecedores): a marca/nome do modelo não conta, só o tipo
@@ -66,6 +76,11 @@ const grupoDe = (p: Produto) => {
   // cada palavra tem de começar uma palavra do texto (ex.: "desport" apanha "desportivo", mas "bone" não apanha "boney")
   return (GRUPOS.find(g => g.palavras.some(w => t.includes(" " + semAcentos(w).trim().replace(/[^a-z0-9-]+/g, " ")))) || GRUPOS[GRUPOS.length - 1]).id;
 };
+
+const textoDe = (p: Produto) => " " + semAcentos(`${p.nome} ${p.categoria}`).replace(/[^a-z0-9-]+/g, " ") + " ";
+const temPalavra = (t: string, ws: string[]) => ws.some(w => t.includes(" " + semAcentos(w)));
+// 2 = artigo de Natal, 1 = boa ideia de presente, 0 = não entra
+const pontosNatal = (p: Produto) => (temPalavra(textoDe(p), NATAL_TEMA) ? 2 : temPalavra(textoDe(p), NATAL_PRESENTES) ? 1 : 0);
 
 const euro = (v: number) =>
   v.toLocaleString("pt-PT", { style: "currency", currency: "EUR", minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -99,6 +114,7 @@ export default function Catalogo() {
         .flatMap(l => l || [])
         .filter(p => p.imagem && p.preco > 0)
         .filter(p => (vistos.has(p.ref) ? false : (vistos.add(p.ref), true)))
+        .map(p => ({ ...p, nome: traduzirNome(p.nome) }))
         .map(p => ({ ...p, grupo: grupoDe(p) }));
       setProdutos(todos);
       setEstado("ok");
@@ -129,20 +145,40 @@ export default function Catalogo() {
     }).filter(g => g.total > 0);
   }, [produtos]);
 
+  const natal = useMemo(
+    () =>
+      !NATAL_ATIVO
+        ? []
+        : produtos
+            .map(p => ({ p, n: pontosNatal(p) }))
+            .filter(x => x.n > 0)
+            .sort((a, b) => b.n - a.n || Number(b.p.stock !== 0) - Number(a.p.stock !== 0))
+            .map(x => x.p),
+    [produtos]
+  );
+  const natalRefs = useMemo(() => new Set(natal.map(p => p.ref)), [natal]);
+
   const q = semAcentos(pesquisa.trim());
   const filtrados = useMemo(
     () =>
       produtos.filter(p => {
-        if (grupo && p.grupo !== grupo) return false;
+        if (grupo === "natal") { if (!natalRefs.has(p.ref)) return false; }
+        else if (grupo && p.grupo !== grupo) return false;
         if (!grupo && !q) return false; // na página inicial do catálogo só mostramos produtos se houver pesquisa
         if (soStock && p.stock === 0) return false;
         if (q && !semAcentos(`${p.nome} ${p.ref} ${p.categoria} ${p.material}`).includes(q)) return false;
         return true;
       }),
-    [produtos, grupo, q, soStock]
+    [produtos, grupo, q, soStock, natalRefs]
+  );
+  // na categoria Natal mantém a ordem do destaque (artigos de Natal primeiro)
+  const ordenados = useMemo(
+    () => (grupo === "natal" ? [...filtrados].sort((a, b) => natal.indexOf(a) - natal.indexOf(b)) : filtrados),
+    [filtrados, grupo, natal]
   );
 
-  const grupoAtual = GRUPOS.find(g => g.id === grupo);
+  const GRUPO_NATAL = { id: "natal", nome: "Ideias para o Natal", icone: "🎄", palavras: [] as string[] };
+  const grupoAtual = grupo === "natal" ? GRUPO_NATAL : GRUPOS.find(g => g.id === grupo);
 
   const pedir = (p: Produto, cor?: string) =>
     WA_MSG(
@@ -218,6 +254,34 @@ export default function Catalogo() {
           </div>
         )}
 
+        {/* 🎄 Destaque de Natal (só na página das categorias) */}
+        {estado === "ok" && !grupo && !q && natal.length > 0 && (
+          <section style={{ background: "linear-gradient(135deg, #14532d, #166534 55%, #991b1b)", borderRadius: "16px", padding: "20px 16px", marginBottom: "28px", color: "white" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: "12px", flexWrap: "wrap", marginBottom: "14px" }}>
+              <div>
+                <h2 style={{ fontFamily: font, fontSize: "22px", fontWeight: 800, margin: 0 }}>🎄 Ideias para o Natal</h2>
+                <p style={{ margin: "4px 0 0", fontSize: "14px", opacity: 0.9 }}>Presentes personalizados com nome, foto ou logótipo · {NATAL_PRAZO}</p>
+              </div>
+              <button onClick={() => irPara("natal")}
+                style={{ background: "white", color: "#14532d", border: "none", borderRadius: "999px", padding: "10px 18px", fontWeight: 700, fontFamily: font, cursor: "pointer", whiteSpace: "nowrap" }}>
+                Ver todas as ideias ({natal.length}) →
+              </button>
+            </div>
+            <div style={{ display: "flex", gap: "12px", overflowX: "auto", paddingBottom: "6px", scrollSnapType: "x mandatory" }}>
+              {natal.slice(0, 12).map(p => (
+                <button key={p.ref} onClick={() => setAberto(p)}
+                  style={{ flex: "0 0 150px", scrollSnapAlign: "start", background: "white", border: "none", borderRadius: "12px", padding: 0, overflow: "hidden", cursor: "pointer", textAlign: "left" }}>
+                  <div style={{ aspectRatio: "1 / 1" }}><img src={p.imagem} alt={p.nome} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "contain" }} /></div>
+                  <div style={{ padding: "8px 10px" }}>
+                    <div style={{ fontSize: "13px", fontWeight: 700, color: "#1a1a2e", fontFamily: font, lineHeight: 1.3, height: "34px", overflow: "hidden" }}>{p.nome}</div>
+                    <div style={{ fontSize: "12px", color: "#6b7280", marginTop: "4px" }}>desde <strong style={{ color: "#991b1b" }}>{euro(p.preco)}</strong></div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* 1) Categorias */}
         {estado === "ok" && !grupo && !q && (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 170px), 1fr))", gap: "16px" }}>
@@ -245,7 +309,7 @@ export default function Catalogo() {
             </p>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 160px), 1fr))", gap: "16px" }}>
-              {filtrados.slice(0, limite).map(p => (
+              {ordenados.slice(0, limite).map(p => (
                 <button key={p.ref} onClick={() => setAberto(p)}
                   style={{ backgroundColor: "white", borderRadius: "12px", border: "1px solid #e5e7eb", overflow: "hidden", display: "flex", flexDirection: "column", padding: 0, cursor: "pointer", textAlign: "left" }}>
                   <div style={{ aspectRatio: "1 / 1", width: "100%", background: "white" }}>
