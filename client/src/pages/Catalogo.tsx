@@ -95,16 +95,6 @@ const MINIMO_BARATOS = 50; // unidades
 const minimoDe = (p: { preco: number; multiplos?: number }) =>
   Math.max(p.preco <= LIMITE_BARATO ? MINIMO_BARATOS : 1, p.multiplos && p.multiplos > 1 ? p.multiplos : 1);
 
-// Peso estimado por unidade (kg), já a contar com o peso que a transportadora cobra (volume da caixa).
-// Base: 10 t-shirts enviadas = 7 kg. Ajusta aqui se os portes reais forem diferentes.
-const PESO_KG: Record<string, number> = {
-  textil: 0.7, casacos: 1.2, trabalho: 0.9, bones: 0.2, sacos: 0.35, bebidas: 0.5, escrita: 0.04, tecnologia: 0.3,
-  festas: 0.1, casa: 0.6, pequenos: 0.05, crianca: 0.25, lazer: 0.4, pessoal: 0.1, ferramentas: 0.3, outros: 0.25,
-};
-const PESO_EMBALAGEM = 0.3; // kg por encomenda
-const PESO_MAXIMO = 30; // acima disto os portes vão no orçamento
-const pesoDe = (p: Produto) => PESO_KG[p.grupo || "outros"] ?? 0.25;
-
 // Ocasiões / coleções (barra do topo). Para acrescentar uma, junta aqui um id, nome, ícone e regra.
 const OCASIOES: { id: string; nome: string; icone: string; descricao: string; regra: (p: Produto) => boolean }[] = [
   ...(NATAL_ATIVO ? [{ id: "natal", nome: "Natal", icone: "🎄", descricao: "Enfeites, canecas, mantas e presentes com nome ou foto", regra: (p: Produto) => pontosNatal(p) > 0 }] : []),
@@ -134,7 +124,7 @@ const euro = (v: number) =>
 const lerSelecaoDoEndereco = () => new URLSearchParams(window.location.search).get("categoria");
 
 // ── Lista de orçamento (fica guardada neste dispositivo) ──────────────────────
-type ItemOrcamento = { ref: string; nome: string; imagem: string; preco: number; cor: string; tamanho: string; quantidade: number; minimo?: number; peso?: number };
+type ItemOrcamento = { ref: string; nome: string; imagem: string; preco: number; cor: string; tamanho: string; quantidade: number; minimo?: number };
 const CHAVE_ORC = "ninho-orcamento";
 const lerOrcamento = (): ItemOrcamento[] => {
   try { return JSON.parse(localStorage.getItem(CHAVE_ORC) || "[]"); } catch { return []; }
@@ -262,31 +252,18 @@ export default function Catalogo() {
     setOrcamento(o => {
       const i = o.findIndex(x => x.ref === p.ref && x.cor === cor && x.tamanho === tamanho);
       if (i >= 0) return o.map((x, k) => (k === i ? { ...x, quantidade: x.quantidade + quantidade } : x));
-      return [...o, { ref: p.ref, nome: p.nome, imagem: p.imagem, preco: p.preco, cor, tamanho, quantidade, minimo, peso: pesoDe(p) }];
+      return [...o, { ref: p.ref, nome: p.nome, imagem: p.imagem, preco: p.preco, cor, tamanho, quantidade, minimo }];
     });
     setAviso(`«${p.nome}» juntado ao orçamento`);
   };
   const [notas, setNotas] = useState("");
   // Entrega: levantar em Beja (grátis) ou envio (portes calculados pela AllExpress, estimativa para 1 kg)
-  type Opcao = { coluna: string; peso: number; preco: number };
+  type Opcao = { coluna: string };
   type Tabela = { colunas: string[]; escaloes: { peso: number; precos: Record<string, number | null> }[] };
   const [entrega, setEntrega] = useState<"beja" | "envio">("beja");
   const [cp, setCp] = useState("");
   const [portes, setPortes] = useState<{ estado: "" | "a-calcular" | "ok" | "erro"; tabela?: Tabela; msg?: string }>({ estado: "" });
   const [opcao, setOpcao] = useState<Opcao | null>(null);
-  const pesoTotal = Math.ceil((orcamento.reduce((s, i) => s + i.quantidade * (i.peso ?? 0.25), 0) + PESO_EMBALAGEM) * 10) / 10;
-  // escalão que corresponde ao peso estimado da lista
-  const escalaoAtual = (t?: Tabela) => t?.escaloes.find(e => e.peso >= pesoTotal) || null;
-  useEffect(() => {
-    // quando a lista muda, a opção escolhida passa para o escalão certo
-    setOpcao(o => {
-      const e = escalaoAtual(portes.tabela);
-      if (!o || !e) return null;
-      const preco = e.precos[o.coluna];
-      return preco != null ? { coluna: o.coluna, peso: e.peso, preco } : null;
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pesoTotal]);
   const calcularPortes = () => {
     const c = cp.trim();
     if (!/^\d{4}-\d{3}$/.test(c)) { setPortes({ estado: "erro", msg: "Escreve o código postal no formato 0000-000." }); return; }
@@ -300,9 +277,6 @@ export default function Catalogo() {
         }
         const t: Tabela = { colunas: d.colunas, escaloes: d.escaloes };
         setPortes({ estado: "ok", tabela: t });
-        const e = t.escaloes.find(x => x.peso >= pesoTotal);
-        const col = e && t.colunas.find(k => e.precos[k] != null);
-        if (e && col) setOpcao({ coluna: col, peso: e.peso, preco: e.precos[col] as number });
       })
       .catch(() => setPortes({ estado: "erro", msg: "Não foi possível calcular os portes agora. Indicamos o valor no orçamento." }));
   };
@@ -311,7 +285,7 @@ export default function Catalogo() {
     orcamento.map(i => `• ${i.quantidade} × ${i.nome} (ref. ${i.ref}${i.cor ? `, cor ${i.cor}` : ""}${i.tamanho ? `, tam. ${i.tamanho}` : ""})`).join("\n") +
     `\n\nEntrega: ${entrega === "beja"
       ? "levanto em Beja"
-      : `envio para ${cp || "(código postal)"}${opcao ? ` — ${opcao.coluna}, escalão até ${opcao.peso} kg: ${euro(opcao.preco)} (peso estimado ~${pesoTotal} kg)` : ""}`}` +
+      : `envio para ${cp || "(código postal)"}${opcao ? ` — prefiro ${opcao.coluna}` : ""}`}` +
     `\nPersonalização / notas: ${notas || ""}`;
 
   const pedirSo = (p: Produto, cor?: string) =>
@@ -598,7 +572,6 @@ export default function Catalogo() {
                   </label>
                   {entrega === "envio" && (
                     <>
-                      <div style={{ fontSize: "12px", color: "#6b7280" }}>Peso estimado da encomenda: <strong>{pesoTotal} kg</strong></div>
                       <div style={{ display: "flex", gap: "8px" }}>
                         <input value={cp} onChange={e => setCp(e.target.value)} onKeyDown={e => { if (e.key === "Enter") calcularPortes(); }}
                           placeholder="Código postal (0000-000)" inputMode="numeric" maxLength={8}
@@ -610,7 +583,6 @@ export default function Catalogo() {
                       {portes.estado === "erro" && <div style={{ fontSize: "12px", color: "#b91c1c" }}>{portes.msg}</div>}
                       {portes.estado === "ok" && portes.tabela && (() => {
                         const t = portes.tabela;
-                        const atual = escalaoAtual(t);
                         return (
                           <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                             <div style={{ fontFamily: font, fontWeight: 800, fontSize: "12px", color: "#1a1a2e", textTransform: "uppercase", letterSpacing: "0.04em" }}>Tabela de preços dos portes</div>
@@ -619,34 +591,30 @@ export default function Catalogo() {
                                 <thead>
                                   <tr>
                                     <th style={{ textAlign: "left", padding: "4px 6px", borderBottom: "1px solid #e5e7eb", whiteSpace: "nowrap" }}>Peso</th>
-                                    {t.colunas.map(c => <th key={c} style={{ textAlign: "right", padding: "4px 6px", borderBottom: "1px solid #e5e7eb", fontWeight: 700 }}>{c}</th>)}
+                                    {t.colunas.map(c => (
+                                      <th key={c} style={{ textAlign: "right", padding: "4px 6px", borderBottom: "1px solid #e5e7eb", fontWeight: 700, background: opcao?.coluna === c ? "#eef2ff" : undefined }}>
+                                        <label style={{ cursor: "pointer", display: "flex", gap: "4px", alignItems: "flex-start", justifyContent: "flex-end" }}>
+                                          <input type="radio" name="transportadora" checked={opcao?.coluna === c} onChange={() => setOpcao({ coluna: c })} style={{ marginTop: "2px" }} />{c}
+                                        </label>
+                                      </th>
+                                    ))}
                                   </tr>
                                 </thead>
                                 <tbody>
                                   {t.escaloes.map(e => (
-                                    <tr key={e.peso} style={{ background: atual?.peso === e.peso ? "#eef2ff" : undefined }}>
-                                      <td style={{ padding: "4px 6px", whiteSpace: "nowrap", fontWeight: atual?.peso === e.peso ? 800 : 500 }}>até {e.peso} kg{atual?.peso === e.peso ? " ◀" : ""}</td>
-                                      {t.colunas.map(c => {
-                                        const v = e.precos[c];
-                                        const sel = opcao?.coluna === c && opcao?.peso === e.peso;
-                                        return (
-                                          <td key={c} style={{ padding: "2px 4px", textAlign: "right" }}>
-                                            {v == null ? <span style={{ color: "#d1d5db" }}>—</span> : (
-                                              <button onClick={() => setOpcao({ coluna: c, peso: e.peso, preco: v })}
-                                                style={{ border: sel ? `2px solid ${AZUL}` : "1px solid transparent", background: sel ? "#eef2ff" : "none", borderRadius: "6px", padding: "2px 6px", cursor: "pointer", fontWeight: sel ? 800 : 500, fontSize: "12px" }}>
-                                                {euro(v)}
-                                              </button>
-                                            )}
-                                          </td>
-                                        );
-                                      })}
+                                    <tr key={e.peso}>
+                                      <td style={{ padding: "4px 6px", whiteSpace: "nowrap" }}>até {e.peso} kg</td>
+                                      {t.colunas.map(c => (
+                                        <td key={c} style={{ padding: "4px 6px", textAlign: "right", background: opcao?.coluna === c ? "#eef2ff" : undefined }}>
+                                          {e.precos[c] == null ? <span style={{ color: "#d1d5db" }}>—</span> : euro(e.precos[c] as number)}
+                                        </td>
+                                      ))}
                                     </tr>
                                   ))}
                                 </tbody>
                               </table>
                             </div>
-                            {!atual && <div style={{ fontSize: "12px", color: "#b91c1c" }}>Encomenda acima de 30 kg: enviamos os portes no orçamento.</div>}
-                            <div style={{ fontSize: "11px", color: "#9ca3af" }}>Escolhe a transportadora que preferes. Os portes são pagos à parte. A linha ◀ é a do peso estimado da tua encomenda (~{pesoTotal} kg); o escalão final confirma-se no orçamento.</div>
+                            <div style={{ fontSize: "11px", color: "#9ca3af" }}>Escolhe a transportadora que preferes. Os portes são pagos à parte e dependem do peso da encomenda — indicamos o valor certo no orçamento.</div>
                           </div>
                         );
                       })()}
