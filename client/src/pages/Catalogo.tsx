@@ -50,7 +50,7 @@ const GRUPOS: { id: string; nome: string; icone: string; palavras: string[] }[] 
   { id: "bebidas", nome: "Canecas, copos e garrafas", icone: "☕", palavras: ["caneca", "chavena", "copo", "garrafa", "termo", "cantil", "taza", "botella", "vaso", "bidon", "thermo", "jarra", "mug"] },
   { id: "escrita", nome: "Canetas e escritório", icone: "🖊️", palavras: ["estuche", "carpeta", "portadocumentos", "portanotas", "lapicero", "lapices", "calendario", "sobre", "caneta", "esferografica", "lapis", "lapiseira", "marcador", "boligrafo", "lapiz", "roller", "caderno", "bloco", "agenda", "notas", "libreta", "bloc", "regua", "escritorio", "oficina", "post-it", "clip", "porta-cartoes", "tarjetero"] },
   { id: "tecnologia", nome: "Tecnologia", icone: "🔌", palavras: ["soporte", "portamovil", "suporte", "alfombrilla", "localizador", "adaptador", "lampara", "candeeiro", "estacion", "ventilador", "cascos", "usb", "carregador", "cargador", "power bank", "powerbank", "bateria", "coluna", "altavoz", "auricular", "headphone", "cabo", "cable", " rato ", "webcam", "tecnolog", "relogio", "reloj", "smart", "wireless", "bluetooth", " led "] },
-  { id: "festas", nome: "Festas, eventos e Natal", icone: "🎉", palavras: ["pulsera", "festa", "evento", "natal", "navid", "leque", "abanico", "pulseira", "lanyard", "fita", "bandeira", "adorno", "trofeu", "trofeo", "medalha", "medalla", "casamento", "boda"] },
+  { id: "festas", nome: "Festas e eventos", icone: "🎉", palavras: ["pulsera", "festa", "evento", "natal", "navid", "leque", "abanico", "pulseira", "lanyard", "fita", "bandeira", "adorno", "trofeu", "trofeo", "medalha", "medalla", "casamento", "boda"] },
   { id: "casa", nome: "Casa, cozinha e decoração", icone: "🏠", palavras: ["tabla", "posavasos", "caja", "caixa", "maceta", "vaso de planta", "cubo", "organizador", "cenicero", "bascula", "cortador", "zapatillero", "manopla", "silla", "cadeira", "cozinha", "cocina", "tabua", "vela", "decora", "moldura", "marco", "saca-rolhas", "sacacorchos", "vinho", "vino", "abre-cap", "abrebotellas", " bar ", "queijo", "manta", "almofada", "toalha", "toalla", "casa"] },
   { id: "pequenos", nome: "Porta-chaves e pequenos brindes", icone: "🔑", palavras: ["porta-chaves", "porta chaves", "llavero", "iman", "cracha", " pin ", "anti-stress", "antiestres", "chapa", "abridor"] },
   { id: "crianca", nome: "Criança e jogos", icone: "🧸", palavras: ["domino", "parchis", "frisbee", "balon", "bola", "crianca", "infantil", "nino", "kid", "jogo", "juego", "brinquedo", "juguete", "peluche", "colorir", "desenho", "lapis de cor", "puzzle"] },
@@ -62,7 +62,7 @@ const GRUPOS: { id: string; nome: string; icone: string; palavras: string[] }[] 
 
 // 🎄 Destaque de Natal: artigos de Natal primeiro, depois boas ideias de presente.
 // Para mudar a seleção, edita estas duas listas (ou NATAL_ATIVO para desligar o destaque depois do Natal).
-const NATAL_ATIVO = true;
+const NATAL_ATIVO = false;
 const NATAL_PRAZO = "Encomendas para o Natal até 30 de novembro";
 const NATAL_TEMA = ["natal", "navid", "noel", "christmas", "xmas", "arvore", "advento", "rena", "presepio", "bola de natal"];
 const NATAL_PRESENTES = ["manta", "caneca", "taza", "chavena", "vela", "gorro", "meia", "calcetin", "luvas", "guantes", "cachecol", "bufanda",
@@ -155,18 +155,18 @@ export default function Catalogo() {
   const [aviso, setAviso] = useState("");
 
   useEffect(() => {
-    document.title = "Catálogo de produtos personalizados | Ninho do Dragão";
-    const carregar = (url: string) =>
+    document.title = "Mais artigos | Ninho do Dragão";
+    const carregar = (url: string): Promise<Produto[] | null> =>
       fetch(url)
         .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
         .then(d => (d.produtos || []) as Produto[])
         .catch(() => null);
-    Promise.all([
-      carregar("/.netlify/functions/catalogo-valento"),
-      carregar("/.netlify/functions/catalogo-cifra"),
-      carregar("/catalogo/pubeivil.json"),
-    ]).then(listas => {
-      if (listas.every(l => !l)) return setEstado("erro");
+    // Cada fonte aparece assim que chega (não espera pelas outras) e desiste ao fim de 15 s.
+    const fontes = ["/catalogo/pubeivil.json", "/.netlify/functions/catalogo-valento", "/.netlify/functions/catalogo-cifra"];
+    const listas: (Produto[] | null)[] = fontes.map(() => null);
+    let respostas = 0;
+    const juntar = () => {
+      if (listas.every(l => !l)) { if (respostas === fontes.length) setEstado("erro"); return; }
       const vistos = new Set<string>();
       const todos = listas
         .flatMap(l => l || [])
@@ -177,7 +177,10 @@ export default function Catalogo() {
         .map(p => ({ ...p, grupo: grupoDe(p) }));
       setProdutos(todos);
       setEstado("ok");
-    });
+    };
+    fontes.forEach((url, i) =>
+      Promise.race([carregar(url), new Promise<null>(r => setTimeout(() => r(null), 15000))])
+        .then(l => { listas[i] = l; respostas++; juntar(); }));
     const voltar = () => { setSel(lerSelecaoDoEndereco()); setAberto(null); };
     const tecla = (e: KeyboardEvent) => { if (e.key === "Escape") { setAberto(null); setOrcAberto(false); } };
     window.addEventListener("popstate", voltar);
@@ -308,7 +311,7 @@ export default function Catalogo() {
       <button onClick={() => setAberto(p)} aria-label={`Ver ${p.nome}`}
         style={{ position: "relative", aspectRatio: "1 / 1", width: "100%", background: "white", border: "none", padding: "10px", cursor: "pointer" }}>
         <Etiquetas p={p} />
-        <img src={p.imagem} alt={p.nome} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+        <SemFoto grande />
       </button>
       <div style={{ padding: "10px 12px 12px", display: "flex", flexDirection: "column", gap: "3px", flex: 1, borderTop: "1px solid #f3f4f6" }}>
         <button onClick={() => setAberto(p)} style={{ background: "none", border: "none", padding: 0, textAlign: "left", cursor: "pointer", fontFamily: font, fontSize: "13.5px", fontWeight: 700, color: "#1a1a2e", lineHeight: 1.35 }}>
@@ -370,8 +373,9 @@ export default function Catalogo() {
       <header style={{ background: "white", borderBottom: "1px solid #e5e7eb", position: "sticky", top: 0, zIndex: 30 }}>
         <div style={{ maxWidth: "1240px", margin: "0 auto", padding: "12px 16px", display: "flex", alignItems: "center", gap: "16px" }}>
           <a href="/" style={{ textDecoration: "none", fontFamily: "'Dancing Script', cursive", fontSize: "26px", fontWeight: 700, color: AZUL, whiteSpace: "nowrap" }}>Ninho do Dragão</a>
+          <span style={{ fontFamily: font, fontWeight: 700, fontSize: "13px", color: "#6b7280", whiteSpace: "nowrap" }}>· Mais artigos</span>
           <input className="cat-pesquisa-topo" type="search" value={pesquisa} onChange={e => { setPesquisa(e.target.value); setLimite(POR_PAGINA); }}
-            placeholder="O que procuras? (caneca, polo, mochila, Natal…)"
+            placeholder="Procurar artigo (caneca, polo, mochila, caneta…)"
             style={{ flex: 1, padding: "10px 14px", borderRadius: "10px", border: "2px solid #e5e7eb", fontSize: "14px", outline: "none", minWidth: 0 }} />
           <button onClick={() => setOrcAberto(true)}
             style={{ marginLeft: "auto", display: "inline-flex", alignItems: "center", gap: "6px", background: AZUL, color: "white", border: "none", borderRadius: "10px", padding: "9px 14px", fontWeight: 700, fontFamily: font, fontSize: "13px", cursor: "pointer", whiteSpace: "nowrap" }}>
@@ -381,7 +385,8 @@ export default function Catalogo() {
         {/* Ocasiões */}
         <div style={{ borderTop: "1px solid #f0f0f0" }}>
           <div style={{ maxWidth: "1240px", margin: "0 auto", padding: "8px 16px", display: "flex", gap: "8px", overflowX: "auto" }}>
-            <button style={botaoChip(!sel && !q)} onClick={() => irPara(null)}>🏠 Início do catálogo</button>
+            <a href="/" style={{ ...botaoChip(false), textDecoration: "none" }}>← Loja</a>
+            <button style={botaoChip(!sel && !q)} onClick={() => irPara(null)}>Todos os artigos</button>
             {ocasioes.map(o => (
               <button key={o.id} style={botaoChip(sel === o.id)} onClick={() => irPara(o.id)}>{o.icone} {o.nome}</button>
             ))}
@@ -420,7 +425,7 @@ export default function Catalogo() {
                 <div style={{ display: "flex", gap: "12px", overflowX: "auto", paddingBottom: "6px" }}>
                   {natalDestaque.map(p => (
                     <button key={p.ref} onClick={() => setAberto(p)} style={{ flex: "0 0 150px", background: "white", border: "none", borderRadius: "12px", padding: 0, overflow: "hidden", cursor: "pointer", textAlign: "left" }}>
-                      <div style={{ aspectRatio: "1 / 1", padding: "8px" }}><img src={p.imagem} alt={p.nome} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "contain" }} /></div>
+                      <div style={{ aspectRatio: "1 / 1", padding: "8px" }}><SemFoto /></div>
                       <div style={{ padding: "8px 10px" }}>
                         <div style={{ fontSize: "13px", fontWeight: 700, color: "#1a1a2e", fontFamily: font, lineHeight: 1.3, height: "34px", overflow: "hidden" }}>{p.nome}</div>
                         <div style={{ fontSize: "12px", color: "#6b7280", marginTop: "4px" }}>desde <strong style={{ color: "#991b1b" }}>{euro(p.preco)}</strong></div>
@@ -437,7 +442,7 @@ export default function Catalogo() {
                 <button key={o.id} onClick={() => irPara(o.id)}
                   style={{ display: "flex", gap: "12px", alignItems: "center", background: "white", border: "1px solid #e5e7eb", borderRadius: "14px", padding: "10px", cursor: "pointer", textAlign: "left" }}>
                   <div style={{ width: "64px", height: "64px", flex: "0 0 64px", borderRadius: "10px", background: "#f6f7fb", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-                    {o.capa ? <img src={o.capa} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "contain" }} /> : <span style={{ fontSize: "28px" }}>{o.icone}</span>}
+                    <span style={{ fontSize: "28px" }}>{o.icone}</span>
                   </div>
                   <div>
                     <div style={{ fontFamily: font, fontWeight: 800, fontSize: "15px", color: "#1a1a2e" }}>{o.icone} {o.nome}</div>
@@ -454,7 +459,7 @@ export default function Catalogo() {
                 <button key={g.id} onClick={() => irPara(g.id)}
                   style={{ border: "1px solid #e5e7eb", borderRadius: "14px", background: "white", padding: 0, cursor: "pointer", overflow: "hidden", textAlign: "left", display: "flex", flexDirection: "column" }}>
                   <div style={{ aspectRatio: "4 / 3", width: "100%", background: "white", padding: "10px", boxSizing: "border-box" }}>
-                    {g.capa ? <img src={g.capa} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "contain" }} /> : <span style={{ fontSize: "40px" }}>{g.icone}</span>}
+                    <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "#f6f7fb", borderRadius: "10px" }}><span style={{ fontSize: "40px" }}>{g.icone}</span></div>
                   </div>
                   <div style={{ padding: "10px 12px", borderTop: "1px solid #f3f4f6", width: "100%", boxSizing: "border-box" }}>
                     <div style={{ fontFamily: font, fontWeight: 700, fontSize: "14px", color: "#1a1a2e", lineHeight: 1.3 }}>{g.icone} {g.nome}</div>
@@ -544,7 +549,7 @@ export default function Catalogo() {
               {orcamento.length === 0 && <p style={{ color: "#6b7280", fontSize: "14px" }}>Ainda não juntaste artigos. Carrega em <strong>+ Orçamento</strong> nos artigos que te interessam e envia tudo de uma vez.</p>}
               {orcamento.map((i, k) => (
                 <div key={k} style={{ display: "flex", gap: "10px", padding: "10px 0", borderBottom: "1px solid #f3f4f6" }}>
-                  <img src={i.imagem} alt="" style={{ width: "56px", height: "56px", objectFit: "contain", flex: "0 0 56px" }} />
+                  <div style={{ width: "56px", height: "56px", flex: "0 0 56px" }}><SemFoto /></div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: "13.5px", fontWeight: 700, color: "#1a1a2e" }}>{i.nome}</div>
                     <div style={{ fontSize: "12px", color: "#6b7280" }}>{i.ref}{i.cor ? ` · ${i.cor}` : ""}{i.tamanho ? ` · tam. ${i.tamanho}` : ""}</div>
@@ -658,14 +663,14 @@ function Detalhe({ p, fechar, adicionar, pedirSo }: {
         <button onClick={fechar} aria-label="Fechar" style={{ position: "absolute", top: "8px", right: "12px", border: "none", background: "none", fontSize: "28px", cursor: "pointer", color: "#6b7280" }}>×</button>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "22px" }}>
           <div>
-            <img src={imagem} alt={p.nome} style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "contain" }} />
+            <div style={{ aspectRatio: "1 / 1" }}><SemFoto grande /></div>
             {p.variantes.length > 1 && (
               <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "8px" }}>
                 {p.variantes.map(v => (
                   <button key={v.ref} onClick={() => { setCor(v.cor || v.ref.split("-").pop() || ""); if (v.imagem) setImagem(v.imagem); }}
                     title={`${v.cor || "Cor " + v.ref.split("-").pop()}${v.stock === 0 ? " (sem stock)" : ""}`}
-                    style={{ width: "46px", height: "46px", padding: 0, border: (cor && (cor === v.cor || cor === v.ref.split("-").pop())) ? `2px solid ${AZUL}` : "1px solid #e5e7eb", borderRadius: "8px", overflow: "hidden", opacity: v.stock !== 0 ? 1 : 0.4, background: !v.imagem && v.hex ? v.hex : "white", cursor: "pointer" }}>
-                    {v.imagem && <img src={v.imagem} alt={v.cor || v.ref} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "contain" }} />}
+                    style={{ width: "46px", height: "46px", padding: 0, border: (cor && (cor === v.cor || cor === v.ref.split("-").pop())) ? `2px solid ${AZUL}` : "1px solid #e5e7eb", borderRadius: "8px", overflow: "hidden", opacity: v.stock !== 0 ? 1 : 0.4, background: v.hex || "white", cursor: "pointer" }}>
+                    {!v.hex && <span style={{ fontSize: "10px", color: "#374151" }}>{(v.cor || v.ref.split("-").pop() || "").slice(0, 6)}</span>}
                   </button>
                 ))}
               </div>
@@ -712,6 +717,16 @@ function Detalhe({ p, fechar, adicionar, pedirSo }: {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+// Sem fotos dos fornecedores: mostra um quadrado neutro com a indicação de que é personalizável.
+function SemFoto({ grande = false }: { grande?: boolean }) {
+  return (
+    <div style={{ width: "100%", height: "100%", background: "#f6f7fb", borderRadius: "10px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "4px", color: "#9ca3af" }}>
+      <span style={{ fontSize: grande ? "40px" : "22px" }} aria-hidden>🎨</span>
+      {grande && <span style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>Personalizável</span>}
     </div>
   );
 }

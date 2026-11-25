@@ -214,9 +214,12 @@ html {
 }
 
 /* ─── Mobile First Responsive ──────────────────────────────────── */
-@media (max-width: 768px) {
+@media (max-width: 1080px) {
   .nav-desktop { display: none !important; }
   .nav-mobile-btn { display: flex !important; }
+}
+
+@media (max-width: 768px) {
   .grid-responsive { grid-template-columns: 1fr !important; }
   .grid-responsive-2 { grid-template-columns: 1fr 1fr !important; }
   .section-pad { padding: 48px 20px !important; }
@@ -228,7 +231,15 @@ html {
   .hide-mobile { display: none !important; }
 }
 
-@media (min-width: 769px) {
+@media (min-width: 1081px) {
   .nav-mobile-btn { display: none !important; }
   .nav-desktop { display: flex !important; }
 }
+
+/* ─── Loja (nov 2026) ─── */
+.grelha-areas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.grelha-produtos { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+.cartao { transition: transform .15s ease, box-shadow .15s ease; }
+.cartao:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0,0,0,.08); }
+@media (max-width: 960px) { .grelha-areas { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px) { .grelha-produtos { grid-template-columns: 1fr 1fr; gap: 10px; } }
