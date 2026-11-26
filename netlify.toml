@@ -5,6 +5,17 @@
 [functions]
   directory = "netlify/functions"
 
+# Endereços antigos usados no Instagram
+[[redirects]]
+  from = "/natal"
+  to = "/catalogo?categoria=natal"
+  status = 301
+
+[[redirects]]
+  from = "/encomendar"
+  to = "/pedido"
+  status = 301
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
