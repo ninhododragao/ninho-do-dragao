@@ -4,6 +4,7 @@
 import { useEffect } from "react";
 import Layout, { AZUL, DOURADO, FONTE, Imagem, WA_MSG } from "@/components/Layout";
 import { AREAS, PRODUTOS, euro } from "@/data/loja";
+import { NATAL_ATIVO, NATAL_PRAZO } from "@/pages/Catalogo";
 
 const DESTAQUES = ["ND-PR-01", "ND-BB-01", "ND-EM-01", "ND-PR-05", "ND-FE-01", "ND-CA-03"];
 
@@ -22,6 +23,22 @@ export default function Home() {
           Feitos em Beja, com envio para todo o país. Escolhe o que procuras:
         </p>
       </section>
+
+      {/* Natal (aparece sozinho de 1 de novembro a 24 de dezembro) */}
+      {NATAL_ATIVO && (
+        <section style={{ maxWidth: "1100px", margin: "0 auto 18px", padding: "0 16px" }}>
+          <a href="/catalogo?categoria=natal" className="cartao natal-destaque"
+            style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", alignItems: "stretch", textDecoration: "none", background: "#7f1d1d", color: "white", borderRadius: "18px", overflow: "hidden" }}>
+            <img src="/loja/natal.webp" alt="Meia de Natal com nome, caneca e manta personalizadas" style={{ width: "100%", height: "100%", minHeight: "200px", objectFit: "cover" }} />
+            <div style={{ padding: "22px 20px", display: "flex", flexDirection: "column", justifyContent: "center", gap: "8px" }}>
+              <span style={{ fontSize: "12px", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#fcd34d" }}>🎄 Especial Natal</span>
+              <span style={{ fontFamily: FONTE, fontSize: "26px", fontWeight: 800, lineHeight: 1.15 }}>Presentes de Natal com nome</span>
+              <span style={{ fontSize: "14.5px", opacity: 0.92, lineHeight: 1.5 }}>Meias para pendurar, canecas, mantas, enfeites e muito mais. {NATAL_PRAZO}.</span>
+              <span style={{ marginTop: "6px", alignSelf: "flex-start", background: "white", color: "#7f1d1d", fontWeight: 800, fontFamily: FONTE, padding: "11px 18px", borderRadius: "10px", fontSize: "14px" }}>Ver ideias de Natal →</span>
+            </div>
+          </a>
+        </section>
+      )}
 
       {/* As 5 áreas */}
       <section style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 16px" }}>

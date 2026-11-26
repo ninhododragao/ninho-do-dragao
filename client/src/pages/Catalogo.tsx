@@ -62,8 +62,9 @@ export const GRUPOS: { id: string; nome: string; icone: string; palavras: string
 
 // 🎄 Destaque de Natal: artigos de Natal primeiro, depois boas ideias de presente.
 // Para mudar a seleção, edita estas duas listas (ou NATAL_ATIVO para desligar o destaque depois do Natal).
-const NATAL_ATIVO = false;
-const NATAL_PRAZO = "Encomendas para o Natal até 30 de novembro";
+// Liga-se sozinho de 1 de novembro a 24 de dezembro.
+export const NATAL_ATIVO = (() => { const d = new Date(); return d.getMonth() === 10 || (d.getMonth() === 11 && d.getDate() <= 24); })();
+export const NATAL_PRAZO = "Encomenda já: fica pronto em 5 a 8 dias";
 const NATAL_TEMA = ["natal", "navid", "noel", "christmas", "xmas", "arvore", "advento", "rena", "presepio", "bola de natal"];
 const NATAL_PRESENTES = ["manta", "caneca", "taza", "chavena", "vela", "gorro", "meia", "calcetin", "luvas", "guantes", "cachecol", "bufanda",
   "termo", "garrafa termica", "conjunto de vinho", "set de vino", "vinho", "peluche", "moldura", "portafotos", "almofada", "pantufa",
@@ -84,7 +85,7 @@ const grupoDe = (p: Produto) => {
 const textoDe = (p: Produto) => " " + semAcentos(`${p.nome} ${p.categoria} ${p.material}`).replace(/[^a-z0-9-]+/g, " ") + " ";
 const temPalavra = (t: string, ws: string[]) => ws.some(w => t.includes(" " + semAcentos(w)));
 // 2 = artigo de Natal, 1 = boa ideia de presente, 0 = não entra
-const pontosNatal = (p: Produto) => (temPalavra(textoDe(p), NATAL_TEMA) ? 2 : temPalavra(textoDe(p), NATAL_PRESENTES) ? 1 : 0);
+export const pontosNatal = (p: Produto) => (temPalavra(textoDe(p), NATAL_TEMA) ? 2 : temPalavra(textoDe(p), NATAL_PRESENTES) ? 1 : 0);
 const ECO = ["rpet", "reciclad", "recycled", "bambu", "bamboo", "cortica", "corcho", "cork", "organico", "organic", "juta", "yute", "jute",
   "eco", "palha de trigo", "trigo", "semente", "fsc", "canhamo", "cañamo", "algodao reciclado", "papel reciclado", "kraft"];
 const eEco = (p: Produto) => temPalavra(textoDe(p), ECO);

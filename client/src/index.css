@@ -243,3 +243,4 @@ html {
 .cartao:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0,0,0,.08); }
 @media (max-width: 960px) { .grelha-areas { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 520px) { .grelha-produtos { grid-template-columns: 1fr 1fr; gap: 10px; } }
+@media (max-width: 700px) { .natal-destaque { grid-template-columns: 1fr !important; } }

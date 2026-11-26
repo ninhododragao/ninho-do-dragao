@@ -4,7 +4,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Layout, { AZUL, FONTE, Imagem } from "@/components/Layout";
 import { AREAS, GRUPOS_POR_AREA, PRODUTOS, areaPorId, euro } from "@/data/loja";
-import { GRUPOS, carregarCatalogo, type Produto } from "@/pages/Catalogo";
+import { GRUPOS, NATAL_ATIVO, carregarCatalogo, pontosNatal, type Produto } from "@/pages/Catalogo";
 
 const POR_FILA = 10;
 
@@ -14,10 +14,13 @@ export default function Area({ id }: { id: string }) {
   useEffect(() => { carregarCatalogo(setCatalogo); }, []);
   const filas = useMemo(() => {
     if (!area || !catalogo) return [];
-    return GRUPOS_POR_AREA[area.id]
-      .map(g => ({ grupo: GRUPOS.find(x => x.id === g)!, itens: catalogo.filter(p => p.grupo === g) }))
+    const natal = NATAL_ATIVO && (area.id === "festas" || area.id === "presentes")
+      ? [{ grupo: { id: "natal", nome: "Natal", icone: "🎄", palavras: [] }, itens: catalogo.filter(p => pontosNatal(p) > 0).sort((a, b) => pontosNatal(b) - pontosNatal(a)) }]
+      : [];
+    return [...natal, ...GRUPOS_POR_AREA[area.id]
+      .map(g => ({ grupo: GRUPOS.find(x => x.id === g)!, itens: catalogo.filter(p => p.grupo === g) }))]
       .filter(f => f.grupo && f.itens.length)
-      .map(f => ({ ...f, total: f.itens.length, itens: [...f.itens].sort((a, b) => (b.stock > 0 ? 1 : 0) - (a.stock > 0 ? 1 : 0)).slice(0, POR_FILA) }));
+      .map(f => ({ ...f, total: f.itens.length, itens: (f.grupo.id === "natal" ? f.itens : [...f.itens].sort((a, b) => (b.stock > 0 ? 1 : 0) - (a.stock > 0 ? 1 : 0))).slice(0, POR_FILA) }));
   }, [area, catalogo]);
   useEffect(() => { document.title = `${area ? area.nome : "Loja"} | Ninho do Dragão`; window.scrollTo(0, 0); }, [area]);
 
