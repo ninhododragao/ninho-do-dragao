@@ -27,7 +27,7 @@ export default function Home() {
       {/* Natal (aparece sozinho de 1 de novembro a 24 de dezembro) */}
       {NATAL_ATIVO && (
         <section style={{ maxWidth: "1100px", margin: "0 auto 18px", padding: "0 16px" }}>
-          <a href="/catalogo?categoria=natal" className="cartao natal-destaque"
+          <a href="/loja/natal" className="cartao natal-destaque"
             style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", alignItems: "stretch", textDecoration: "none", background: "#7f1d1d", color: "white", borderRadius: "18px", overflow: "hidden" }}>
             <img src="/loja/natal.webp" alt="Meia de Natal com nome, caneca e manta personalizadas" style={{ width: "100%", height: "100%", minHeight: "200px", objectFit: "cover" }} />
             <div style={{ padding: "22px 20px", display: "flex", flexDirection: "column", justifyContent: "center", gap: "8px" }}>
@@ -43,7 +43,7 @@ export default function Home() {
       {/* As 5 áreas */}
       <section style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 16px" }}>
         <div className="grelha-areas">
-          {AREAS.map(a => (
+          {AREAS.filter(a => a.id !== "natal").map(a => (
             <a key={a.id} href={`/loja/${a.id}`} className="cartao"
               style={{ display: "flex", flexDirection: "column", textDecoration: "none", background: a.cor, borderRadius: "16px", overflow: "hidden", border: "1px solid #e5e7eb" }}>
               <Imagem src={a.imagem} icone={a.icone} alt={a.nome} fundo={a.cor} proporcao="4 / 3" />

@@ -7,7 +7,10 @@
  * - codigo: código ND- (o mesmo do Excel). Nunca pôr a referência do fornecedor.
  */
 
-export type AreaId = "bebe" | "festas" | "presentes" | "empresas" | "casa";
+export type AreaId = "natal" | "bebe" | "festas" | "presentes" | "empresas" | "casa";
+
+// Natal: aparece sozinho de 1 de novembro a 24 de dezembro.
+export const NATAL_ATIVO = (() => { const d = new Date(); return d.getMonth() === 10 || (d.getMonth() === 11 && d.getDate() <= 24); })();
 
 export interface Area {
   id: AreaId;
@@ -29,15 +32,35 @@ export interface ProdutoLoja {
   imagem?: string;
 }
 
-export const AREAS: Area[] = [
+const TODAS_AREAS: Area[] = [
+  { id: "natal", nome: "Natal", icone: "🎄", frase: "Meias com nome, canecas, enfeites, gorros e mantas de Natal", cor: "#FEE2E2", imagem: "/loja/natal.webp" },
   { id: "bebe", nome: "Bebé e criança", icone: "🧸", frase: "Babetes, bibes, bodies, etiquetas e roupa com nome", cor: "#FDF2F8", imagem: "/loja/area-bebe.webp" },
   { id: "festas", nome: "Festas e eventos", icone: "🎉", frase: "Batizados, casamentos, aniversários e lembranças", cor: "#FEF3C7", imagem: "/loja/area-festas.webp" },
   { id: "presentes", nome: "Presentes personalizados", icone: "🎁", frase: "Canecas, azulejos, mantas e copos com nome ou foto", cor: "#EEF2FF", imagem: "/loja/area-presentes.webp" },
   { id: "empresas", nome: "Empresas e brindes", icone: "💼", frase: "T-shirts com logótipo, brindes, sacos e fardamento", cor: "#ECFDF5", imagem: "/loja/area-empresas.webp" },
   { id: "casa", nome: "Escritório, lar e têxtil", icone: "🏡", frase: "T-shirts, sweats, aventais, sacos e papelaria", cor: "#F5F5F4", imagem: "/loja/area-casa.webp" },
 ];
+// Fora da época de Natal, a área Natal desaparece do menu e da página inicial.
+export const AREAS: Area[] = TODAS_AREAS.filter(a => a.id !== "natal" || NATAL_ATIVO);
 
 export const PRODUTOS: ProdutoLoja[] = [
+  // ── Natal (preços da tabela da banca de Natal)
+  { codigo: "ND-NA-01", area: "natal", icone: "🧦", nome: "Meia de Natal com nome", descricao: "Para pendurar na lareira ou na árvore, com o nome bordado ou estampado.", precoDesde: 5.9, imagem: "/loja/natal.webp" },
+  { codigo: "ND-NA-02", area: "natal", icone: "☕", nome: "Caneca de Natal com nome", descricao: "Tema natalício com o nome ou uma frase.", precoDesde: 11.9, imagem: "/loja/natal-caneca.webp" },
+  { codigo: "ND-NA-03", area: "natal", icone: "🎁", nome: "Caneca com embalagem de oferta", descricao: "Pronta a pôr debaixo da árvore.", precoDesde: 12.9, imagem: "/loja/caneca.webp" },
+  { codigo: "ND-NA-04", area: "natal", icone: "✨", nome: "Caneca com brilhantes", descricao: "Acabamento com brilhantes, com nome ou frase.", precoDesde: 12.9 },
+  { codigo: "ND-NA-05", area: "natal", icone: "🔮", nome: "Caneca mágica de Natal", descricao: "A imagem aparece com a bebida quente.", precoDesde: 13.9, imagem: "/loja/natal-caneca.webp" },
+  { codigo: "ND-NA-06", area: "natal", icone: "🎄", nome: "Enfeite de Natal com nome", descricao: "Para pendurar na árvore.", precoDesde: 3.9, imagem: "/loja/natal-enfeite.webp" },
+  { codigo: "ND-NA-07", area: "natal", icone: "🪵", nome: "Enfeite de madeira gravado", descricao: "Com nome ou data.", precoDesde: 4.9, imagem: "/loja/natal-madeira.webp" },
+  { codigo: "ND-NA-08", area: "natal", icone: "🖼️", nome: "Enfeite porta-fotos", descricao: "Com a tua fotografia.", precoDesde: 5.9 },
+  { codigo: "ND-NA-09", area: "natal", icone: "🎄", nome: "Conjunto de enfeites em madeira", descricao: "Vários enfeites com nomes, para toda a família.", precoDesde: 9.9, imagem: "/loja/natal-madeira.webp" },
+  { codigo: "ND-NA-10", area: "natal", icone: "🧲", nome: "Íman de Natal personalizado", descricao: "Com foto ou frase.", precoDesde: 4.99 },
+  { codigo: "ND-NA-11", area: "natal", icone: "🎅", nome: "Gorro de Pai Natal com nome", descricao: "Para a família toda.", precoDesde: 6.9, imagem: "/loja/natal-gorro.webp" },
+  { codigo: "ND-NA-12", area: "natal", icone: "🧶", nome: "Gorro de malha personalizado", descricao: "Com nome ou desenho.", precoDesde: 8.9 },
+  { codigo: "ND-NA-13", area: "natal", icone: "🛏️", nome: "Manta polar de Natal", descricao: "Com nome ou fotografia.", precoDesde: 24.9, imagem: "/loja/manta.webp" },
+  { codigo: "ND-NA-14", area: "natal", icone: "👨‍👩‍👧‍👦", nome: "Família a combinar: 4 t-shirts", descricao: "Quatro t-shirts com o mesmo tema de Natal.", precoDesde: 45, nota: "pack de 4" },
+  { codigo: "ND-NA-15", area: "natal", icone: "🖼️", nome: "Azulejo de Natal com foto", descricao: "Com foto, frase ou arte de Natal.", precoDesde: 11.9, imagem: "/loja/azulejo.webp" },
+
   // ── Bebé e criança
   { codigo: "ND-BB-01", area: "bebe", icone: "👕", nome: "T-shirt de criança personalizada", descricao: "Com nome, desenho ou frase. Tamanhos dos 6 meses aos 14 anos.", precoDesde: 10.9, imagem: "/loja/tshirt-crianca.webp" },
   { codigo: "ND-BB-02", area: "bebe", icone: "🍼", nome: "Babete com nome", descricao: "Para o dia a dia ou para oferecer no nascimento.", precoDesde: null, imagem: "/loja/babete.webp" },
@@ -84,6 +107,7 @@ export const PRODUTOS: ProdutoLoja[] = [
 
 // Categorias dos fornecedores (página "Mais artigos") que aparecem em cada área, por esta ordem.
 export const GRUPOS_POR_AREA: Record<AreaId, string[]> = {
+  natal: [],
   bebe: ["crianca", "textil", "bebidas"],
   festas: ["festas", "pequenos", "casa", "bebidas"],
   presentes: ["bebidas", "casa", "pessoal", "tecnologia", "lazer", "pequenos"],

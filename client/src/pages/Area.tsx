@@ -14,8 +14,8 @@ export default function Area({ id }: { id: string }) {
   useEffect(() => { carregarCatalogo(setCatalogo); }, []);
   const filas = useMemo(() => {
     if (!area || !catalogo) return [];
-    const natal = NATAL_ATIVO && (area.id === "festas" || area.id === "presentes")
-      ? [{ grupo: { id: "natal", nome: "Natal", icone: "🎄", palavras: [] }, itens: catalogo.filter(p => pontosNatal(p) > 0).sort((a, b) => pontosNatal(b) - pontosNatal(a)) }]
+    const natal = NATAL_ATIVO && (area.id === "natal" || area.id === "festas" || area.id === "presentes")
+      ? [{ grupo: { id: "natal", nome: area.id === "natal" ? "Mais artigos de Natal dos nossos fornecedores" : "Natal", icone: "🎄", palavras: [] }, itens: catalogo.filter(p => pontosNatal(p) > 0).sort((a, b) => pontosNatal(b) - pontosNatal(a)) }]
       : [];
     return [...natal, ...GRUPOS_POR_AREA[area.id]
       .map(g => ({ grupo: GRUPOS.find(x => x.id === g)!, itens: catalogo.filter(p => p.grupo === g) }))]

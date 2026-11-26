@@ -15,6 +15,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { traduzirNome } from "@/lib/traducao";
+import { NATAL_ATIVO } from "@/data/loja";
 
 const WA = "https://wa.me/351935852703";
 const WA_MSG = (msg: string) => `${WA}?text=${encodeURIComponent(msg)}`;
@@ -62,8 +63,8 @@ export const GRUPOS: { id: string; nome: string; icone: string; palavras: string
 
 // 🎄 Destaque de Natal: artigos de Natal primeiro, depois boas ideias de presente.
 // Para mudar a seleção, edita estas duas listas (ou NATAL_ATIVO para desligar o destaque depois do Natal).
-// Liga-se sozinho de 1 de novembro a 24 de dezembro.
-export const NATAL_ATIVO = (() => { const d = new Date(); return d.getMonth() === 10 || (d.getMonth() === 11 && d.getDate() <= 24); })();
+// NATAL_ATIVO: liga-se sozinho de 1 de novembro a 24 de dezembro (definido em data/loja.ts).
+export { NATAL_ATIVO };
 export const NATAL_PRAZO = "Encomenda já: fica pronto em 5 a 8 dias";
 const NATAL_TEMA = ["natal", "navid", "noel", "christmas", "xmas", "arvore", "advento", "rena", "presepio", "bola de natal"];
 const NATAL_PRESENTES = ["manta", "caneca", "taza", "chavena", "vela", "gorro", "meia", "calcetin", "luvas", "guantes", "cachecol", "bufanda",
