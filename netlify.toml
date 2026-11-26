@@ -8,7 +8,7 @@
 # Endereços antigos usados no Instagram
 [[redirects]]
   from = "/natal"
-  to = "/catalogo?categoria=natal"
+  to = "/loja/natal"
   status = 301
 
 [[redirects]]
