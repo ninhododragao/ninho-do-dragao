@@ -3,7 +3,8 @@
  *
  * PARA MUDAR UM PREÇO OU PRODUTO: edita só este ficheiro.
  * - precoDesde: preço de venda mais baixo (do sistema de gestão em Excel). null = "Preço sob orçamento".
- * - imagem: ficheiro em /public/loja (imagens próprias, nunca fotos de fornecedores). Sem imagem = ícone.
+ * - imagem: foto REAL do produto (fornecedor que autorizou, ex.: Stamina/Roly pela Pubeivil) ou foto da Laila.
+ *   Nunca uma imagem gerada de um produto que nenhum fornecedor vende. Sem imagem = ícone.
  * - codigo: código ND- (o mesmo do Excel). Nunca pôr a referência do fornecedor.
  */
 
@@ -33,7 +34,7 @@ export interface ProdutoLoja {
 }
 
 const TODAS_AREAS: Area[] = [
-  { id: "natal", nome: "Natal", icone: "🎄", frase: "Meias com nome, canecas, enfeites, gorros e mantas de Natal", cor: "#FEE2E2", imagem: "/loja/natal.webp" },
+  { id: "natal", nome: "Natal", icone: "🎄", frase: "Meias com nome, canecas, enfeites, gorros e mantas de Natal", cor: "#FEE2E2", imagem: "https://static.gorfactory.es/images/models/1301/model/large/1301_60_1_1.jpg" },
   { id: "bebe", nome: "Bebé e criança", icone: "🧸", frase: "Babetes, bibes, bodies, etiquetas e roupa com nome", cor: "#FDF2F8", imagem: "/loja/area-bebe.webp" },
   { id: "festas", nome: "Festas e eventos", icone: "🎉", frase: "Batizados, casamentos, aniversários e lembranças", cor: "#FEF3C7", imagem: "/loja/area-festas.webp" },
   { id: "presentes", nome: "Presentes personalizados", icone: "🎁", frase: "Canecas, azulejos, mantas e copos com nome ou foto", cor: "#EEF2FF", imagem: "/loja/area-presentes.webp" },
@@ -45,21 +46,21 @@ export const AREAS: Area[] = TODAS_AREAS.filter(a => a.id !== "natal" || NATAL_A
 
 export const PRODUTOS: ProdutoLoja[] = [
   // ── Natal (preços da tabela da banca de Natal)
-  { codigo: "ND-NA-01", area: "natal", icone: "🧦", nome: "Meia de Natal com nome", descricao: "Para pendurar na lareira ou na árvore, com o nome bordado ou estampado.", precoDesde: 5.9, imagem: "/loja/natal.webp" },
-  { codigo: "ND-NA-02", area: "natal", icone: "☕", nome: "Caneca de Natal com nome", descricao: "Tema natalício com o nome ou uma frase.", precoDesde: 11.9, imagem: "/loja/natal-caneca.webp" },
-  { codigo: "ND-NA-03", area: "natal", icone: "🎁", nome: "Caneca com embalagem de oferta", descricao: "Pronta a pôr debaixo da árvore.", precoDesde: 12.9, imagem: "/loja/caneca.webp" },
+  { codigo: "ND-NA-01", area: "natal", icone: "🧦", nome: "Meia de Natal com nome", descricao: "Vermelha com punho branco, para pendurar. O nome vai no punho branco.", precoDesde: 5.9, imagem: "https://static.gorfactory.es/images/models/1301/model/large/1301_60_1_1.jpg" },
+  { codigo: "ND-NA-02", area: "natal", icone: "☕", nome: "Caneca de Natal com nome", descricao: "Tema natalício com o nome ou uma frase.", precoDesde: 11.9, imagem: "https://static.gorfactory.es/images/models/1852/model/large/1852_60_1_1.jpg" },
+  { codigo: "ND-NA-03", area: "natal", icone: "🎁", nome: "Caneca com embalagem de oferta", descricao: "Pronta a pôr debaixo da árvore.", precoDesde: 12.9 },
   { codigo: "ND-NA-04", area: "natal", icone: "✨", nome: "Caneca com brilhantes", descricao: "Acabamento com brilhantes, com nome ou frase.", precoDesde: 12.9 },
-  { codigo: "ND-NA-05", area: "natal", icone: "🔮", nome: "Caneca mágica de Natal", descricao: "A imagem aparece com a bebida quente.", precoDesde: 13.9, imagem: "/loja/natal-caneca.webp" },
-  { codigo: "ND-NA-06", area: "natal", icone: "🎄", nome: "Enfeite de Natal com nome", descricao: "Para pendurar na árvore.", precoDesde: 3.9, imagem: "/loja/natal-enfeite.webp" },
-  { codigo: "ND-NA-07", area: "natal", icone: "🪵", nome: "Enfeite de madeira gravado", descricao: "Com nome ou data.", precoDesde: 4.9, imagem: "/loja/natal-madeira.webp" },
-  { codigo: "ND-NA-08", area: "natal", icone: "🖼️", nome: "Enfeite porta-fotos", descricao: "Com a tua fotografia.", precoDesde: 5.9 },
-  { codigo: "ND-NA-09", area: "natal", icone: "🎄", nome: "Conjunto de enfeites em madeira", descricao: "Vários enfeites com nomes, para toda a família.", precoDesde: 9.9, imagem: "/loja/natal-madeira.webp" },
-  { codigo: "ND-NA-10", area: "natal", icone: "🧲", nome: "Íman de Natal personalizado", descricao: "Com foto ou frase.", precoDesde: 4.99 },
-  { codigo: "ND-NA-11", area: "natal", icone: "🎅", nome: "Gorro de Pai Natal com nome", descricao: "Para a família toda.", precoDesde: 6.9, imagem: "/loja/natal-gorro.webp" },
+  { codigo: "ND-NA-05", area: "natal", icone: "🔮", nome: "Caneca mágica de Natal", descricao: "A imagem aparece com a bebida quente.", precoDesde: 13.9 },
+  { codigo: "ND-NA-06", area: "natal", icone: "🎄", nome: "Enfeite de Natal com nome", descricao: "Para pendurar na árvore.", precoDesde: 3.9 },
+  { codigo: "ND-NA-07", area: "natal", icone: "🪵", nome: "Enfeite de madeira gravado", descricao: "Com nome ou data.", precoDesde: 4.9 },
+  { codigo: "ND-NA-08", area: "natal", icone: "🖼️", nome: "Enfeite porta-fotos", descricao: "Com a tua fotografia.", precoDesde: 5.9, imagem: "https://static.gorfactory.es/images/models/1511/model/large/1511_512_1_1.jpg" },
+  { codigo: "ND-NA-09", area: "natal", icone: "🎄", nome: "Conjunto de enfeites em madeira", descricao: "Vários enfeites com nomes, para toda a família.", precoDesde: 9.9 },
+  { codigo: "ND-NA-10", area: "natal", icone: "🧲", nome: "Íman de Natal personalizado", descricao: "Com foto ou frase.", precoDesde: 4.99, imagem: "https://static.gorfactory.es/images/models/1304/model/large/1304_60_1_1.jpg" },
+  { codigo: "ND-NA-11", area: "natal", icone: "🎅", nome: "Gorro de Pai Natal com nome", descricao: "Vermelho com faixa branca. O nome vai na faixa.", precoDesde: 6.9, imagem: "https://static.gorfactory.es/images/models/1300/model/large/1300_60_1_1.jpg" },
   { codigo: "ND-NA-12", area: "natal", icone: "🧶", nome: "Gorro de malha personalizado", descricao: "Com nome ou desenho.", precoDesde: 8.9 },
-  { codigo: "ND-NA-13", area: "natal", icone: "🛏️", nome: "Manta polar de Natal", descricao: "Com nome ou fotografia.", precoDesde: 24.9, imagem: "/loja/manta.webp" },
+  { codigo: "ND-NA-13", area: "natal", icone: "🛏️", nome: "Manta polar de Natal", descricao: "Com nome ou fotografia.", precoDesde: 24.9 },
   { codigo: "ND-NA-14", area: "natal", icone: "👨‍👩‍👧‍👦", nome: "Família a combinar: 4 t-shirts", descricao: "Quatro t-shirts com o mesmo tema de Natal.", precoDesde: 45, nota: "pack de 4" },
-  { codigo: "ND-NA-15", area: "natal", icone: "🖼️", nome: "Azulejo de Natal com foto", descricao: "Com foto, frase ou arte de Natal.", precoDesde: 11.9, imagem: "/loja/azulejo.webp" },
+  { codigo: "ND-NA-15", area: "natal", icone: "🖼️", nome: "Azulejo de Natal com foto", descricao: "Com foto, frase ou arte de Natal.", precoDesde: 11.9 },
 
   // ── Bebé e criança
   { codigo: "ND-BB-01", area: "bebe", icone: "👕", nome: "T-shirt de criança personalizada", descricao: "Com nome, desenho ou frase. Tamanhos dos 6 meses aos 14 anos.", precoDesde: 10.9, imagem: "/loja/tshirt-crianca.webp" },

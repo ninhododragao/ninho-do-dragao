@@ -104,7 +104,7 @@ export function Imagem({ src, icone, alt, fundo = "#f6f7fb", proporcao = "1 / 1"
   return (
     <div style={{ width: "100%", aspectRatio: proporcao, background: fundo, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
       {src && !falhou
-        ? <img src={src} alt={alt} loading="lazy" onError={() => setFalhou(true)} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        ? <img src={src} alt={alt} loading="lazy" onError={() => setFalhou(true)} style={{ width: "100%", height: "100%", objectFit: src.startsWith("http") ? "contain" : "cover", background: src.startsWith("http") ? "white" : undefined }} />
         : <span style={{ fontSize: "56px" }} aria-hidden>{icone}</span>}
     </div>
   );
