@@ -35,6 +35,11 @@ function Navbar() {
           </svg>
         </button>
       </div>
+      <form action="/catalogo" method="get" style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 16px 10px", display: "flex", gap: "8px" }}>
+        <input name="q" type="search" placeholder="Procurar: caneca, meia de Natal, t-shirt, caneta…" aria-label="Procurar artigos"
+          style={{ flex: 1, minWidth: 0, padding: "11px 14px", borderRadius: "10px", border: "2px solid #e5e7eb", fontSize: "16px", fontFamily: "inherit" }} />
+        <button type="submit" className="btn-primary" style={{ padding: "0 16px", borderRadius: "10px", border: "none", fontSize: "14px", cursor: "pointer" }}>Procurar</button>
+      </form>
       {aberto && (
         <div style={{ background: "white", borderTop: "1px solid #e5e7eb", padding: "8px 16px 16px", display: "flex", flexDirection: "column" }}>
           {AREAS.map(a => (

@@ -160,6 +160,12 @@ export function carregarCatalogo(aoAtualizar: (produtos: Produto[]) => void) {
       .then(l => { listas[i] = l; respostas++; juntar(); }));
 }
 
+const PALAVRAS_VAZIAS = new Set(["para", "com", "sem", "uma", "uns", "umas", "dos", "das", "que", "por", "pela", "pelo", "the"]);
+const pontosPesquisa = (p: Produto, palavras: string[]) => {
+  const texto = semAcentos(`${p.nome} ${p.ref} ${p.categoria} ${p.material} ${p.descricao || ""}`);
+  return palavras.filter(w => texto.includes(w)).length;
+};
+
 const lerSelecaoDoEndereco = () => new URLSearchParams(window.location.search).get("categoria");
 
 // ── Lista de orçamento (fica guardada neste dispositivo) ──────────────────────
@@ -182,7 +188,7 @@ export default function Catalogo() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [estado, setEstado] = useState<"a-carregar" | "ok" | "erro">("a-carregar");
   const [sel, setSel] = useState<string | null>(lerSelecaoDoEndereco);
-  const [pesquisa, setPesquisa] = useState("");
+  const [pesquisa, setPesquisa] = useState(() => new URLSearchParams(window.location.search).get("q") || "");
   const [soStock, setSoStock] = useState(false);
   const [ordem, setOrdem] = useState("relevancia");
   const [faixa, setFaixa] = useState("");
@@ -241,6 +247,10 @@ export default function Catalogo() {
   const titulo = ocasiaoAtual ? { icone: ocasiaoAtual.icone, nome: ocasiaoAtual.nome } : grupoAtual ? { icone: grupoAtual.icone, nome: grupoAtual.nome } : null;
 
   const q = semAcentos(pesquisa.trim());
+  // Pesquisa palavra a palavra: "meia de natal para pendurar" encontra "Meia Natal".
+  // Ignora palavras pequenas (de, para, com…) e aceita singular/plural; com 3+ palavras pode faltar uma.
+  const palavras = q.split(/[^a-z0-9]+/).filter(w => w.length > 2 && !PALAVRAS_VAZIAS.has(w)).map(w => w.replace(/(es|s)$/, ""));
+  const minimoPalavras = palavras.length >= 3 ? palavras.length - 1 : Math.max(1, palavras.length);
   const mostrarLista = !!sel || !!q;
   const fx = FAIXAS_PRECO.find(f => f.id === faixa) || FAIXAS_PRECO[0];
 
@@ -251,16 +261,17 @@ export default function Catalogo() {
       if (grupoAtual && p.grupo !== grupoAtual.id) return false;
       if (soStock && p.stock === 0) return false;
       if (p.preco < fx.min || p.preco > fx.max) return false;
-      if (q && !semAcentos(`${p.nome} ${p.ref} ${p.categoria} ${p.material}`).includes(q)) return false;
+      if (q && pontosPesquisa(p, palavras) < minimoPalavras) return false;
       return true;
     });
+    if (q && ordem === "relevancia") r = [...r].sort((a, b) => pontosPesquisa(b, palavras) - pontosPesquisa(a, palavras) || Number(b.stock !== 0) - Number(a.stock !== 0));
     if (ordem === "preco-asc") r = [...r].sort((a, b) => a.preco - b.preco);
     else if (ordem === "preco-desc") r = [...r].sort((a, b) => b.preco - a.preco);
     else if (ordem === "nome") r = [...r].sort((a, b) => a.nome.localeCompare(b.nome, "pt"));
     else if (sel === "natal") r = [...r].sort((a, b) => pontosNatal(b) - pontosNatal(a) || Number(b.stock !== 0) - Number(a.stock !== 0));
     else r = [...r].sort((a, b) => Number(b.stock !== 0) - Number(a.stock !== 0));
     return r;
-  }, [produtos, mostrarLista, ocasiaoAtual, grupoAtual, soStock, fx, q, ordem, sel]);
+  }, [produtos, mostrarLista, ocasiaoAtual, grupoAtual, soStock, fx, q, ordem, sel]); // palavras/minimoPalavras vêm de q
 
   const natalDestaque = useMemo(
     () => (NATAL_ATIVO ? produtos.filter(p => pontosNatal(p) === 2).sort((a, b) => Number(b.stock !== 0) - Number(a.stock !== 0)).slice(0, 12) : []),
