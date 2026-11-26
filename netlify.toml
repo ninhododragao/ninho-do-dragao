@@ -1,5 +1,5 @@
 [build]
-  command = "cd client && pnpm install && pnpm build"
+  command = "cd client && pnpm install && pnpm build && node ../scripts/gerar-catalogos.mjs"
   publish = "client/dist"
 
 [functions]

@@ -82,6 +82,15 @@ export const PRODUTOS: ProdutoLoja[] = [
   { codigo: "ND-CA-06", area: "casa", icone: "📓", nome: "Cadernos e agendas personalizados", descricao: "Com nome, foto ou logótipo na capa.", precoDesde: null, imagem: "/loja/caderno.webp" },
 ];
 
+// Categorias dos fornecedores (página "Mais artigos") que aparecem em cada área, por esta ordem.
+export const GRUPOS_POR_AREA: Record<AreaId, string[]> = {
+  bebe: ["crianca", "textil", "bebidas"],
+  festas: ["festas", "pequenos", "casa", "bebidas"],
+  presentes: ["bebidas", "casa", "pessoal", "tecnologia", "lazer", "pequenos"],
+  empresas: ["textil", "trabalho", "escrita", "sacos", "bones", "tecnologia", "pequenos", "ferramentas"],
+  casa: ["textil", "casacos", "casa", "escrita", "sacos", "lazer"],
+};
+
 export const euro = (v: number) => v.toLocaleString("pt-PT", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
 
 export const areaPorId = (id: string) => AREAS.find(a => a.id === id);

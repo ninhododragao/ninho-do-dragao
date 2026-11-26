@@ -1,12 +1,24 @@
 /*
  * Página de uma área (/loja/:area): produtos dessa área + pedido.
  */
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Layout, { AZUL, FONTE, Imagem } from "@/components/Layout";
-import { AREAS, PRODUTOS, areaPorId, euro } from "@/data/loja";
+import { AREAS, GRUPOS_POR_AREA, PRODUTOS, areaPorId, euro } from "@/data/loja";
+import { GRUPOS, carregarCatalogo, type Produto } from "@/pages/Catalogo";
+
+const POR_FILA = 10;
 
 export default function Area({ id }: { id: string }) {
   const area = areaPorId(id);
+  const [catalogo, setCatalogo] = useState<Produto[] | null>(null);
+  useEffect(() => { carregarCatalogo(setCatalogo); }, []);
+  const filas = useMemo(() => {
+    if (!area || !catalogo) return [];
+    return GRUPOS_POR_AREA[area.id]
+      .map(g => ({ grupo: GRUPOS.find(x => x.id === g)!, itens: catalogo.filter(p => p.grupo === g) }))
+      .filter(f => f.grupo && f.itens.length)
+      .map(f => ({ ...f, total: f.itens.length, itens: [...f.itens].sort((a, b) => (b.stock > 0 ? 1 : 0) - (a.stock > 0 ? 1 : 0)).slice(0, POR_FILA) }));
+  }, [area, catalogo]);
   useEffect(() => { document.title = `${area ? area.nome : "Loja"} | Ninho do Dragão`; window.scrollTo(0, 0); }, [area]);
 
   if (!area) {
@@ -59,10 +71,36 @@ export default function Area({ id }: { id: string }) {
           ))}
         </div>
 
+        <h2 style={{ fontFamily: FONTE, fontSize: "22px", fontWeight: 800, color: "#1a1a2e", margin: "36px 0 4px" }}>Mais artigos para personalizar</h2>
+        <p style={{ fontSize: "14px", color: "#6b7280", margin: "0 0 14px" }}>Preços por unidade, com personalização a combinar no orçamento.</p>
+        {catalogo === null && <p style={{ color: "#6b7280" }}>A carregar artigos…</p>}
+        {filas.map(f => (
+          <div key={f.grupo.id} style={{ marginBottom: "22px" }}>
+            <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "10px", marginBottom: "8px" }}>
+              <h3 style={{ fontFamily: FONTE, fontSize: "16px", fontWeight: 700, color: "#1a1a2e", margin: 0 }}>{f.grupo.icone} {f.grupo.nome}</h3>
+              <a href={`/catalogo?categoria=${f.grupo.id}`} style={{ color: AZUL, fontWeight: 700, fontSize: "13px", textDecoration: "none", whiteSpace: "nowrap" }}>Ver todos ({f.total}) →</a>
+            </div>
+            <div style={{ display: "flex", gap: "10px", overflowX: "auto", paddingBottom: "6px", scrollSnapType: "x mandatory" }}>
+              {f.itens.map(p => (
+                <a key={p.ref} href={`/catalogo?categoria=${f.grupo.id}&artigo=${encodeURIComponent(p.ref)}`} className="cartao"
+                  style={{ flex: "0 0 150px", scrollSnapAlign: "start", textDecoration: "none", background: "white", border: "1px solid #e5e7eb", borderRadius: "12px", overflow: "hidden" }}>
+                  <div style={{ aspectRatio: "1 / 1", background: "white", padding: "6px" }}>
+                    <img src={p.imagem} alt={p.nome} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                  </div>
+                  <div style={{ padding: "6px 9px 10px" }}>
+                    <div style={{ fontSize: "12.5px", fontWeight: 600, color: "#1a1a2e", lineHeight: 1.3, height: "33px", overflow: "hidden" }}>{p.nome}</div>
+                    <div style={{ fontSize: "13px", color: AZUL, fontWeight: 800, marginTop: "4px" }}>{euro(p.preco)}</div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        ))}
+
         <div style={{ marginTop: "28px", background: "#f9fafb", border: "1px dashed #d1d5db", borderRadius: "14px", padding: "18px", textAlign: "center" }}>
-          <p style={{ margin: "0 0 10px", color: "#374151", fontSize: "14.5px" }}>Procuras outro artigo? Temos centenas de opções dos nossos fornecedores.</p>
+          <p style={{ margin: "0 0 10px", color: "#374151", fontSize: "14.5px" }}>Não encontraste o que procuras? Pesquisa em todos os artigos ou descreve-nos a ideia.</p>
           <div style={{ display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap" }}>
-            <a href="/catalogo" style={{ padding: "10px 18px", borderRadius: "8px", border: `2px solid ${AZUL}`, color: AZUL, fontWeight: 700, textDecoration: "none", fontSize: "14px" }}>Ver mais artigos</a>
+            <a href="/catalogo" style={{ padding: "10px 18px", borderRadius: "8px", border: `2px solid ${AZUL}`, color: AZUL, fontWeight: 700, textDecoration: "none", fontSize: "14px" }}>Pesquisar todos os artigos</a>
             <a href={`/pedido?area=${area.id}`} className="btn-primary" style={{ padding: "10px 18px", borderRadius: "8px", textDecoration: "none", fontSize: "14px" }}>Descrever a minha ideia</a>
           </div>
         </div>

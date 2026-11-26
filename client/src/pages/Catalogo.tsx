@@ -22,8 +22,8 @@ const POR_PAGINA = 48;
 const font = "Montserrat, sans-serif";
 const AZUL = "#2B4EAF";
 
-type Variante = { ref: string; cor: string; imagem: string; stock: number; hex?: string };
-type Produto = {
+export type Variante = { ref: string; cor: string; imagem: string; stock: number; hex?: string };
+export type Produto = {
   ref: string;
   nome: string;
   descricao: string;
@@ -41,7 +41,7 @@ type Produto = {
 };
 
 // Ordem = ordem no ecrã. As palavras são procuradas sem acentos, em PT e ES (alguns fornecedores são espanhóis).
-const GRUPOS: { id: string; nome: string; icone: string; palavras: string[] }[] = [
+export const GRUPOS: { id: string; nome: string; icone: string; palavras: string[] }[] = [
   { id: "textil", nome: "T-shirts, polos e sweats", icone: "👕", palavras: ["blusao", "leggin", "malha", "sweatshirt", "t-shirt", "tshirt", "camiseta", "polo", "sweat", "sudadera", "hoodie", "camisola", "camisa", " top ", "regata", " body", "babygrow", "pijama"] },
   { id: "casacos", nome: "Casacos e coletes", icone: "🧥", palavras: ["casaco", "parka", "colete", "chaleco", "chaqueta", "soft-shell", "softshell", "anorak", "impermeavel", "cortavientos"] },
   { id: "trabalho", nome: "Roupa de trabalho", icone: "🦺", palavras: ["roupa de trabalho", "workwear", "bata", "jaleca", "farda", "calca", "pantalon", "calcoes", "bermuda", "macacao", "alta visibilidade", "botas", "sapato", "zapato", "sapatilha", "avental", "delantal"] },
@@ -121,6 +121,45 @@ const FAIXAS_PRECO = [
 const euro = (v: number) =>
   v.toLocaleString("pt-PT", { style: "currency", currency: "EUR", minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
+/**
+ * Carrega os artigos dos fornecedores (Pubeivil, Valento, Cifra).
+ * Chama aoAtualizar cada vez que chega mais um fornecedor (não espera pelos outros).
+ * Usado na página "Mais artigos" e nas páginas de cada área.
+ */
+export function carregarCatalogo(aoAtualizar: (produtos: Produto[]) => void) {
+  const carregar = (url: string): Promise<Produto[] | null> =>
+    fetch(url)
+      .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then(d => (d.produtos || []) as Produto[])
+      .catch(() => null);
+  // Cada fonte aparece assim que chega (não espera pelas outras).
+  const fontes: [string, string | null][] = [
+    ["/catalogo/pubeivil.json", null],
+    ["/catalogo/valento.json", "/.netlify/functions/catalogo-valento"],
+    ["/catalogo/cifra.json", "/.netlify/functions/catalogo-cifra"],
+  ];
+  const listas: (Produto[] | null)[] = fontes.map(() => null);
+  let respostas = 0;
+  const juntar = () => {
+    if (listas.every(l => !l)) { if (respostas === fontes.length) aoAtualizar([]); return; }
+    const vistos = new Set<string>();
+    const todos = listas
+      .flatMap(l => l || [])
+      .filter(p => p.imagem && p.preco > 0)
+      .filter(p => !NAO_MOSTRAR.test(semAcentos(`${p.nome} ${p.categoria} ${p.categoriaPrincipal}`)))
+      .filter(p => (vistos.has(p.ref) ? false : (vistos.add(p.ref), true)))
+      .map(p => ({ ...p, nome: traduzirNome(p.nome) }))
+      .map(p => ({ ...p, grupo: grupoDe(p) }));
+    if (!todos.length && respostas < fontes.length) return;
+    aoAtualizar(todos);
+  };
+  // Ficheiro pronto (gerado na publicação, abre logo); se não existir, pergunta ao fornecedor (pode demorar 20 s).
+  fontes.forEach(([ficheiro, funcao], i) =>
+    carregar(ficheiro)
+      .then(l => l || (funcao ? Promise.race([carregar(funcao), new Promise<null>(r => setTimeout(() => r(null), 40000))]) : null))
+      .then(l => { listas[i] = l; respostas++; juntar(); }));
+}
+
 const lerSelecaoDoEndereco = () => new URLSearchParams(window.location.search).get("categoria");
 
 // ── Lista de orçamento (fica guardada neste dispositivo) ──────────────────────
@@ -156,31 +195,12 @@ export default function Catalogo() {
 
   useEffect(() => {
     document.title = "Mais artigos | Ninho do Dragão";
-    const carregar = (url: string): Promise<Produto[] | null> =>
-      fetch(url)
-        .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
-        .then(d => (d.produtos || []) as Produto[])
-        .catch(() => null);
-    // Cada fonte aparece assim que chega (não espera pelas outras) e desiste ao fim de 15 s.
-    const fontes = ["/catalogo/pubeivil.json", "/.netlify/functions/catalogo-valento", "/.netlify/functions/catalogo-cifra"];
-    const listas: (Produto[] | null)[] = fontes.map(() => null);
-    let respostas = 0;
-    const juntar = () => {
-      if (listas.every(l => !l)) { if (respostas === fontes.length) setEstado("erro"); return; }
-      const vistos = new Set<string>();
-      const todos = listas
-        .flatMap(l => l || [])
-        .filter(p => p.imagem && p.preco > 0)
-        .filter(p => !NAO_MOSTRAR.test(semAcentos(`${p.nome} ${p.categoria} ${p.categoriaPrincipal}`)))
-        .filter(p => (vistos.has(p.ref) ? false : (vistos.add(p.ref), true)))
-        .map(p => ({ ...p, nome: traduzirNome(p.nome) }))
-        .map(p => ({ ...p, grupo: grupoDe(p) }));
+    carregarCatalogo(todos => {
       setProdutos(todos);
-      setEstado("ok");
-    };
-    fontes.forEach((url, i) =>
-      Promise.race([carregar(url), new Promise<null>(r => setTimeout(() => r(null), 15000))])
-        .then(l => { listas[i] = l; respostas++; juntar(); }));
+      setEstado(todos.length ? "ok" : "erro");
+      const artigo = new URLSearchParams(window.location.search).get("artigo");
+      if (artigo) { const a = todos.find(p => p.ref === artigo); if (a) setAberto(a); }
+    });
     const voltar = () => { setSel(lerSelecaoDoEndereco()); setAberto(null); };
     const tecla = (e: KeyboardEvent) => { if (e.key === "Escape") { setAberto(null); setOrcAberto(false); } };
     window.addEventListener("popstate", voltar);
@@ -311,7 +331,7 @@ export default function Catalogo() {
       <button onClick={() => setAberto(p)} aria-label={`Ver ${p.nome}`}
         style={{ position: "relative", aspectRatio: "1 / 1", width: "100%", background: "white", border: "none", padding: "10px", cursor: "pointer" }}>
         <Etiquetas p={p} />
-        <SemFoto grande />
+        <img src={p.imagem} alt={p.nome} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
       </button>
       <div style={{ padding: "10px 12px 12px", display: "flex", flexDirection: "column", gap: "3px", flex: 1, borderTop: "1px solid #f3f4f6" }}>
         <button onClick={() => setAberto(p)} style={{ background: "none", border: "none", padding: 0, textAlign: "left", cursor: "pointer", fontFamily: font, fontSize: "13.5px", fontWeight: 700, color: "#1a1a2e", lineHeight: 1.35 }}>
@@ -425,7 +445,7 @@ export default function Catalogo() {
                 <div style={{ display: "flex", gap: "12px", overflowX: "auto", paddingBottom: "6px" }}>
                   {natalDestaque.map(p => (
                     <button key={p.ref} onClick={() => setAberto(p)} style={{ flex: "0 0 150px", background: "white", border: "none", borderRadius: "12px", padding: 0, overflow: "hidden", cursor: "pointer", textAlign: "left" }}>
-                      <div style={{ aspectRatio: "1 / 1", padding: "8px" }}><SemFoto /></div>
+                      <div style={{ aspectRatio: "1 / 1", padding: "8px" }}><img src={p.imagem} alt={p.nome} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "contain" }} /></div>
                       <div style={{ padding: "8px 10px" }}>
                         <div style={{ fontSize: "13px", fontWeight: 700, color: "#1a1a2e", fontFamily: font, lineHeight: 1.3, height: "34px", overflow: "hidden" }}>{p.nome}</div>
                         <div style={{ fontSize: "12px", color: "#6b7280", marginTop: "4px" }}>desde <strong style={{ color: "#991b1b" }}>{euro(p.preco)}</strong></div>
@@ -442,7 +462,7 @@ export default function Catalogo() {
                 <button key={o.id} onClick={() => irPara(o.id)}
                   style={{ display: "flex", gap: "12px", alignItems: "center", background: "white", border: "1px solid #e5e7eb", borderRadius: "14px", padding: "10px", cursor: "pointer", textAlign: "left" }}>
                   <div style={{ width: "64px", height: "64px", flex: "0 0 64px", borderRadius: "10px", background: "#f6f7fb", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-                    <span style={{ fontSize: "28px" }}>{o.icone}</span>
+                    {o.capa ? <img src={o.capa} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "contain" }} /> : <span style={{ fontSize: "28px" }}>{o.icone}</span>}
                   </div>
                   <div>
                     <div style={{ fontFamily: font, fontWeight: 800, fontSize: "15px", color: "#1a1a2e" }}>{o.icone} {o.nome}</div>
@@ -459,7 +479,7 @@ export default function Catalogo() {
                 <button key={g.id} onClick={() => irPara(g.id)}
                   style={{ border: "1px solid #e5e7eb", borderRadius: "14px", background: "white", padding: 0, cursor: "pointer", overflow: "hidden", textAlign: "left", display: "flex", flexDirection: "column" }}>
                   <div style={{ aspectRatio: "4 / 3", width: "100%", background: "white", padding: "10px", boxSizing: "border-box" }}>
-                    <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "#f6f7fb", borderRadius: "10px" }}><span style={{ fontSize: "40px" }}>{g.icone}</span></div>
+                    {g.capa ? <img src={g.capa} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "contain" }} /> : <span style={{ fontSize: "40px" }}>{g.icone}</span>}
                   </div>
                   <div style={{ padding: "10px 12px", borderTop: "1px solid #f3f4f6", width: "100%", boxSizing: "border-box" }}>
                     <div style={{ fontFamily: font, fontWeight: 700, fontSize: "14px", color: "#1a1a2e", lineHeight: 1.3 }}>{g.icone} {g.nome}</div>
@@ -549,7 +569,7 @@ export default function Catalogo() {
               {orcamento.length === 0 && <p style={{ color: "#6b7280", fontSize: "14px" }}>Ainda não juntaste artigos. Carrega em <strong>+ Orçamento</strong> nos artigos que te interessam e envia tudo de uma vez.</p>}
               {orcamento.map((i, k) => (
                 <div key={k} style={{ display: "flex", gap: "10px", padding: "10px 0", borderBottom: "1px solid #f3f4f6" }}>
-                  <div style={{ width: "56px", height: "56px", flex: "0 0 56px" }}><SemFoto /></div>
+                  <img src={i.imagem} alt="" style={{ width: "56px", height: "56px", objectFit: "contain", flex: "0 0 56px" }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: "13.5px", fontWeight: 700, color: "#1a1a2e" }}>{i.nome}</div>
                     <div style={{ fontSize: "12px", color: "#6b7280" }}>{i.ref}{i.cor ? ` · ${i.cor}` : ""}{i.tamanho ? ` · tam. ${i.tamanho}` : ""}</div>
@@ -663,14 +683,14 @@ function Detalhe({ p, fechar, adicionar, pedirSo }: {
         <button onClick={fechar} aria-label="Fechar" style={{ position: "absolute", top: "8px", right: "12px", border: "none", background: "none", fontSize: "28px", cursor: "pointer", color: "#6b7280" }}>×</button>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "22px" }}>
           <div>
-            <div style={{ aspectRatio: "1 / 1" }}><SemFoto grande /></div>
+            <img src={imagem} alt={p.nome} style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "contain" }} />
             {p.variantes.length > 1 && (
               <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "8px" }}>
                 {p.variantes.map(v => (
                   <button key={v.ref} onClick={() => { setCor(v.cor || v.ref.split("-").pop() || ""); if (v.imagem) setImagem(v.imagem); }}
                     title={`${v.cor || "Cor " + v.ref.split("-").pop()}${v.stock === 0 ? " (sem stock)" : ""}`}
-                    style={{ width: "46px", height: "46px", padding: 0, border: (cor && (cor === v.cor || cor === v.ref.split("-").pop())) ? `2px solid ${AZUL}` : "1px solid #e5e7eb", borderRadius: "8px", overflow: "hidden", opacity: v.stock !== 0 ? 1 : 0.4, background: v.hex || "white", cursor: "pointer" }}>
-                    {!v.hex && <span style={{ fontSize: "10px", color: "#374151" }}>{(v.cor || v.ref.split("-").pop() || "").slice(0, 6)}</span>}
+                    style={{ width: "46px", height: "46px", padding: 0, border: (cor && (cor === v.cor || cor === v.ref.split("-").pop())) ? `2px solid ${AZUL}` : "1px solid #e5e7eb", borderRadius: "8px", overflow: "hidden", opacity: v.stock !== 0 ? 1 : 0.4, background: !v.imagem && v.hex ? v.hex : "white", cursor: "pointer" }}>
+                    {v.imagem && <img src={v.imagem} alt={v.cor || v.ref} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "contain" }} />}
                   </button>
                 ))}
               </div>
@@ -721,12 +741,3 @@ function Detalhe({ p, fechar, adicionar, pedirSo }: {
   );
 }
 
-// Sem fotos dos fornecedores: mostra um quadrado neutro com a indicação de que é personalizável.
-function SemFoto({ grande = false }: { grande?: boolean }) {
-  return (
-    <div style={{ width: "100%", height: "100%", background: "#f6f7fb", borderRadius: "10px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "4px", color: "#9ca3af" }}>
-      <span style={{ fontSize: grande ? "40px" : "22px" }} aria-hidden>🎨</span>
-      {grande && <span style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>Personalizável</span>}
-    </div>
-  );
-}
